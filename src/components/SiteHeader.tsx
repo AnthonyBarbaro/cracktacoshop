@@ -379,22 +379,25 @@ export default function SiteHeader({
               Shopping At: <span className="text-brand-yellow">{shoppingLabel}</span>
             </p>
 
-            <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3 2xl:hidden">
+            <div className="mt-2 flex items-center gap-1.5 2xl:hidden">
               <Link
                 href={selectedDirectionsUrl ?? "/locations"}
-                className="brand-btn-directions min-h-10 px-3 py-2 text-xs"
+                className="brand-btn-directions min-h-9 flex-1 px-2 py-1.5 text-[11px] leading-none whitespace-nowrap"
               >
                 Get Directions
               </Link>
 
-              <Link href={primaryCtaHref} className="brand-btn min-h-10 px-3 py-2 text-xs">
+              <Link
+                href={primaryCtaHref}
+                className="brand-btn min-h-9 flex-1 px-2 py-1.5 text-[11px] leading-none whitespace-nowrap"
+              >
                 {ctaLabel}
               </Link>
 
               <button
                 type="button"
                 onClick={openMenu}
-                className="brand-btn-muted col-span-2 min-h-10 px-3 py-2 text-xs sm:col-span-1"
+                className="brand-btn-muted min-h-9 flex-1 px-2 py-1.5 text-[11px] leading-none whitespace-nowrap"
               >
                 Change Location
               </button>
