@@ -14,13 +14,15 @@ import {
 
 type Props = {
   locations: Location[];
+  mode?: "full" | "minimal";
 };
 
-export default function LocationPicker({ locations }: Props) {
+export default function LocationPicker({ locations, mode = "full" }: Props) {
   const router = useRouter();
   const [isFindingNearest, setIsFindingNearest] = useState(false);
   const [nearestMessage, setNearestMessage] = useState<string | null>(null);
   const [nearestError, setNearestError] = useState<string | null>(null);
+  const isMinimal = mode === "minimal";
   const selectedSlug = useSyncExternalStore(
     subscribeToShoppingLocationChanges,
     getShoppingLocationSlugSnapshot,
@@ -144,33 +146,37 @@ export default function LocationPicker({ locations }: Props) {
           Start Order
         </button>
 
-        <button
-          type="button"
-          onClick={() => {
-            if (selectedSlug) {
-              setStoredShoppingLocationSlug(selectedSlug);
-              router.push(`/locations/${selectedSlug}`);
-            }
-          }}
-          disabled={!selectedSlug}
-          className="brand-btn-muted px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-45"
-        >
-          View Location
-        </button>
+        {!isMinimal && (
+          <>
+            <button
+              type="button"
+              onClick={() => {
+                if (selectedSlug) {
+                  setStoredShoppingLocationSlug(selectedSlug);
+                  router.push(`/locations/${selectedSlug}`);
+                }
+              }}
+              disabled={!selectedSlug}
+              className="brand-btn-muted px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-45"
+            >
+              View Location
+            </button>
 
-        {directionsUrl ? (
-          <a
-            href={directionsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="brand-btn-directions px-4 py-2 text-sm"
-          >
-            Get Directions
-          </a>
-        ) : (
-          <span className="brand-btn-directions px-4 py-2 text-sm opacity-45">
-            Get Directions
-          </span>
+            {directionsUrl ? (
+              <a
+                href={directionsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="brand-btn-directions px-4 py-2 text-sm"
+              >
+                Get Directions
+              </a>
+            ) : (
+              <span className="brand-btn-directions px-4 py-2 text-sm opacity-45">
+                Get Directions
+              </span>
+            )}
+          </>
         )}
       </div>
 

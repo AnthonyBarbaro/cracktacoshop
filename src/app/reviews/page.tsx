@@ -74,11 +74,11 @@ export default function ReviewsPage() {
         </section>
 
         <section className="section-shell mt-10">
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="review-mobile-track">
             {reviews.map((review, index) => (
               <article
                 key={`${review.author}-${index}`}
-                className="review-card review-card-animate rounded-2xl border border-white/10 bg-black/35 p-5"
+                className="review-card review-card-animate review-mobile-slide rounded-2xl border border-white/10 bg-black/35 p-5"
                 style={{ animationDelay: `${index * 80}ms` }}
               >
                 <p className="font-semibold text-white">{review.author}</p>
