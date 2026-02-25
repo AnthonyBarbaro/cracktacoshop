@@ -1,0 +1,17 @@
+<svg width="1600" height="1000" viewBox="0 0 1600 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g4" x1="0" y1="0" x2="1600" y2="1000" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#15505C" />
+      <stop offset="1" stop-color="#08161D" />
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#g4)" />
+  <circle cx="1300" cy="190" r="220" fill="#2FDDC8" fill-opacity="0.25" />
+  <circle cx="280" cy="820" r="270" fill="#F5865A" fill-opacity="0.15" />
+  <text x="120" y="760" fill="#ECFFFA" font-family="Sora, Arial, sans-serif" font-size="104" font-weight="700">
+    Coronado
+  </text>
+  <text x="120" y="840" fill="#BFE8DF" font-family="Manrope, Arial, sans-serif" font-size="44" font-weight="600">
+    Crack Taco Shop San Diego
+  </text>
+</svg>
