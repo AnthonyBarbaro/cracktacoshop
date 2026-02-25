@@ -69,6 +69,59 @@ export const foodShowcase = [
   },
 ];
 
+export const legacyFoodShowcase = [
+  {
+    src: "/images/legacy/veggie-nachos.png",
+    alt: "Veggie nachos loaded with toppings",
+    label: "Veggie Nachos",
+  },
+  {
+    src: "/images/legacy/asada.jpg",
+    alt: "Asada tacos and sides on a serving board",
+    label: "Asada Special",
+  },
+  {
+    src: "/images/legacy/baja-salad.jpg",
+    alt: "Baja salad with fresh greens and toppings",
+    label: "Baja Salad",
+  },
+  {
+    src: "/images/legacy/breakfast-burrito.jpg",
+    alt: "Breakfast burrito cut open with house toppings",
+    label: "Breakfast Burrito",
+  },
+  {
+    src: "/images/legacy/alpastor-fries.jpg",
+    alt: "Al pastor fries topped with sauce and garnish",
+    label: "Al Pastor Fries",
+  },
+  {
+    src: "/images/legacy/elote-nachos.png",
+    alt: "Elote nachos with corn and crema",
+    label: "Elote Nachos",
+  },
+  {
+    src: "/images/legacy/fruit-cup-tajin.png",
+    alt: "Fruit cup with tamarindo and tajin seasoning",
+    label: "Fruit Cup + Tajin",
+  },
+  {
+    src: "/images/legacy/loaded-tri-tip.png",
+    alt: "Loaded tri-tip plate with toppings",
+    label: "Loaded Tri-Tip",
+  },
+  {
+    src: "/images/legacy/pup-approved.png",
+    alt: "Dog-friendly menu item and snack display",
+    label: "Pup Approved",
+  },
+  {
+    src: "/images/legacy/street-corn.png",
+    alt: "Street corn served with chili and toppings",
+    label: "Street Corn",
+  },
+];
+
 export const reviews = [
   {
     quote:

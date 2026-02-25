@@ -9,7 +9,7 @@ import LocationPicker from "@/components/LocationPicker";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 import { locations } from "@/data/locations";
-import { foodShowcase, highlights, site } from "@/data/site-content";
+import { foodShowcase, highlights, legacyFoodShowcase, site } from "@/data/site-content";
 
 export const metadata: Metadata = {
   title: "Crack Taco Shop San Diego | Tri-Tip Tacos and Burritos",
@@ -217,6 +217,18 @@ export default function HomePage() {
                 View Full Menu
               </Link>
             </div>
+          </div>
+        </section>
+
+        <section className="section-shell mt-8">
+          <div className="home-fade-up rounded-3xl border border-white/10 bg-black/28 p-4 sm:p-6">
+            <div className="mb-4 sm:mb-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-yellow">
+                Food Gallery
+              </p>
+              <h2 className="mt-2 font-display text-3xl text-white sm:text-4xl">Original Favorites</h2>
+            </div>
+            <HomeFoodShowcase slides={legacyFoodShowcase} />
           </div>
         </section>
       </main>

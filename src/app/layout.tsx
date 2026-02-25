@@ -1,17 +1,18 @@
 import type { Metadata, Viewport } from "next";
-import { Manrope, Sora } from "next/font/google";
+import { Bungee, Plus_Jakarta_Sans } from "next/font/google";
 
 import { site } from "@/data/site-content";
 
 import "./globals.css";
 
-const manrope = Manrope({
+const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-manrope",
   subsets: ["latin"],
 });
 
-const sora = Sora({
+const bungee = Bungee({
   variable: "--font-sora",
+  weight: "400",
   subsets: ["latin"],
 });
 
@@ -78,7 +79,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${manrope.variable} ${sora.variable} antialiased`}>{children}</body>
+      <body className={`${plusJakartaSans.variable} ${bungee.variable} antialiased`}>{children}</body>
     </html>
   );
 }
