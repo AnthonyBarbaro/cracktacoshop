@@ -4,6 +4,7 @@ import { useMemo, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 
 import type { Location } from "@/data/locations";
+import { getGoogleMapsDirectionsUrl } from "@/lib/google-maps";
 import { findNearestLocationFromBrowser } from "@/lib/nearest-location";
 import {
   getShoppingLocationSlugServerSnapshot,
@@ -34,7 +35,10 @@ export default function LocationPicker({ locations, mode = "full" }: Props) {
     [locations, selectedSlug],
   );
   const directionsUrl = selectedLocation
-    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedLocation.address)}`
+    ? getGoogleMapsDirectionsUrl({
+        address: selectedLocation.address,
+        placeId: selectedLocation.placeId,
+      })
     : undefined;
 
   const handleFindNearestLocation = async () => {

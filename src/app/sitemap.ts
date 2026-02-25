@@ -9,7 +9,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "locations",
     "menu",
     "our-story",
-    "specials",
     "reviews",
     "careers",
     "faq",

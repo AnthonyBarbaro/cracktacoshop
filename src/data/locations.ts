@@ -2,6 +2,7 @@ export type Location = {
   slug: string;
   name: string;
   phone?: string;
+  placeId: string;
   latitude: number;
   longitude: number;
   city: string;
@@ -22,6 +23,7 @@ export const locations: Location[] = [
     slug: "mission-valley",
     name: "Mission Valley",
     phone: "619-269-2828",
+    placeId: "ChIJOc3z-bdV2YARQp5C72Q2NDI",
     latitude: 32.777,
     longitude: -117.157,
     city: "San Diego",
@@ -29,7 +31,7 @@ export const locations: Location[] = [
     postalCode: "92108",
     address: "4242 Camino Del Rio N, San Diego, CA 92108",
     hours: "Daily: 7AM - Midnight",
-    image: "/images/mission-valley.jpg",
+    image: "/images/mission.jpg",
     menuUrl: "/menu/mission-valley/embed",
     doorDash:
       "https://www.doordash.com/store/crack-taco-shop-san-diego-841981/44392947/",
@@ -42,6 +44,7 @@ export const locations: Location[] = [
     slug: "seaport-village",
     name: "Seaport Village",
     phone: "619-326-8497",
+    placeId: "ChIJK3jWFFRT2YARneWUVMeEgkU",
     latitude: 32.7089,
     longitude: -117.1705,
     city: "San Diego",
@@ -60,6 +63,7 @@ export const locations: Location[] = [
     slug: "encinitas",
     name: "Encinitas",
     phone: "760-230-1649",
+    placeId: "ChIJ4WUU9PAM3IARnFYuDOtAOMU",
     latitude: 33.0657,
     longitude: -117.2897,
     city: "Encinitas",
@@ -80,6 +84,7 @@ export const locations: Location[] = [
     slug: "coronado",
     name: "Coronado",
     phone: "619-673-8887",
+    placeId: "ChIJuTXkXsms3oARqq28AQBC5ps",
     latitude: 32.6926,
     longitude: -117.1785,
     city: "Coronado",

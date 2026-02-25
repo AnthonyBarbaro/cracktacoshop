@@ -173,21 +173,6 @@ export const marketingHighlights = [
   },
 ];
 
-export const specials = [
-  {
-    title: "Late Night Tri-Tip Burrito Combo",
-    details: "Tri-tip burrito, chips, and drink. Available daily after 8PM.",
-  },
-  {
-    title: "Taco Tuesday Pack",
-    details: "Mix-and-match taco pack with house salsas and fresh guacamole.",
-  },
-  {
-    title: "Family Taco Tray",
-    details: "Build-your-own taco tray for groups with proteins and toppings.",
-  },
-];
-
 export const faqItems = [
   {
     question: "What are your hours?",

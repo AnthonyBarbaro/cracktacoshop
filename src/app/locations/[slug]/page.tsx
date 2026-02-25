@@ -4,10 +4,16 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Script from "next/script";
 
+import LocationOpenBadge from "@/components/LocationOpenBadge";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 import { locations } from "@/data/locations";
 import { site } from "@/data/site-content";
+import {
+  getGoogleMapsDirectionsUrl,
+  getGoogleMapsEmbedUrl,
+  getGoogleMapsSearchUrl,
+} from "@/lib/google-maps";
 
 type LocationPageProps = {
   params: Promise<{ slug: string }>;
@@ -65,7 +71,20 @@ export default async function LocationPage({ params }: LocationPageProps) {
   }
 
   const menuEmbedUrl = location.menuUrl ?? `/menu/${location.slug}/embed`;
-  const directionsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location.address)}`;
+  const directionsUrl = getGoogleMapsSearchUrl({
+    address: location.address,
+    placeId: location.placeId,
+  });
+  const mapsDirectionsUrl = getGoogleMapsDirectionsUrl({
+    address: location.address,
+    placeId: location.placeId,
+  });
+  const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY?.trim();
+  const mapEmbedUrl = getGoogleMapsEmbedUrl({
+    address: location.address,
+    placeId: location.placeId,
+    apiKey: googleMapsApiKey,
+  });
   const pickupOrderUrl = location.toastUrl;
   const schemaUrl = `${site.url}/locations/${location.slug}`;
   const schema = {
@@ -189,6 +208,53 @@ export default async function LocationPage({ params }: LocationPageProps) {
                     </a>
                   )}
                 </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="overflow-hidden rounded-3xl border border-white/12 bg-black/35">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-5 py-4 sm:px-6">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-yellow">
+                  Map + Directions
+                </p>
+                <h2 className="mt-1 font-display text-2xl text-white sm:text-3xl">
+                  {location.name}
+                </h2>
+              </div>
+              <LocationOpenBadge slug={location.slug} />
+            </div>
+
+            <div className="relative min-h-72">
+              <iframe
+                title={`${location.name} location map`}
+                src={mapEmbedUrl}
+                className="absolute inset-0 h-full w-full"
+                loading="lazy"
+                allowFullScreen
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
+
+            <div className="border-t border-white/10 px-5 py-4 sm:px-6">
+              <p className="text-sm text-white/75">{location.address}</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <a
+                  href={mapsDirectionsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="brand-btn-directions px-4 py-2 text-sm"
+                >
+                  Get Directions
+                </a>
+                <a
+                  href={directionsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="brand-btn-muted px-4 py-2 text-sm"
+                >
+                  Open In Google Maps
+                </a>
               </div>
             </div>
           </section>

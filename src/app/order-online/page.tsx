@@ -5,6 +5,7 @@ import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 import { locations } from "@/data/locations";
 import { site } from "@/data/site-content";
+import { getGoogleMapsDirectionsUrl } from "@/lib/google-maps";
 
 export const metadata: Metadata = {
   title: "Order Online",
@@ -36,7 +37,10 @@ export default function OrderOnlinePage() {
         <section className="section-shell mt-10">
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             {locations.map((location) => {
-              const directionsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location.address)}`;
+              const directionsUrl = getGoogleMapsDirectionsUrl({
+                address: location.address,
+                placeId: location.placeId,
+              });
 
               return (
                 <article

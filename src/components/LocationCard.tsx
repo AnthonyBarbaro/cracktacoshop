@@ -2,13 +2,17 @@ import Image from "next/image";
 import Link from "next/link";
 
 import type { Location } from "@/data/locations";
+import { getGoogleMapsDirectionsUrl } from "@/lib/google-maps";
 
 type Props = {
   location: Location;
 };
 
 export default function LocationCard({ location }: Props) {
-  const directionsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location.address)}`;
+  const directionsUrl = getGoogleMapsDirectionsUrl({
+    address: location.address,
+    placeId: location.placeId,
+  });
   const quickOrderUrl =
     location.toastUrl ?? location.doorDash ?? location.grubHub ?? location.uberEats;
 

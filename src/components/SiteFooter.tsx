@@ -3,13 +3,13 @@ import Link from "next/link";
 
 import { locations } from "@/data/locations";
 import { site } from "@/data/site-content";
+import { getGoogleMapsDirectionsUrl } from "@/lib/google-maps";
 
 export default function SiteFooter() {
   const footerLinks = [
     { href: "/", label: "Home" },
     { href: "/menu", label: "Menu" },
     { href: "/our-story", label: "Our Story" },
-    { href: "/specials", label: "Specials" },
     { href: "/reviews", label: "Reviews" },
     { href: "/careers", label: "Careers" },
     { href: "/faq", label: "FAQ" },
@@ -60,29 +60,36 @@ export default function SiteFooter() {
         <div>
           <h3 className="font-display text-xl text-white">Locations & Phones</h3>
           <ul className="mt-4 space-y-4 text-sm">
-            {locations.map((location) => (
-              <li key={location.slug} className="text-white/75">
-                <p className="font-semibold text-white">{location.name}</p>
-                <p>{location.address}</p>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {location.phone ? (
-                    <a href={`tel:${location.phone}`} className="font-semibold text-brand-yellow">
-                      {location.phone}
+            {locations.map((location) => {
+              const directionsUrl = getGoogleMapsDirectionsUrl({
+                address: location.address,
+                placeId: location.placeId,
+              });
+
+              return (
+                <li key={location.slug} className="text-white/75">
+                  <p className="font-semibold text-white">{location.name}</p>
+                  <p>{location.address}</p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {location.phone ? (
+                      <a href={`tel:${location.phone}`} className="font-semibold text-brand-yellow">
+                        {location.phone}
+                      </a>
+                    ) : (
+                      <p className="text-white/60">Phone available at location</p>
+                    )}
+                    <a
+                      href={directionsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="brand-btn-directions px-3 py-1.5 text-xs"
+                    >
+                      Directions
                     </a>
-                  ) : (
-                    <p className="text-white/60">Phone available at location</p>
-                  )}
-                  <a
-                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location.address)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="brand-btn-directions px-3 py-1.5 text-xs"
-                  >
-                    Directions
-                  </a>
-                </div>
-              </li>
-            ))}
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </div>

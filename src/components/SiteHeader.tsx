@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 
 import { locations } from "@/data/locations";
+import { getGoogleMapsDirectionsUrl } from "@/lib/google-maps";
 import { findNearestLocationFromBrowser } from "@/lib/nearest-location";
 import {
   getShoppingLocationSlugServerSnapshot,
@@ -60,7 +61,6 @@ export default function SiteHeader({
     { href: "/locations", label: "Locations" },
     { href: "/menu", label: "Menu" },
     { href: "/our-story", label: "Our Story" },
-    { href: "/specials", label: "Specials" },
     { href: "/reviews", label: "Reviews" },
     { href: "/careers", label: "Careers" },
     { href: "/faq", label: "FAQ" },
@@ -80,10 +80,16 @@ export default function SiteHeader({
   const shoppingLabel = shoppingLocation?.name ?? "Select a location";
   const shoppingHref = shoppingLocation ? `/locations/${shoppingLocation.slug}` : "/locations";
   const selectedDirectionsUrl = shoppingLocation
-    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shoppingLocation.address)}`
+    ? getGoogleMapsDirectionsUrl({
+        address: shoppingLocation.address,
+        placeId: shoppingLocation.placeId,
+      })
     : undefined;
   const menuDirectionsUrl = menuLocation
-    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(menuLocation.address)}`
+    ? getGoogleMapsDirectionsUrl({
+        address: menuLocation.address,
+        placeId: menuLocation.placeId,
+      })
     : undefined;
   const isLinkActive = (href: string) => {
     if (href === "/") {

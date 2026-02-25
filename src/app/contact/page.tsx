@@ -5,6 +5,7 @@ import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 import { locations } from "@/data/locations";
 import { site } from "@/data/site-content";
+import { getGoogleMapsDirectionsUrl } from "@/lib/google-maps";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -65,7 +66,10 @@ export default function ContactPage() {
             <h2 className="font-display text-3xl text-white sm:text-4xl">All Store Contacts</h2>
             <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
               {locations.map((location) => {
-                const directionsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location.address)}`;
+                const directionsUrl = getGoogleMapsDirectionsUrl({
+                  address: location.address,
+                  placeId: location.placeId,
+                });
 
                 return (
                   <article
