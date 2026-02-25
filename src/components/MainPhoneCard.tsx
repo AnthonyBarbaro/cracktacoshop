@@ -1,13 +1,14 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useSyncExternalStore } from "react";
 
 import { locations } from "@/data/locations";
 import { site } from "@/data/site-content";
 import {
-  getStoredShoppingLocationSlug,
-  SHOPPING_LOCATION_CHANGE_EVENT,
+  getShoppingLocationSlugServerSnapshot,
+  getShoppingLocationSlugSnapshot,
+  subscribeToShoppingLocationChanges,
 } from "@/lib/shopping-location";
 
 function getRouteLocationSlug(pathname: string): string | undefined {
@@ -27,38 +28,17 @@ function getRouteLocationSlug(pathname: string): string | undefined {
 export default function MainPhoneCard() {
   const pathname = usePathname();
   const routeLocationSlug = getRouteLocationSlug(pathname);
-  const [selectedSlug, setSelectedSlug] = useState<string>(
-    () => getStoredShoppingLocationSlug() ?? "",
+  const storedShoppingSlug = useSyncExternalStore(
+    subscribeToShoppingLocationChanges,
+    getShoppingLocationSlugSnapshot,
+    getShoppingLocationSlugServerSnapshot,
   );
-
-  useEffect(() => {
-    const onShoppingLocationChange = (event: Event) => {
-      const customEvent = event as CustomEvent<{ slug?: string }>;
-      const slug = customEvent.detail?.slug;
-
-      if (slug && locations.some((location) => location.slug === slug)) {
-        setSelectedSlug(slug);
-      }
-    };
-
-    window.addEventListener(
-      SHOPPING_LOCATION_CHANGE_EVENT,
-      onShoppingLocationChange as EventListener,
-    );
-
-    return () => {
-      window.removeEventListener(
-        SHOPPING_LOCATION_CHANGE_EVENT,
-        onShoppingLocationChange as EventListener,
-      );
-    };
-  }, []);
 
   const fallbackLocation = useMemo(
     () => locations.find((location) => location.phone === site.phone) ?? locations[0],
     [],
   );
-  const activeSlug = routeLocationSlug ?? selectedSlug;
+  const activeSlug = routeLocationSlug ?? storedShoppingSlug;
   const selectedLocation = useMemo(
     () => locations.find((location) => location.slug === activeSlug),
     [activeSlug],

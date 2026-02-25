@@ -6,6 +6,7 @@ type LocationPoint = {
 
 export const SHOPPING_LOCATION_STORAGE_KEY = "cts-shopping-location-slug";
 export const SHOPPING_LOCATION_CHANGE_EVENT = "cts-shopping-location-change";
+const SHOPPING_LOCATION_STORAGE_EVENT = "storage";
 
 export function getStoredShoppingLocationSlug(): string | undefined {
   if (typeof window === "undefined") {
@@ -23,6 +24,32 @@ export function setStoredShoppingLocationSlug(slug: string): void {
 
   window.localStorage.setItem(SHOPPING_LOCATION_STORAGE_KEY, slug);
   window.dispatchEvent(new CustomEvent(SHOPPING_LOCATION_CHANGE_EVENT, { detail: { slug } }));
+}
+
+export function subscribeToShoppingLocationChanges(callback: () => void): () => void {
+  if (typeof window === "undefined") {
+    return () => {};
+  }
+
+  const handler = () => {
+    callback();
+  };
+
+  window.addEventListener(SHOPPING_LOCATION_CHANGE_EVENT, handler as EventListener);
+  window.addEventListener(SHOPPING_LOCATION_STORAGE_EVENT, handler);
+
+  return () => {
+    window.removeEventListener(SHOPPING_LOCATION_CHANGE_EVENT, handler as EventListener);
+    window.removeEventListener(SHOPPING_LOCATION_STORAGE_EVENT, handler);
+  };
+}
+
+export function getShoppingLocationSlugSnapshot(): string {
+  return getStoredShoppingLocationSlug() ?? "";
+}
+
+export function getShoppingLocationSlugServerSnapshot(): string {
+  return "";
 }
 
 function getDistanceInKm(

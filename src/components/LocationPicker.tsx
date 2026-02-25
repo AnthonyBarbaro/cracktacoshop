@@ -1,11 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 
 import type { Location } from "@/data/locations";
 import {
-  getStoredShoppingLocationSlug,
+  getShoppingLocationSlugServerSnapshot,
+  getShoppingLocationSlugSnapshot,
+  subscribeToShoppingLocationChanges,
   setStoredShoppingLocationSlug,
 } from "@/lib/shopping-location";
 
@@ -15,9 +17,12 @@ type Props = {
 
 export default function LocationPicker({ locations }: Props) {
   const router = useRouter();
-  const [selectedSlug, setSelectedSlug] = useState<string>(
-    () => getStoredShoppingLocationSlug() ?? "",
+  const selectedSlug = useSyncExternalStore(
+    subscribeToShoppingLocationChanges,
+    getShoppingLocationSlugSnapshot,
+    getShoppingLocationSlugServerSnapshot,
   );
+
   const selectedLocation = useMemo(
     () => locations.find((location) => location.slug === selectedSlug),
     [locations, selectedSlug],
@@ -41,7 +46,6 @@ export default function LocationPicker({ locations }: Props) {
             value={selectedSlug}
             onChange={(event) => {
               const slug = event.target.value;
-              setSelectedSlug(slug);
               setStoredShoppingLocationSlug(slug);
             }}
             className="brand-input brand-select appearance-none px-4 py-3 pr-11"

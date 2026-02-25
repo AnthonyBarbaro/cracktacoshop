@@ -11,6 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "our-story",
     "specials",
     "reviews",
+    "careers",
     "faq",
     "contact",
     "order-online",

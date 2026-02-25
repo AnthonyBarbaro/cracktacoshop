@@ -64,7 +64,7 @@ export default function LocationOpenBadge({ slug }: Props) {
 
   if (isOpen === null) {
     return (
-      <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/5 px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.06em] text-white/70">
+      <span className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-white/20 bg-white/5 px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.06em] text-white/70">
         <span className="h-1.5 w-1.5 rounded-full bg-white/60" aria-hidden="true" />
         Hours
       </span>
@@ -77,7 +77,7 @@ export default function LocationOpenBadge({ slug }: Props) {
         isOpen
           ? "border-emerald-300/45 bg-emerald-500/12 text-emerald-300"
           : "border-red-300/45 bg-red-500/12 text-red-300"
-      }`}
+      } shrink-0 whitespace-nowrap`}
       aria-live="polite"
     >
       <span

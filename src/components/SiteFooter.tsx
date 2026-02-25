@@ -11,6 +11,7 @@ export default function SiteFooter() {
     { href: "/our-story", label: "Our Story" },
     { href: "/specials", label: "Specials" },
     { href: "/reviews", label: "Reviews" },
+    { href: "/careers", label: "Careers" },
     { href: "/faq", label: "FAQ" },
     { href: "/contact", label: "Contact" },
     { href: "/locations", label: "Locations" },

@@ -16,6 +16,24 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Careers Form Email Setup
+
+The site includes a `/careers` application form that submits to `/api/careers` and sends email.
+
+1. Copy `.env.example` to `.env.local`.
+2. Set SMTP values for your provider (Brevo example uses `SMTP_HOST=smtp-relay.brevo.com`):
+   - `SMTP_HOST`
+   - `SMTP_PORT`
+   - `SMTP_SECURE`
+   - `SMTP_USER`
+   - `SMTP_PASS`
+3. Set careers email routing:
+   - `CAREERS_TO` (recipient inbox, easy to switch later)
+4. Optional sender override:
+   - `CAREERS_FROM` or `SMTP_FROM` (must be validated by your SMTP provider)
+
+Default recipient fallback is `anthony@barbaro.tech`, and changing recipients later only requires updating `CAREERS_TO`.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

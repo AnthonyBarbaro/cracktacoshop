@@ -3,12 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 
 import { locations } from "@/data/locations";
 import {
   findNearestLocationSlug,
-  getStoredShoppingLocationSlug,
+  getShoppingLocationSlugServerSnapshot,
+  getShoppingLocationSlugSnapshot,
+  subscribeToShoppingLocationChanges,
   setStoredShoppingLocationSlug,
   SHOPPING_LOCATION_CHANGE_EVENT,
 } from "@/lib/shopping-location";
@@ -39,10 +41,12 @@ export default function SiteHeader({
   const router = useRouter();
   const pathname = usePathname();
   const routeLocationSlug = getRouteLocationSlug(pathname);
-  const [selectedSlug, setSelectedSlug] = useState<string>(() => getStoredShoppingLocationSlug() ?? "");
-  const [menuLocationSlug, setMenuLocationSlug] = useState<string>(
-    () => getStoredShoppingLocationSlug() ?? "",
+  const storedShoppingSlug = useSyncExternalStore(
+    subscribeToShoppingLocationChanges,
+    getShoppingLocationSlugSnapshot,
+    getShoppingLocationSlugServerSnapshot,
   );
+  const [menuLocationSlug, setMenuLocationSlug] = useState<string>("");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isFindingNearest, setIsFindingNearest] = useState(false);
   const [nearestError, setNearestError] = useState<string | null>(null);
@@ -57,11 +61,12 @@ export default function SiteHeader({
     { href: "/our-story", label: "Our Story" },
     { href: "/specials", label: "Specials" },
     { href: "/reviews", label: "Reviews" },
+    { href: "/careers", label: "Careers" },
     { href: "/faq", label: "FAQ" },
     { href: "/contact", label: "Contact" },
   ];
 
-  const shoppingSlug = routeLocationSlug ?? selectedSlug;
+  const shoppingSlug = routeLocationSlug ?? storedShoppingSlug;
   const shoppingLocation = useMemo(
     () => locations.find((location) => location.slug === shoppingSlug),
     [shoppingSlug],
@@ -98,7 +103,6 @@ export default function SiteHeader({
       return;
     }
 
-    setSelectedSlug(slug);
     setStoredShoppingLocationSlug(slug);
     setNearestError(null);
   };
@@ -109,7 +113,7 @@ export default function SiteHeader({
   };
 
   const handleViewSelectedLocation = () => {
-    const targetSlug = menuLocationSlug || selectedSlug || routeLocationSlug;
+    const targetSlug = menuLocationSlug || storedShoppingSlug || routeLocationSlug;
 
     if (!targetSlug) {
       return;
@@ -176,7 +180,6 @@ export default function SiteHeader({
       const slug = customEvent.detail?.slug;
 
       if (slug && locations.some((location) => location.slug === slug)) {
-        setSelectedSlug(slug);
         setMenuLocationSlug(slug);
       }
     };
@@ -460,7 +463,7 @@ export default function SiteHeader({
                 <button
                   type="button"
                   onClick={handleViewSelectedLocation}
-                  disabled={!menuLocationSlug && !selectedSlug && !routeLocationSlug}
+                  disabled={!menuLocationSlug && !storedShoppingSlug && !routeLocationSlug}
                   className="brand-btn w-full px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-45"
                 >
                   View Location
