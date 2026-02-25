@@ -74,10 +74,12 @@ export default async function LocationPage({ params }: LocationPageProps) {
   const directionsUrl = getGoogleMapsSearchUrl({
     address: location.address,
     placeId: location.placeId,
+    googleMapsUrl: location.googleMapsUrl,
   });
   const mapsDirectionsUrl = getGoogleMapsDirectionsUrl({
     address: location.address,
     placeId: location.placeId,
+    googleMapsUrl: location.googleMapsUrl,
   });
   const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY?.trim();
   const mapEmbedUrl = getGoogleMapsEmbedUrl({

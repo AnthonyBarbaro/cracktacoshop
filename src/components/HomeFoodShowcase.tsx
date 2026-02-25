@@ -11,13 +11,15 @@ type Slide = {
 
 type Props = {
   slides: Slide[];
+  variant?: "default" | "tall";
 };
 
 const AUTOPLAY_MS = 4200;
 
-export default function HomeFoodShowcase({ slides }: Props) {
+export default function HomeFoodShowcase({ slides, variant = "default" }: Props) {
   const [activeIndex, setActiveIndex] = useState(0);
   const slideCount = slides.length;
+  const showcaseClassName = `food-showcase ${variant === "tall" ? "food-showcase-tall" : ""} home-fade-up`;
 
   useEffect(() => {
     if (slideCount < 2) {
@@ -33,7 +35,7 @@ export default function HomeFoodShowcase({ slides }: Props) {
 
   if (slideCount === 0) {
     return (
-      <section className="food-showcase home-fade-up" aria-label="Food slideshow">
+      <section className={showcaseClassName} aria-label="Food slideshow">
         <div className="food-frame" />
       </section>
     );
@@ -45,7 +47,7 @@ export default function HomeFoodShowcase({ slides }: Props) {
   const nextIndex = (currentIndex + 1) % slideCount;
 
   return (
-    <section className="food-showcase home-fade-up" aria-label="Food slideshow">
+    <section className={showcaseClassName} aria-label="Food slideshow">
       <div className="food-frame">
         {slides.map((slide, index) => {
           const isActive = index === currentIndex;

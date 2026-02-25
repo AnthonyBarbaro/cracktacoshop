@@ -121,7 +121,7 @@ export default function HomePage() {
                 ))}
               </div>
 
-              <div className="mt-5">
+              <div className="mt-5 hidden lg:block">
                 <LocationPicker locations={locations} mode="minimal" />
               </div>
 

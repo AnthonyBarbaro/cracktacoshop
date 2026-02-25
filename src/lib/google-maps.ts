@@ -1,6 +1,7 @@
 type MapsLocation = {
   address: string;
   placeId?: string;
+  googleMapsUrl?: string;
 };
 
 type MapsDirectionsOptions = MapsLocation & {
@@ -11,7 +12,16 @@ type MapsEmbedOptions = MapsLocation & {
   apiKey?: string;
 };
 
-export function getGoogleMapsSearchUrl({ address, placeId }: MapsLocation): string {
+export function getGoogleMapsSearchUrl({
+  address,
+  placeId,
+  googleMapsUrl,
+}: MapsLocation): string {
+  const normalizedGoogleMapsUrl = googleMapsUrl?.trim();
+  if (normalizedGoogleMapsUrl) {
+    return normalizedGoogleMapsUrl;
+  }
+
   const normalizedPlaceId = placeId?.trim();
   const query = encodeURIComponent(address);
 
@@ -25,8 +35,14 @@ export function getGoogleMapsSearchUrl({ address, placeId }: MapsLocation): stri
 export function getGoogleMapsDirectionsUrl({
   address,
   placeId,
+  googleMapsUrl,
   origin,
 }: MapsDirectionsOptions): string {
+  const normalizedGoogleMapsUrl = googleMapsUrl?.trim();
+  if (normalizedGoogleMapsUrl) {
+    return normalizedGoogleMapsUrl;
+  }
+
   const normalizedPlaceId = placeId?.trim();
   const destination = encodeURIComponent(address);
   const originParam = origin ? `&origin=${encodeURIComponent(origin)}` : "";

@@ -40,6 +40,7 @@ export default function OrderOnlinePage() {
               const directionsUrl = getGoogleMapsDirectionsUrl({
                 address: location.address,
                 placeId: location.placeId,
+                googleMapsUrl: location.googleMapsUrl,
               });
 
               return (

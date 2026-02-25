@@ -12,6 +12,7 @@ export default function LocationCard({ location }: Props) {
   const directionsUrl = getGoogleMapsDirectionsUrl({
     address: location.address,
     placeId: location.placeId,
+    googleMapsUrl: location.googleMapsUrl,
   });
   const quickOrderUrl =
     location.toastUrl ?? location.doorDash ?? location.grubHub ?? location.uberEats;

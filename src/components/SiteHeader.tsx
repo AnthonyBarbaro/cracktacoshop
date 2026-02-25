@@ -76,19 +76,31 @@ export default function SiteHeader({
     () => locations.find((location) => location.slug === menuLocationSlug),
     [menuLocationSlug],
   );
+  const fallbackLocationSlug = locations[0]?.slug;
+  const shoppingMenuHref = shoppingSlug
+    ? `/menu/${shoppingSlug}/embed`
+    : fallbackLocationSlug
+      ? `/menu/${fallbackLocationSlug}/embed`
+      : "/order-online";
+  const primaryCtaHref = ctaHref === "/order-online" ? shoppingMenuHref : ctaHref;
+  const drawerOrderHref = menuLocationSlug
+    ? `/menu/${menuLocationSlug}/embed`
+    : shoppingMenuHref;
+  const drawerCtaHref = ctaHref === "/order-online" ? drawerOrderHref : ctaHref;
 
   const shoppingLabel = shoppingLocation?.name ?? "Select a location";
-  const shoppingHref = shoppingLocation ? `/locations/${shoppingLocation.slug}` : "/locations";
   const selectedDirectionsUrl = shoppingLocation
     ? getGoogleMapsDirectionsUrl({
         address: shoppingLocation.address,
         placeId: shoppingLocation.placeId,
+        googleMapsUrl: shoppingLocation.googleMapsUrl,
       })
     : undefined;
   const menuDirectionsUrl = menuLocation
     ? getGoogleMapsDirectionsUrl({
         address: menuLocation.address,
         placeId: menuLocation.placeId,
+        googleMapsUrl: menuLocation.googleMapsUrl,
       })
     : undefined;
   const isLinkActive = (href: string) => {
@@ -299,7 +311,7 @@ export default function SiteHeader({
             />
           </Link>
 
-          <nav aria-label="Primary navigation" className="hidden gap-3 text-xs font-semibold text-white/80 lg:flex">
+          <nav aria-label="Primary navigation" className="hidden gap-3 text-xs font-semibold text-white/80 xl:flex">
             {links.map((link) => (
               <Link
                 key={link.href}
@@ -313,29 +325,28 @@ export default function SiteHeader({
           </nav>
 
           <div className="ml-auto flex items-center gap-2">
-            <Link
-              href={shoppingHref}
-              className="hidden rounded-xl border border-white/20 bg-black/40 px-3 py-2 text-xs font-semibold text-white/85 xl:inline-flex"
-            >
-              Shopping: <span className="ml-1 text-brand-yellow">{shoppingLabel}</span>
-            </Link>
+            <div className="hidden 2xl:flex items-center gap-2">
+              <Link
+                href={selectedDirectionsUrl ?? "/locations"}
+                className="brand-btn-directions px-4 py-2 text-sm"
+              >
+                Get Directions
+              </Link>
 
-            <Link
-              href={selectedDirectionsUrl ?? "/locations"}
-              className="brand-btn-directions hidden px-4 py-2 text-sm md:inline-flex"
-            >
-              Get Directions
-            </Link>
+              <Link href={primaryCtaHref} className="brand-btn px-3 py-2 text-xs sm:px-4 sm:text-sm">
+                {ctaLabel}
+              </Link>
 
-            <Link href={ctaHref} className="brand-btn px-3 py-2 text-xs sm:px-4 sm:text-sm">
-              {ctaLabel}
-            </Link>
+              <Link href="/locations" className="brand-btn-muted px-4 py-2 text-sm">
+                Change Location
+              </Link>
+            </div>
 
             <button
               ref={menuToggleButtonRef}
               type="button"
               onClick={() => (isMenuOpen ? closeMenu() : openMenu())}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-black/45 text-white lg:hidden"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-black/45 text-white 2xl:hidden"
               aria-haspopup="dialog"
               aria-expanded={isMenuOpen}
               aria-controls="mobile-site-menu"
@@ -363,28 +374,30 @@ export default function SiteHeader({
         </div>
 
         <div className="border-t border-white/10 bg-black/62">
-          <div className="section-shell flex flex-col items-start justify-between gap-2 py-2 sm:flex-row sm:items-center">
+          <div className="section-shell py-2">
             <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-white/70">
               Shopping At: <span className="text-brand-yellow">{shoppingLabel}</span>
             </p>
 
-            <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
+            <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3 2xl:hidden">
               <Link
                 href={selectedDirectionsUrl ?? "/locations"}
-                className="brand-btn-directions hidden px-3 py-1.5 text-xs sm:inline-flex"
+                className="brand-btn-directions min-h-10 px-3 py-2 text-xs"
               >
-                Directions
+                Get Directions
               </Link>
+
+              <Link href={primaryCtaHref} className="brand-btn min-h-10 px-3 py-2 text-xs">
+                {ctaLabel}
+              </Link>
+
               <button
                 type="button"
                 onClick={openMenu}
-                className="brand-btn-muted px-3 py-1.5 text-xs lg:hidden"
+                className="brand-btn-muted col-span-2 min-h-10 px-3 py-2 text-xs sm:col-span-1"
               >
-                Menu
-              </button>
-              <Link href="/locations" className="brand-btn-muted hidden px-3 py-1.5 text-xs lg:inline-flex">
                 Change Location
-              </Link>
+              </button>
             </div>
           </div>
         </div>
@@ -479,8 +492,8 @@ export default function SiteHeader({
                   View Location
                 </button>
 
-                <Link href="/order-online" onClick={closeMenu} className="brand-btn w-full px-4 py-2 text-sm">
-                  Order Online
+                <Link href={drawerCtaHref} onClick={closeMenu} className="brand-btn w-full px-4 py-2 text-sm">
+                  {ctaLabel}
                 </Link>
 
                 {menuDirectionsUrl && (

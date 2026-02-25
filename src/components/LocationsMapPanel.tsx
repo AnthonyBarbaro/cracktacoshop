@@ -43,10 +43,12 @@ export default function LocationsMapPanel({ locations }: Props) {
   const directionsUrl = getGoogleMapsDirectionsUrl({
     address: activeLocation.address,
     placeId: activeLocation.placeId,
+    googleMapsUrl: activeLocation.googleMapsUrl,
   });
   const googleListingUrl = getGoogleMapsSearchUrl({
     address: activeLocation.address,
     placeId: activeLocation.placeId,
+    googleMapsUrl: activeLocation.googleMapsUrl,
   });
 
   return (

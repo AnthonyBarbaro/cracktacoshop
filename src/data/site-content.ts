@@ -57,6 +57,16 @@ export const foodShowcase = [
     alt: "Late-night taco order packed to-go",
     label: "Late Night Eats",
   },
+  {
+    src: "/images/al-pastor-street-tacos.jpg",
+    alt: "Al pastor street taco with pineapple, guacamole, and onion",
+    label: "Al Pastor Street Tacos",
+  },
+  {
+    src: "/images/beef-quesadilla.jpg",
+    alt: "Beef quesadilla served with guacamole and crema",
+    label: "Beef Quesadilla",
+  },
 ];
 
 export const reviews = [

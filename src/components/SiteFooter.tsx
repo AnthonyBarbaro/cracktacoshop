@@ -64,6 +64,7 @@ export default function SiteFooter() {
               const directionsUrl = getGoogleMapsDirectionsUrl({
                 address: location.address,
                 placeId: location.placeId,
+                googleMapsUrl: location.googleMapsUrl,
               });
 
               return (

@@ -275,10 +275,10 @@ a {
 
 @keyframes slide-zoom {
   from {
-    transform: scale(1.02);
+    transform: scale(1.01);
   }
   to {
-    transform: scale(1.1);
+    transform: scale(1.06);
   }
 }
 
@@ -337,6 +337,10 @@ a {
   border: 1px solid rgb(255 255 255 / 12%);
   background: #040404;
   box-shadow: 0 26px 50px rgb(0 0 0 / 36%);
+}
+
+.food-showcase-tall .food-frame {
+  min-height: 26rem;
 }
 
 .food-slide {
@@ -526,6 +530,10 @@ a {
 @media (min-width: 1024px) {
   .section-shell {
     padding-inline: 2rem;
+  }
+
+  .food-showcase-tall .food-frame {
+    min-height: 30rem;
   }
 }
 

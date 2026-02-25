@@ -30,7 +30,7 @@ export default function ContactPage() {
             </h1>
             <p className="mt-3 max-w-2xl text-sm text-white/75 sm:text-base">
               For immediate orders, call your nearest location. You can also connect with us on
-              social channels for updates and specials.
+              social channels for updates and announcements.
             </p>
           </div>
         </section>
@@ -69,6 +69,7 @@ export default function ContactPage() {
                 const directionsUrl = getGoogleMapsDirectionsUrl({
                   address: location.address,
                   placeId: location.placeId,
+                  googleMapsUrl: location.googleMapsUrl,
                 });
 
                 return (

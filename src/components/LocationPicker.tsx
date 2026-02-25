@@ -38,6 +38,7 @@ export default function LocationPicker({ locations, mode = "full" }: Props) {
     ? getGoogleMapsDirectionsUrl({
         address: selectedLocation.address,
         placeId: selectedLocation.placeId,
+        googleMapsUrl: selectedLocation.googleMapsUrl,
       })
     : undefined;
 
