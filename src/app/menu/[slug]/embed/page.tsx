@@ -13,15 +13,50 @@ type MenuEmbedPageProps = {
 };
 
 export const dynamicParams = false;
-export const metadata: Metadata = {
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
 
 export function generateStaticParams() {
   return locations.map((location) => ({ slug: location.slug }));
+}
+
+export async function generateMetadata({ params }: MenuEmbedPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const location = locations.find((entry) => entry.slug === slug);
+
+  if (!location) {
+    return {
+      title: "Menu Not Found | Crack Taco Shop",
+    };
+  }
+
+  const canonicalUrl = `${site.url}/menu/${location.slug}/embed`;
+
+  return {
+    title: `${location.name} Menu | Crack Taco Shop`,
+    description: `Browse the ${location.name} menu for tacos, burritos, and location-specific ordering links.`,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title: `${location.name} Menu | Crack Taco Shop`,
+      description: `Order ${location.name} favorites online and view the latest menu categories.`,
+      url: canonicalUrl,
+      siteName: site.shortName,
+      locale: "en_US",
+      type: "website",
+      images: [
+        {
+          url: `${site.url}${location.image}`,
+          width: 1600,
+          height: 1000,
+          alt: `${location.name} Crack Taco Shop menu`,
+        },
+      ],
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
+  };
 }
 
 export default async function MenuEmbedPage({ params }: MenuEmbedPageProps) {

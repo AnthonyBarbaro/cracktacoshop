@@ -96,7 +96,7 @@ export default function HomePage() {
           <div className="grid gap-6 lg:grid-cols-[1.08fr_0.92fr] lg:items-start">
             <HomeFoodShowcase slides={foodShowcase} />
 
-            <div className="home-fade-up home-delay-1 rounded-3xl border border-[#f0be3e]/24 bg-black/45 p-5 shadow-2xl shadow-black/30 sm:p-7">
+            <div className="home-fade-up home-delay-1 home-surface-warm rounded-3xl border border-[#f0be3e]/24 p-5 shadow-2xl shadow-black/30 sm:p-7">
               <div className="home-fade-up home-delay-2">
                 <p className="text-xs font-semibold uppercase tracking-[0.26em] text-brand-yellow">
                   Fast Ordering + Fresh Food
@@ -138,7 +138,7 @@ export default function HomePage() {
         </section>
 
         <section className="section-shell mt-9">
-          <div className="home-fade-up home-delay-3 rounded-3xl border border-white/10 bg-black/32 p-5 sm:p-6">
+          <div className="home-fade-up home-delay-3 home-surface-fresh rounded-3xl border border-white/10 p-5 sm:p-6">
             <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-yellow">
@@ -148,7 +148,7 @@ export default function HomePage() {
                   Pick A Location And Start Fast
                 </h2>
               </div>
-              <p className="max-w-md text-sm text-white/70">
+              <p className="max-w-md text-sm text-white/75">
                 Select your nearest shop to jump straight into pickup or delivery.
               </p>
             </div>
@@ -184,15 +184,17 @@ export default function HomePage() {
                     <div className="mt-4 flex gap-2">
                       <Link
                         href={`/menu/${location.slug}/embed`}
+                        aria-label={`Open the ${location.name} menu`}
                         className="brand-btn w-full px-3 py-2 text-sm"
                       >
-                        Order
+                        Open Menu
                       </Link>
                       <Link
                         href={`/locations/${location.slug}`}
+                        aria-label={`View ${location.name} location details`}
                         className="brand-btn-muted w-full px-3 py-2 text-sm"
                       >
-                        Info
+                        Location
                       </Link>
                     </div>
                   </div>
@@ -203,7 +205,7 @@ export default function HomePage() {
         </section>
 
         <section className="section-shell mt-8">
-          <div className="home-fade-up home-delay-3 rounded-2xl border border-white/10 bg-black/28 px-5 py-4 sm:px-6">
+          <div className="home-fade-up home-delay-3 home-surface-sun rounded-2xl border border-white/10 px-5 py-4 sm:px-6">
             <div>
               <p className="text-sm text-white/75">
                 {site.tagline}
@@ -221,7 +223,7 @@ export default function HomePage() {
         </section>
 
         <section className="section-shell mt-8">
-          <div className="home-fade-up rounded-3xl border border-white/10 bg-black/28 p-4 sm:p-6">
+          <div className="home-fade-up home-originals-gallery home-surface-aqua rounded-3xl border border-white/10 p-4 sm:p-6">
             <div className="mb-4 sm:mb-5">
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-yellow">
                 Food Gallery

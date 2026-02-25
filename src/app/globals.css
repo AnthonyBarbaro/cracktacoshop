@@ -35,9 +35,11 @@ body {
   background:
     radial-gradient(circle at 92% -8%, rgb(241 194 74 / 11%), transparent 38%),
     radial-gradient(circle at -8% 106%, rgb(43 166 74 / 8%), transparent 36%),
+    radial-gradient(circle at 102% 62%, rgb(72 154 226 / 8%), transparent 36%),
     linear-gradient(180deg, #121212, #090909 52%, #060606);
   color: var(--text-100);
   font-family: var(--font-manrope), sans-serif;
+  line-height: 1.5;
   overflow-x: hidden;
   text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
@@ -323,6 +325,33 @@ a {
   animation: chip-float 3.6s ease-in-out infinite;
 }
 
+.home-surface-warm {
+  background:
+    radial-gradient(circle at 8% 0%, rgb(241 194 74 / 16%), transparent 32%),
+    radial-gradient(circle at 100% 100%, rgb(214 66 44 / 10%), transparent 35%),
+    rgb(0 0 0 / 46%);
+}
+
+.home-surface-fresh {
+  background:
+    radial-gradient(circle at 94% 0%, rgb(80 207 133 / 14%), transparent 36%),
+    radial-gradient(circle at 0% 100%, rgb(78 150 224 / 10%), transparent 37%),
+    rgb(0 0 0 / 34%);
+}
+
+.home-surface-sun {
+  background:
+    linear-gradient(120deg, rgb(241 194 74 / 12%), transparent 30%),
+    rgb(0 0 0 / 30%);
+}
+
+.home-surface-aqua {
+  background:
+    radial-gradient(circle at 100% 0%, rgb(86 193 222 / 14%), transparent 35%),
+    radial-gradient(circle at 0% 100%, rgb(241 194 74 / 10%), transparent 38%),
+    rgb(0 0 0 / 30%);
+}
+
 .food-showcase {
   display: flex;
   flex-direction: column;
@@ -341,6 +370,10 @@ a {
 
 .food-showcase-tall .food-frame {
   min-height: 26rem;
+}
+
+.home-originals-gallery .food-frame {
+  min-height: 24rem;
 }
 
 .food-slide {
@@ -521,6 +554,25 @@ a {
   }
 }
 
+@media (prefers-contrast: more) {
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline-width: 4px;
+  }
+
+  .brand-btn,
+  .brand-btn-muted,
+  .brand-btn-directions {
+    border-width: 2px;
+  }
+
+  .home-surface-warm,
+  .home-surface-fresh,
+  .home-surface-sun,
+  .home-surface-aqua {
+    background: rgb(0 0 0 / 70%);
+  }
+}
+
 @media (min-width: 640px) {
   .section-shell {
     padding-inline: 1.5rem;
@@ -534,6 +586,10 @@ a {
 
   .food-showcase-tall .food-frame {
     min-height: 30rem;
+  }
+
+  .home-originals-gallery .food-frame {
+    min-height: 35rem;
   }
 }
 

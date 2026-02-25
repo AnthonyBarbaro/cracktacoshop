@@ -238,28 +238,43 @@ export const marketingHighlights = [
 
 export const faqItems = [
   {
+    question: "Are you a San Diego based taco shop?",
+    answer:
+      "Yes. Crack Taco Shop is San Diego based and currently serves guests in Mission Valley, Seaport Village, Encinitas, and Coronado.",
+  },
+  {
+    question: "What makes Crack Taco Shop different?",
+    answer:
+      "We are known for tacos and burritos built with the world famous Burgundy Pepper Tri-Tip, plus fast ordering and made-fresh flavors across all locations.",
+  },
+  {
+    question: "How do I order online?",
+    answer:
+      "Choose your location first, then use Order Online to open that store's menu page. This makes sure your order goes to the right kitchen.",
+  },
+  {
+    question: "Do all locations have the same menu?",
+    answer:
+      "Not always. Core favorites are available across stores, but specific items and platform availability can vary by location.",
+  },
+  {
+    question: "What delivery apps do you support?",
+    answer:
+      "Delivery options include DoorDash, GrubHub, and Uber Eats where available. Some stores also support Toast pickup ordering.",
+  },
+  {
     question: "What are your hours?",
     answer:
-      "Hours vary by location. Most stores are open daily, including late-night service. Visit the locations page for the latest hours by store.",
+      "Hours vary by location, and some stores stay open late. Check the Locations page for current store hours before you visit or order.",
   },
   {
-    question: "Can I order pickup online?",
+    question: "Do you have vegetarian-friendly options?",
     answer:
-      "Yes. Select locations support Toast pickup ordering. You can also order via delivery partners directly from our order-online page.",
+      "Yes. We offer vegetarian-friendly choices, including meatless menu options and sides. Availability can vary by store.",
   },
   {
-    question: "Do you offer delivery?",
+    question: "How do I get directions or contact a specific store?",
     answer:
-      "Yes. Delivery options include DoorDash, GrubHub, and Uber Eats, depending on the location.",
-  },
-  {
-    question: "Do you serve the famous Cardiff Crack Tri-Tip?",
-    answer:
-      "Yes. Our tacos and burritos feature the world famous Burgundy Pepper Tri-Tip.",
-  },
-  {
-    question: "Do you offer vegetarian options?",
-    answer:
-      "Yes. We offer vegetarian-friendly options, including sides and build-your-own menu items.",
+      "Open the Locations page and select your store to view map directions, address details, and direct phone links.",
   },
 ];

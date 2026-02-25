@@ -54,6 +54,40 @@ export default function OurStoryPage() {
         </section>
 
         <section className="section-shell mt-10">
+          <div className="grid items-stretch gap-5 lg:grid-cols-[1.05fr_0.95fr]">
+            <figure className="overflow-hidden rounded-3xl border border-white/10 bg-black/35 p-2 sm:p-3">
+              <div className="relative h-[24rem] overflow-hidden rounded-2xl bg-black/65 sm:h-[30rem] lg:h-[38rem]">
+                <Image
+                  src="/images/family.png"
+                  alt="Crack Taco Shop team celebrating the Coronado opening"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 55vw"
+                  className="object-contain"
+                  priority
+                />
+              </div>
+            </figure>
+
+            <article className="rounded-3xl border border-white/10 bg-black/35 p-6 sm:p-8">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-yellow">
+                San Diego Roots
+              </p>
+              <h2 className="mt-3 font-display text-3xl text-white sm:text-4xl">
+                Family Energy At Every Location
+              </h2>
+              <p className="mt-4 text-sm text-white/75 sm:text-base">
+                Crack Taco Shop is proudly San Diego based, built around quality food, fast service, and a team that
+                treats guests like regulars from day one.
+              </p>
+              <p className="mt-3 text-sm text-white/75 sm:text-base">
+                From grand openings to daily lunch rushes, we keep the same goal: bold flavor, consistent execution,
+                and a welcoming vibe in every shop.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section className="section-shell mt-10">
           <h2 className="font-display text-3xl text-white sm:text-4xl">Food Showcase</h2>
           <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {foodShowcase.map((item) => (
