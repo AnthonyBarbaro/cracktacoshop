@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useSyncExternalStore } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 
 import type { Location } from "@/data/locations";
+import { findNearestLocationFromBrowser } from "@/lib/nearest-location";
 import {
   getShoppingLocationSlugServerSnapshot,
   getShoppingLocationSlugSnapshot,
@@ -17,6 +18,9 @@ type Props = {
 
 export default function LocationPicker({ locations }: Props) {
   const router = useRouter();
+  const [isFindingNearest, setIsFindingNearest] = useState(false);
+  const [nearestMessage, setNearestMessage] = useState<string | null>(null);
+  const [nearestError, setNearestError] = useState<string | null>(null);
   const selectedSlug = useSyncExternalStore(
     subscribeToShoppingLocationChanges,
     getShoppingLocationSlugSnapshot,
@@ -30,6 +34,45 @@ export default function LocationPicker({ locations }: Props) {
   const directionsUrl = selectedLocation
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedLocation.address)}`
     : undefined;
+
+  const handleFindNearestLocation = async () => {
+    setIsFindingNearest(true);
+    setNearestMessage(null);
+    setNearestError(null);
+
+    const result = await findNearestLocationFromBrowser(locations);
+    setIsFindingNearest(false);
+
+    if (!result.ok) {
+      if (result.reason === "permission-denied") {
+        setNearestError(
+          "Location access is blocked. Allow location permission in your browser settings.",
+        );
+        return;
+      }
+
+      if (result.reason === "unsupported") {
+        setNearestError("Location services are not available in this browser.");
+        return;
+      }
+
+      if (result.reason === "timeout") {
+        setNearestError("Location request timed out. Please try again or select a store manually.");
+        return;
+      }
+
+      setNearestError("We could not determine your nearest store. Please choose one manually.");
+      return;
+    }
+
+    const nearestLocation = locations.find((location) => location.slug === result.slug);
+    setStoredShoppingLocationSlug(result.slug);
+    setNearestMessage(
+      nearestLocation
+        ? `Nearest store selected: ${nearestLocation.name}.`
+        : "Nearest store selected.",
+    );
+  };
 
   return (
     <div className="rounded-2xl border border-white/15 bg-black/35 p-4 sm:p-5">
@@ -80,6 +123,15 @@ export default function LocationPicker({ locations }: Props) {
       <div className="mt-4 flex flex-col gap-2 sm:flex-row">
         <button
           type="button"
+          onClick={handleFindNearestLocation}
+          disabled={isFindingNearest}
+          className="brand-btn-directions px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-45"
+        >
+          {isFindingNearest ? "Finding nearest..." : "Use Current Location"}
+        </button>
+
+        <button
+          type="button"
           onClick={() => {
             if (selectedSlug) {
               setStoredShoppingLocationSlug(selectedSlug);
@@ -121,6 +173,15 @@ export default function LocationPicker({ locations }: Props) {
           </span>
         )}
       </div>
+
+      {(nearestMessage || nearestError) && (
+        <p
+          role={nearestError ? "alert" : "status"}
+          className={`mt-3 text-xs ${nearestError ? "text-red-300" : "text-emerald-300"}`}
+        >
+          {nearestError ?? nearestMessage}
+        </p>
+      )}
     </div>
   );
 }

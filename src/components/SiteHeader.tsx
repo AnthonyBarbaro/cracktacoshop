@@ -6,8 +6,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 
 import { locations } from "@/data/locations";
+import { findNearestLocationFromBrowser } from "@/lib/nearest-location";
 import {
-  findNearestLocationSlug,
   getShoppingLocationSlugServerSnapshot,
   getShoppingLocationSlugSnapshot,
   subscribeToShoppingLocationChanges,
@@ -49,6 +49,7 @@ export default function SiteHeader({
   const [menuLocationSlug, setMenuLocationSlug] = useState<string>("");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isFindingNearest, setIsFindingNearest] = useState(false);
+  const [nearestMessage, setNearestMessage] = useState<string | null>(null);
   const [nearestError, setNearestError] = useState<string | null>(null);
   const mobileMenuPanelRef = useRef<HTMLElement | null>(null);
   const mobileMenuCloseButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -94,6 +95,7 @@ export default function SiteHeader({
 
   const openMenu = () => {
     setMenuLocationSlug(shoppingSlug ?? "");
+    setNearestMessage(null);
     setIsMenuOpen(true);
     setNearestError(null);
   };
@@ -104,11 +106,13 @@ export default function SiteHeader({
     }
 
     setStoredShoppingLocationSlug(slug);
+    setNearestMessage(null);
     setNearestError(null);
   };
 
   const closeMenu = () => {
     setIsMenuOpen(false);
+    setNearestMessage(null);
     setNearestError(null);
   };
 
@@ -124,42 +128,41 @@ export default function SiteHeader({
     router.push(`/locations/${targetSlug}`);
   };
 
-  const handleFindNearestLocation = () => {
-    if (!navigator.geolocation) {
-      setNearestError("Location services are not available in this browser.");
+  const handleFindNearestLocation = async () => {
+    setIsFindingNearest(true);
+    setNearestMessage(null);
+    setNearestError(null);
+
+    const result = await findNearestLocationFromBrowser(locations);
+    setIsFindingNearest(false);
+
+    if (!result.ok) {
+      if (result.reason === "permission-denied") {
+        setNearestError(
+          "Location permission is blocked. Enable location access and try again.",
+        );
+        return;
+      }
+
+      if (result.reason === "unsupported") {
+        setNearestError("Location services are not available in this browser.");
+        return;
+      }
+
+      if (result.reason === "timeout") {
+        setNearestError("Location request timed out. Please try again or choose a store manually.");
+        return;
+      }
+
+      setNearestError("We could not determine a nearby location.");
       return;
     }
 
-    setIsFindingNearest(true);
-    setNearestError(null);
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const nearestSlug = findNearestLocationSlug(
-          position.coords.latitude,
-          position.coords.longitude,
-          locations,
-        );
-
-        setIsFindingNearest(false);
-
-        if (!nearestSlug) {
-          setNearestError("We could not determine a nearby location.");
-          return;
-        }
-
-        applyShoppingLocation(nearestSlug);
-        setMenuLocationSlug(nearestSlug);
-      },
-      () => {
-        setIsFindingNearest(false);
-        setNearestError("Unable to access your location. Please choose a store manually.");
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 9000,
-        maximumAge: 120000,
-      },
+    const nearestLocation = locations.find((location) => location.slug === result.slug);
+    applyShoppingLocation(result.slug);
+    setMenuLocationSlug(result.slug);
+    setNearestMessage(
+      nearestLocation ? `Nearest store selected: ${nearestLocation.name}.` : "Nearest store selected.",
     );
   };
 
@@ -455,7 +458,8 @@ export default function SiteHeader({
                 <button
                   type="button"
                   onClick={handleFindNearestLocation}
-                  className="brand-btn-directions w-full px-4 py-2 text-sm"
+                  disabled={isFindingNearest}
+                  className="brand-btn-directions w-full px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-45"
                 >
                   {isFindingNearest ? "Finding nearest..." : "Use My Current Location"}
                 </button>
@@ -494,9 +498,12 @@ export default function SiteHeader({
                 )}
               </div>
 
-              {nearestError && (
-                <p role="alert" className="mt-3 text-xs text-red-300">
-                  {nearestError}
+              {(nearestMessage || nearestError) && (
+                <p
+                  role={nearestError ? "alert" : "status"}
+                  className={`mt-3 text-xs ${nearestError ? "text-red-300" : "text-emerald-300"}`}
+                >
+                  {nearestError ?? nearestMessage}
                 </p>
               )}
             </section>
