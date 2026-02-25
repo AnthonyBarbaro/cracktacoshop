@@ -24,6 +24,9 @@ export default function SiteFooter() {
         <div className="space-y-4">
           <Image src="/logo.png" alt="Crack Taco Shop" width={170} height={64} />
           <p className="max-w-sm text-sm text-white/70">{site.tagline}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-yellow">
+            Proudly San Diego-based
+          </p>
           <div className="flex flex-wrap gap-2 text-sm font-semibold">
             <a
               href={site.instagram}
