@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 type Slide = {
   src: string;
@@ -14,24 +14,10 @@ type Props = {
   variant?: "default" | "tall";
 };
 
-const AUTOPLAY_MS = 4200;
-
 export default function HomeFoodShowcase({ slides, variant = "default" }: Props) {
   const [activeIndex, setActiveIndex] = useState(0);
   const slideCount = slides.length;
   const showcaseClassName = `food-showcase ${variant === "tall" ? "food-showcase-tall" : ""} home-fade-up`;
-
-  useEffect(() => {
-    if (slideCount < 2) {
-      return;
-    }
-
-    const timerId = window.setInterval(() => {
-      setActiveIndex((currentIndex) => (currentIndex + 1) % slideCount);
-    }, AUTOPLAY_MS);
-
-    return () => window.clearInterval(timerId);
-  }, [slideCount]);
 
   if (slideCount === 0) {
     return (
@@ -73,7 +59,7 @@ export default function HomeFoodShowcase({ slides, variant = "default" }: Props)
         <div className="food-overlay" aria-hidden="true" />
 
         <div className="food-caption" key={`${activeSlide.src}-${activeIndex}`}>
-          <p className="text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-brand-yellow">
+          <p className="text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-white">
             Fresh Off The Grill
           </p>
           <p className="mt-2 font-display text-2xl text-white sm:text-3xl">{activeSlide.label}</p>
@@ -117,9 +103,6 @@ export default function HomeFoodShowcase({ slides, variant = "default" }: Props)
         </button>
       </div>
 
-      <div className="food-progress-track" aria-hidden="true">
-        <span key={`${activeSlide.label}-${currentIndex}`} className="food-progress-fill" />
-      </div>
     </section>
   );
 }

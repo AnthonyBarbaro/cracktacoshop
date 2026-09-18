@@ -80,7 +80,7 @@ export default function CareersApplicationForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4" noValidate>
       <div className="grid gap-4 md:grid-cols-2">
-        <label className="text-sm text-white/80">
+        <label className="text-sm text-neutral-600">
           Name
           <input
             required
@@ -95,7 +95,7 @@ export default function CareersApplicationForm() {
           />
         </label>
 
-        <label className="text-sm text-white/80">
+        <label className="text-sm text-neutral-600">
           Email
           <input
             required
@@ -110,7 +110,7 @@ export default function CareersApplicationForm() {
           />
         </label>
 
-        <label className="text-sm text-white/80">
+        <label className="text-sm text-neutral-600">
           Phone Number
           <input
             required
@@ -125,7 +125,7 @@ export default function CareersApplicationForm() {
           />
         </label>
 
-        <label className="text-sm text-white/80">
+        <label className="text-sm text-neutral-600">
           Location
           <select
             required
@@ -148,7 +148,7 @@ export default function CareersApplicationForm() {
         </label>
       </div>
 
-      <label className="text-sm text-white/80">
+      <label className="text-sm text-neutral-600">
         Resume (PDF or DOCX)
         <input
           ref={resumeInputRef}
@@ -156,11 +156,11 @@ export default function CareersApplicationForm() {
           type="file"
           name="resume"
           accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-          className="brand-input mt-2 px-3 py-2 text-sm file:mr-3 file:cursor-pointer file:rounded-md file:border-0 file:bg-brand-yellow file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-black"
+          className="brand-input mt-2 px-3 py-2 text-sm file:mr-3 file:cursor-pointer file:rounded-md file:border-0 file:bg-brand-green file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white"
         />
       </label>
 
-      <label className="text-sm text-white/80">
+      <label className="text-sm text-neutral-600">
         Message (optional)
         <textarea
           name="message"
@@ -193,13 +193,13 @@ export default function CareersApplicationForm() {
       </button>
 
       {status === "success" && (
-        <p role="status" className="text-sm font-medium text-emerald-300">
+        <p role="status" className="text-sm font-medium text-brand-green">
           Application submitted successfully.
         </p>
       )}
 
       {status === "error" && (
-        <p role="alert" className="text-sm font-medium text-red-300">
+        <p role="alert" className="text-sm font-medium text-brand-red">
           {errorMessage}
         </p>
       )}

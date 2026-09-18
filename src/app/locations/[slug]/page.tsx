@@ -31,20 +31,20 @@ export async function generateMetadata({ params }: LocationPageProps): Promise<M
 
   if (!location) {
     return {
-      title: "Location Not Found | Crack Taco Shop",
+      title: "Location Not Found | Prime Tacos",
     };
   }
 
   const url = `${site.url}/locations/${location.slug}`;
 
   return {
-    title: `${location.name} | Crack Taco Shop San Diego`,
+    title: `${location.name} | Prime Tacos San Diego`,
     description: `${location.name} location details, hours, phone number, online ordering, and menu.`,
     alternates: {
       canonical: url,
     },
     openGraph: {
-      title: `${location.name} | Crack Taco Shop`,
+      title: `${location.name} | Prime Tacos`,
       description: `${location.address}. ${location.hours}.`,
       url,
       siteName: site.shortName,
@@ -126,15 +126,15 @@ export default async function LocationPage({ params }: LocationPageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
 
-      <main id="main-content" className="pb-20 pt-10 text-white sm:pt-12">
+      <main id="main-content" className="pb-20 pt-10 text-neutral-950 sm:pt-12">
         <div className="section-shell space-y-8">
-          <section className="overflow-hidden rounded-3xl border border-white/15 bg-black/40 p-5 backdrop-blur-sm sm:p-8">
-            <Link href="/" className="text-sm font-semibold text-brand-yellow hover:text-white">
+          <section>
+            <Link href="/locations" className="text-sm font-semibold text-brand-green hover:text-neutral-950">
               ← Back to locations
             </Link>
 
             <div className="mt-5 grid gap-6 lg:grid-cols-[1.1fr_1fr] lg:items-center">
-              <div className="relative h-60 w-full overflow-hidden rounded-2xl sm:h-80 lg:h-[28rem]">
+              <div className="relative h-60 w-full overflow-hidden rounded-lg sm:h-80 lg:h-[28rem]">
                 <Image
                   src={location.image}
                   alt={location.name}
@@ -145,12 +145,12 @@ export default async function LocationPage({ params }: LocationPageProps) {
               </div>
 
               <div className="space-y-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-yellow">
-                  Crack Taco Shop
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-green">
+                  Prime Tacos
                 </p>
-                <h1 className="font-display text-3xl text-white sm:text-4xl lg:text-5xl">{location.name}</h1>
-                <p className="text-white/85">{location.address}</p>
-                <p className="text-white/75">{location.hours}</p>
+                <h1 className="font-display text-3xl text-neutral-950 sm:text-4xl lg:text-5xl">{location.name}</h1>
+                <p className="text-neutral-600">{location.address}</p>
+                <p className="text-neutral-600">{location.hours}</p>
 
                 <div className="flex flex-wrap gap-2 pt-2">
                   <a
@@ -168,7 +168,7 @@ export default async function LocationPage({ params }: LocationPageProps) {
                       rel="noopener noreferrer"
                       className="brand-btn w-full px-4 py-2 text-sm sm:w-auto"
                     >
-                      Pickup Order (Toast)
+                      Order pickup
                     </a>
                   )}
                   {location.phone && (
@@ -214,13 +214,13 @@ export default async function LocationPage({ params }: LocationPageProps) {
             </div>
           </section>
 
-          <section className="overflow-hidden rounded-3xl border border-white/12 bg-black/35">
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-5 py-4 sm:px-6">
+          <section className="overflow-hidden rounded-lg border border-neutral-200 bg-white">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-200 px-5 py-4 sm:px-6">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-yellow">
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-green">
                   Map + Directions
                 </p>
-                <h2 className="mt-1 font-display text-2xl text-white sm:text-3xl">
+                <h2 className="mt-1 font-display text-2xl text-neutral-950 sm:text-3xl">
                   {location.name}
                 </h2>
               </div>
@@ -238,8 +238,8 @@ export default async function LocationPage({ params }: LocationPageProps) {
               />
             </div>
 
-            <div className="border-t border-white/10 px-5 py-4 sm:px-6">
-              <p className="text-sm text-white/75">{location.address}</p>
+            <div className="border-t border-neutral-200 px-5 py-4 sm:px-6">
+              <p className="text-sm text-neutral-600">{location.address}</p>
               <div className="mt-3 flex flex-wrap gap-2">
                 <a
                   href={mapsDirectionsUrl}
@@ -263,15 +263,14 @@ export default async function LocationPage({ params }: LocationPageProps) {
 
           <section id="menu" className="space-y-4">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-yellow">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-green">
                 Full Menu
               </p>
-              <h2 className="mt-2 font-display text-3xl text-white sm:text-4xl">
-                Browse by Category and Order Fast
+              <h2 className="mt-2 font-display text-3xl text-neutral-950 sm:text-4xl">
+                Our menu
               </h2>
-              <p className="mt-2 text-sm text-white/75 sm:text-base">
-                Open the complete location menu page with full navigation, footer, and ordering
-                links.
+              <p className="mt-2 text-sm text-neutral-600 sm:text-base">
+                Explore the {location.name} menu and choose your favorites.
               </p>
             </div>
 

@@ -9,7 +9,7 @@ import { site } from "@/data/site-content";
 
 export const metadata: Metadata = {
   title: "Locations",
-  description: "Find your nearest Crack Taco Shop location in San Diego County.",
+  description: "Find your nearest Prime Tacos location in San Diego County.",
   alternates: {
     canonical: `${site.url}/locations`,
   },
@@ -21,6 +21,12 @@ export default function LocationsPage() {
       <SiteHeader ctaHref="/order-online" ctaLabel="Order Online" />
       <main id="main-content" className="pb-20 pt-10 sm:pt-12">
         <section className="section-shell">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-green">Find us</p>
+          <h1 className="mt-3 font-display text-3xl text-neutral-950 sm:text-4xl lg:text-5xl">Our locations</h1>
+          <p className="mt-4 text-sm text-neutral-600 sm:text-base">Choose a location for hours, directions, and ordering.</p>
+        </section>
+
+        <section className="section-shell mt-8">
           <LocationsMapPanel locations={locations} />
         </section>
 

@@ -2,18 +2,19 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Crack Taco Shop San Diego",
-    short_name: "Crack Taco Shop",
-    description: "Order tri-tip tacos and burritos from Crack Taco Shop locations.",
+    name: "Prime Tacos",
+    short_name: "Prime Tacos",
+    description: "Order tri-tip tacos and burritos from Prime Tacos locations.",
     start_url: "/",
     display: "standalone",
-    background_color: "#090909",
-    theme_color: "#f0be3e",
+    background_color: "#ffffff",
+    theme_color: "#e21c2a",
     icons: [
       {
-        src: "/favicon.ico",
-        sizes: "16x16 32x32",
-        type: "image/x-icon",
+        src: "/newlogo.png",
+        sizes: "3822x2378",
+        type: "image/png",
+        purpose: "any",
       },
     ],
   };

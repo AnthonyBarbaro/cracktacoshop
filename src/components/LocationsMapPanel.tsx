@@ -52,15 +52,9 @@ export default function LocationsMapPanel({ locations }: Props) {
   });
 
   return (
-    <div className="rounded-3xl border border-white/10 bg-black/35 p-4 shadow-2xl shadow-black/25 sm:p-6">
-      <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-yellow">
-        Store Map
-      </p>
-      <h2 className="mt-2 font-display text-2xl text-white sm:text-3xl">
-        Tap A Location To Update The Map
-      </h2>
-
-      <div className="mt-4 grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+    <div>
+      <h2 className="sr-only">Find a location on the map</h2>
+      <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
           {locations.map((location) => {
             const isSelected = location.slug === activeLocation.slug;
@@ -69,27 +63,28 @@ export default function LocationsMapPanel({ locations }: Props) {
               <button
                 key={location.slug}
                 type="button"
+                aria-pressed={isSelected}
                 onClick={() => {
                   setStoredShoppingLocationSlug(location.slug);
                 }}
-                className={`rounded-xl border px-3 py-3 text-left transition-colors ${
+                className={`rounded-lg border px-3 py-3 text-left transition-colors ${
                   isSelected
-                    ? "border-[#f0be3e]/60 bg-[#f0be3e]/12"
-                    : "border-white/12 bg-black/35 hover:border-[#f0be3e]/30"
+                    ? "border-brand-green bg-green-50"
+                    : "border-neutral-200 bg-white hover:border-brand-green"
                 }`}
               >
                 <div className="flex items-start justify-between gap-2">
-                  <p className="font-display text-xl text-white">{location.name}</p>
+                  <p className="font-display text-xl text-neutral-950">{location.name}</p>
                   <LocationOpenBadge slug={location.slug} />
                 </div>
-                <p className="mt-1 text-xs text-white/75">{location.address}</p>
-                <p className="mt-1 text-xs text-white/65">{location.hours}</p>
+                <p className="mt-1 text-xs text-neutral-600">{location.address}</p>
+                <p className="mt-1 text-xs text-neutral-600">{location.hours}</p>
               </button>
             );
           })}
         </div>
 
-        <div className="overflow-hidden rounded-2xl border border-white/12 bg-black/25">
+        <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white">
           <div className="relative min-h-72">
             <iframe
               title={`${activeLocation.name} map`}
@@ -100,11 +95,11 @@ export default function LocationsMapPanel({ locations }: Props) {
             />
           </div>
 
-          <div className="border-t border-white/10 p-4">
+          <div className="border-t border-neutral-200 p-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <p className="font-display text-2xl text-white">{activeLocation.name}</p>
-                <p className="mt-1 text-sm text-white/75">{activeLocation.address}</p>
+                <p className="font-display text-2xl text-neutral-950">{activeLocation.name}</p>
+                <p className="mt-1 text-sm text-neutral-600">{activeLocation.address}</p>
               </div>
             </div>
 

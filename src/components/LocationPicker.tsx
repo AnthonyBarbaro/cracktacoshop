@@ -82,11 +82,11 @@ export default function LocationPicker({ locations, mode = "full" }: Props) {
   };
 
   return (
-    <div className="rounded-2xl border border-white/15 bg-black/35 p-4 sm:p-5">
-      <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-yellow">
+    <div className="rounded-lg border border-neutral-200 bg-white p-4 sm:p-5">
+      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-green">
         Select Store
       </p>
-      <label htmlFor="location-picker" className="mt-2 block text-lg font-semibold text-white">
+      <label htmlFor="location-picker" className="mt-2 block text-lg font-semibold text-neutral-950">
         Start your order by location
       </label>
       <div className="mt-3 space-y-3">
@@ -111,7 +111,7 @@ export default function LocationPicker({ locations, mode = "full" }: Props) {
           </select>
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 right-3 inline-flex items-center text-brand-yellow"
+            className="pointer-events-none absolute inset-y-0 right-3 inline-flex items-center text-brand-green"
           >
             <svg viewBox="0 0 20 20" className="h-4 w-4 fill-current">
               <path d="M5.6 7.5 10 12l4.4-4.5 1.1 1.1-5.5 5.6-5.5-5.6L5.6 7.5Z" />
@@ -119,10 +119,10 @@ export default function LocationPicker({ locations, mode = "full" }: Props) {
           </span>
         </div>
 
-        <p className="text-sm text-white/75">Pick a store, then tap Start Order.</p>
+        <p className="text-sm text-neutral-600">Pick a store, then tap Start Order.</p>
         {selectedLocation && (
-          <p className="text-xs text-white/70">
-            Selected: <span className="font-semibold text-brand-yellow">{selectedLocation.name}</span>
+          <p className="text-xs text-neutral-600">
+            Selected: <span className="font-semibold text-brand-green">{selectedLocation.name}</span>
           </p>
         )}
       </div>
@@ -188,7 +188,7 @@ export default function LocationPicker({ locations, mode = "full" }: Props) {
       {(nearestMessage || nearestError) && (
         <p
           role={nearestError ? "alert" : "status"}
-          className={`mt-3 text-xs ${nearestError ? "text-red-300" : "text-emerald-300"}`}
+          className={`mt-3 text-xs ${nearestError ? "text-brand-red" : "text-brand-green"}`}
         >
           {nearestError ?? nearestMessage}
         </p>

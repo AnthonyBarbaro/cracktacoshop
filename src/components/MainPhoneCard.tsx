@@ -47,11 +47,11 @@ export default function MainPhoneCard() {
   const phone = activeLocation?.phone ?? site.phone;
 
   return (
-    <a href={`tel:${phone}`} className="rounded-2xl border border-white/10 bg-black/30 p-5">
-      <p className="text-xs uppercase tracking-[0.22em] text-brand-yellow">Main Phone</p>
-      <p className="mt-2 text-xl font-semibold text-white">{phone}</p>
-      <p className="mt-1 text-xs text-white/65">
-        {activeLocation ? `Current location: ${activeLocation.name}` : "Current location selected in menu"}
+    <a href={`tel:${phone}`} className="rounded-lg border border-neutral-200 bg-white p-5">
+      <p className="text-xs uppercase tracking-[0.14em] text-brand-green">Call us</p>
+      <p className="mt-2 text-xl font-semibold text-neutral-950">{phone}</p>
+      <p className="mt-1 text-xs text-neutral-600">
+        {activeLocation ? activeLocation.name : "Your selected location"}
       </p>
     </a>
   );

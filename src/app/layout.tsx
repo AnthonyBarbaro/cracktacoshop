@@ -21,22 +21,21 @@ const bungee = Bungee({
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: "Crack Taco Shop San Diego",
-    template: "%s | Crack Taco Shop",
+    default: "Prime Tacos San Diego",
+    template: "%s | Prime Tacos",
   },
   description: "Tri-tip tacos, burritos, and online ordering across San Diego locations.",
   alternates: {
     canonical: site.url,
   },
   category: "restaurant",
-  applicationName: "Crack Taco Shop",
+  applicationName: "Prime Tacos",
   keywords: [
-    "crack taco shop",
+    "prime tacos",
     "san diego tacos",
     "tri-tip tacos",
     "burritos",
     "order online tacos",
-    "cardiff crack",
     "mission valley tacos",
     "seaport village tacos",
     "encinitas tacos",
@@ -44,9 +43,9 @@ export const metadata: Metadata = {
     "san diego burritos",
     "late night tacos san diego",
   ],
-  authors: [{ name: "Crack Taco Shop" }],
-  creator: "Crack Taco Shop",
-  publisher: "Crack Taco Shop",
+  authors: [{ name: "Prime Tacos" }],
+  creator: "Prime Tacos",
+  publisher: "Prime Tacos",
   robots: {
     index: true,
     follow: true,
@@ -70,9 +69,9 @@ export const metadata: Metadata = {
     ICBM: "32.7157, -117.1611",
   },
   icons: {
-    icon: [{ url: "/favicon.ico", type: "image/x-icon" }],
-    shortcut: "/favicon.ico",
-    apple: [{ url: "/favicon.ico", type: "image/x-icon" }],
+    icon: [{ url: "/newlogo.png", type: "image/png" }],
+    shortcut: "/newlogo.png",
+    apple: [{ url: "/newlogo.png", type: "image/png" }],
   },
   manifest: "/manifest.webmanifest",
   openGraph: {
@@ -80,22 +79,22 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: site.url,
     siteName: site.shortName,
-    title: "Crack Taco Shop San Diego",
+    title: "Prime Tacos San Diego",
     description: "Tri-tip tacos, burritos, and easy online ordering by location.",
     images: [
       {
-        url: "/logo.png",
-        width: 276,
-        height: 105,
-        alt: "Crack Taco Shop",
+        url: "/newlogo.png",
+        width: 3822,
+        height: 2378,
+        alt: "Prime Tacos",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Crack Taco Shop San Diego",
+    title: "Prime Tacos San Diego",
     description: "Tri-tip tacos, burritos, and easy online ordering by location.",
-    images: ["/logo.png"],
+    images: ["/newlogo.png"],
   },
 };
 
@@ -103,7 +102,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#090909",
+  themeColor: "#ffffff",
 };
 
 export default function RootLayout({
@@ -119,8 +118,8 @@ export default function RootLayout({
         "@id": `${site.url}/#organization`,
         name: site.shortName,
         url: site.url,
-        logo: `${site.url}/logo.png`,
-        image: `${site.url}/images/taco.jpg`,
+        logo: `${site.url}/newlogo.png`,
+        image: `${site.url}/images/al-pastor-street-tacos.jpg`,
         telephone: site.phone,
         sameAs: [site.instagram, site.facebook],
         areaServed: "San Diego County",
@@ -138,7 +137,7 @@ export default function RootLayout({
       {
         "@type": "ItemList",
         "@id": `${site.url}/#locations-list`,
-        name: "Crack Taco Shop Locations",
+        name: "Prime Tacos Locations",
         itemListElement: locations.map((location, index) => ({
           "@type": "ListItem",
           position: index + 1,

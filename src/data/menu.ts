@@ -39,7 +39,7 @@ const missionValleySections: MenuSection[] = [
         title: "Meat",
         items: [
           {
-            name: "Crack (Tri-Tip) Taco",
+            name: "Prime (Tri-Tip) Taco",
             description: "Tri-tip, onion, guacamole, cilantro",
             price: "$5.25",
             badge: "Signature",
@@ -132,12 +132,12 @@ const missionValleySections: MenuSection[] = [
             price: "$16.95",
           },
           {
-            name: "Crackafornia Burrito",
+            name: "California Burrito",
             description: "Fries, guacamole, cheese, sour cream, tri-tip",
             price: "$14.95",
           },
           {
-            name: "Crack (Tri-Tip) Burrito",
+            name: "Prime (Tri-Tip) Burrito",
             description: "Guacamole, California pico",
             price: "$15.25",
           },
@@ -208,7 +208,7 @@ const missionValleySections: MenuSection[] = [
         title: "All Day",
         items: [
           {
-            name: "Crack (Tri-Tip) & Eggs Burrito",
+            name: "Prime (Tri-Tip) & Eggs Burrito",
             description: "Eggs, potatoes, cheese",
             price: "$15.95",
           },
@@ -243,7 +243,7 @@ const missionValleySections: MenuSection[] = [
             price: "$14.95",
           },
           {
-            name: "Breakfast Crack (Tri-Tip) Bowl",
+            name: "Breakfast Prime (Tri-Tip) Bowl",
             description: "Eggs, potatoes, cheese",
             price: "$14.95",
           },
@@ -274,7 +274,7 @@ const missionValleySections: MenuSection[] = [
         title: "Meat",
         items: [
           {
-            name: "Crack (Tri-Tip) Bowl",
+            name: "Prime (Tri-Tip) Bowl",
             description: bowlBuildDescription,
             price: "$15.95",
           },
@@ -320,7 +320,7 @@ const missionValleySections: MenuSection[] = [
         title: "Favorites",
         items: [
           {
-            name: "Crack (Tri-Tip) Quesadilla",
+            name: "Prime (Tri-Tip) Quesadilla",
             description: quesadillaSidesDescription,
             price: "$15.45",
           },
@@ -371,13 +371,13 @@ const missionValleySections: MenuSection[] = [
             price: "$14.95",
           },
           {
-            name: "Crack Tri-Tip Nachos",
+            name: "Prime Tri-Tip Nachos",
             description: "Nacho & cheddar cheese, beans, chipotle cream, guacamole, jalapenos",
             price: "$16.95",
           },
           {
-            name: "Crack Tri-Tip Fries",
-            description: "Cardiff crack, guacamole, cheddar cheese, creme, french fries, Cali pico",
+            name: "Prime Tri-Tip Fries",
+            description: "Burgundy pepper tri-tip, guacamole, cheddar cheese, creme, french fries, Cali pico",
             price: "$16.95",
           },
           {
@@ -396,8 +396,8 @@ const missionValleySections: MenuSection[] = [
             price: "$14.95",
           },
           {
-            name: "Crack (Tri-Tip) Sandwich",
-            description: "Cardiff crack tri-tip, BBQ sauce, bun, served with fries",
+            name: "Prime (Tri-Tip) Sandwich",
+            description: "Burgundy pepper tri-tip, BBQ sauce, bun, served with fries",
             price: "$15.95",
           },
         ],
@@ -439,7 +439,7 @@ const missionValleySections: MenuSection[] = [
         items: [
           { name: "Add Shrimp", price: "$6.95" },
           { name: "Add Pollo", price: "$4.95" },
-          { name: "Add Crack/Tri-Tip", price: "$6.95" },
+          { name: "Add Prime/Tri-Tip", price: "$6.95" },
           { name: "Add Al Pastor", price: "$4.95" },
         ],
       },

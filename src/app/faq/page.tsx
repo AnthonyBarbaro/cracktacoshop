@@ -37,12 +37,12 @@ export default function FaqPage() {
       />
       <main id="main-content" className="pb-20 pt-10 sm:pt-12">
         <section className="section-shell">
-          <div className="rounded-3xl border border-white/10 bg-black/35 p-6 sm:p-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-yellow">
+          <div className="py-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-green">
               FAQ
             </p>
-            <h1 className="mt-3 max-w-4xl font-display text-3xl text-white sm:text-4xl lg:text-5xl">
-              Frequently Asked Questions
+            <h1 className="mt-3 max-w-4xl font-display text-3xl text-neutral-950 sm:text-4xl lg:text-5xl">
+              Common questions
             </h1>
           </div>
         </section>
@@ -50,9 +50,9 @@ export default function FaqPage() {
         <section className="section-shell mt-10">
           <div className="space-y-3">
             {faqItems.map((item) => (
-              <article key={item.question} className="rounded-xl border border-white/12 bg-black/30 p-5">
-                <h2 className="font-display text-2xl text-white">{item.question}</h2>
-                <p className="mt-2 text-sm text-white/75 sm:text-base">{item.answer}</p>
+              <article key={item.question} className="rounded-lg border border-neutral-200 bg-white p-5">
+                <h2 className="font-display text-2xl text-neutral-950">{item.question}</h2>
+                <p className="mt-2 text-sm text-neutral-600 sm:text-base">{item.answer}</p>
               </article>
             ))}
           </div>

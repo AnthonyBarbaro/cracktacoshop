@@ -1,106 +1,68 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 
 import { locations } from "@/data/locations";
 import { site } from "@/data/site-content";
-import { getGoogleMapsDirectionsUrl } from "@/lib/google-maps";
+import SiteIcon from "@/components/SiteIcon";
+import { useShoppingLocation } from "@/lib/use-shopping-location";
 
 export default function SiteFooter() {
+  const shoppingLocation = useShoppingLocation();
+  const menuHref = shoppingLocation ? `/menu/${shoppingLocation.slug}/embed` : "/menu";
   const footerLinks = [
-    { href: "/", label: "Home" },
-    { href: "/menu", label: "Menu" },
-    { href: "/our-story", label: "Our Story" },
+    { href: menuHref, label: "Menu" },
+    { href: "/locations", label: "Locations" },
+    { href: "/our-story", label: "Our story" },
     { href: "/reviews", label: "Reviews" },
     { href: "/careers", label: "Careers" },
     { href: "/faq", label: "FAQ" },
     { href: "/contact", label: "Contact" },
-    { href: "/locations", label: "Locations" },
-    { href: "/order-online", label: "Order Online" },
   ];
 
   return (
-    <footer className="border-t border-white/10 bg-black/55">
-      <div className="section-shell grid gap-10 py-12 md:grid-cols-[1.1fr_1fr_1fr]">
-        <div className="space-y-4">
-          <Image src="/logo.png" alt="Crack Taco Shop" width={170} height={64} />
-          <p className="max-w-sm text-sm text-white/70">{site.tagline}</p>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-yellow">
-            Proudly San Diego-based
-          </p>
-          <div className="flex flex-wrap gap-2 text-sm font-semibold">
-            <a
-              href={site.instagram}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="brand-btn-muted px-3 py-2"
-            >
-              Instagram
-            </a>
-            <a
-              href={site.facebook}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="brand-btn-muted px-3 py-2"
-            >
-              Facebook
-            </a>
+    <footer className="site-footer">
+      <div className="section-shell footer-main">
+        <div>
+          <Link href="/" aria-label="Prime Tacos home"><Image src="/newlogo.png" alt="Prime Tacos" width={3822} height={2378} sizes="144px" className="footer-logo" /></Link>
+          <p className="mt-4 text-sm text-white/70">{site.tagline} Proudly San Diego.</p>
+        </div>
+        <nav aria-label="Footer navigation" className="footer-links">
+          {footerLinks.map((link) => <Link key={link.href} href={link.href}>{link.label}</Link>)}
+        </nav>
+        <div className="footer-order">
+          <p className="font-display text-2xl">Hungry yet?</p>
+          <Link href={shoppingLocation ? menuHref : "/order-online"} className="brand-btn mt-4 gap-3 px-6 py-4 text-sm">Order online<SiteIcon name="arrow" /></Link>
+          <div className="mt-5 flex gap-5 text-sm text-white/75">
+            <a href={site.instagram} target="_blank" rel="noopener noreferrer">Instagram</a>
+            <a href={site.facebook} target="_blank" rel="noopener noreferrer">Facebook</a>
           </div>
         </div>
-
-        <div>
-          <h3 className="font-display text-xl text-white">Quick Links</h3>
-          <ul className="mt-4 space-y-3 text-sm text-white/75">
-            {footerLinks.map((link) => (
-              <li key={link.href}>
-                <Link href={link.href} className="transition hover:text-white">
-                  {link.label}
+      </div>
+      <section className="section-shell border-t border-white/15 py-8" aria-labelledby="footer-locations-title">
+        <h2 id="footer-locations-title" className="font-display text-xl">Our locations</h2>
+        <ul className="mt-5 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {locations.map((location) => (
+            <li key={location.slug}>
+              <h3 className="font-display text-base font-semibold">
+                <Link href={`/locations/${location.slug}`} className="hover:underline hover:underline-offset-4">{location.name}</Link>
+              </h3>
+              <div className="mt-2 flex flex-col items-start text-sm">
+                {location.phone && (
+                  <a href={`tel:${location.phone}`} aria-label={`Call ${location.name} at ${location.phone}`} className="inline-flex min-h-11 items-center gap-2 text-white/75 hover:text-white hover:underline hover:underline-offset-4">
+                    <SiteIcon name="phone" className="h-4 w-4" />{location.phone}
+                  </a>
+                )}
+                <Link href={`/menu/${location.slug}/embed`} aria-label={`View ${location.name} menu`} className="inline-flex min-h-11 items-center gap-2 font-semibold hover:underline hover:underline-offset-4">
+                  View menu<SiteIcon name="arrow" className="h-4 w-4" />
                 </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div>
-          <h3 className="font-display text-xl text-white">Locations & Phones</h3>
-          <ul className="mt-4 space-y-4 text-sm">
-            {locations.map((location) => {
-              const directionsUrl = getGoogleMapsDirectionsUrl({
-                address: location.address,
-                placeId: location.placeId,
-                googleMapsUrl: location.googleMapsUrl,
-              });
-
-              return (
-                <li key={location.slug} className="text-white/75">
-                  <p className="font-semibold text-white">{location.name}</p>
-                  <p>{location.address}</p>
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {location.phone ? (
-                      <a href={`tel:${location.phone}`} className="font-semibold text-brand-yellow">
-                        {location.phone}
-                      </a>
-                    ) : (
-                      <p className="text-white/60">Phone available at location</p>
-                    )}
-                    <a
-                      href={directionsUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="brand-btn-directions px-3 py-1.5 text-xs"
-                    >
-                      Directions
-                    </a>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      </div>
-
-      <div className="border-t border-white/10 py-5 text-center text-sm text-white/65">
-        © Crack Taco Shop. All rights reserved.
-      </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+      <div className="section-shell footer-bottom"><p>© {new Date().getFullYear()} Prime Tacos. All rights reserved.</p><p>San Diego, California</p></div>
     </footer>
   );
 }

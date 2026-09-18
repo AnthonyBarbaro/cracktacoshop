@@ -1,14 +1,14 @@
 export const site = {
-  name: "Crack Taco Shop San Diego",
-  shortName: "Crack Taco Shop",
+  name: "Prime Tacos",
+  shortName: "Prime Tacos",
   url: "https://cracktacoshop.com",
   phone: "619-269-2828",
   instagram: "https://www.instagram.com/cracktacoshopsd",
   facebook: "https://www.facebook.com/cracktacoshop/",
-  tagline: "Using the world famous Burgundy Pepper Tri-Tip since 1985",
-  heroHeadline: "Home of the Best Tri-Tip Tacos and Burritos",
+  tagline: "Home of the tri-tip taco.",
+  heroHeadline: "Big flavor. Prime tacos.",
   story:
-    "We use the famous Cardiff Crack Tri-Tip steak in our tacos and burritos. Come and see us for breakfast, lunch or dinner. We offer homemade corn tortillas, beer, wine, sangria and specialty Micheladas.",
+    "Burgundy pepper tri-tip, handmade corn tortillas, and fresh salsa. Find your favorite tacos and burritos at Prime Tacos in San Diego.",
 };
 
 export const highlights = [
@@ -143,7 +143,7 @@ export const reviews = [
   },
   {
     quote:
-      "Hungry? Go straight to Crack Taco Shop, the team will take great care of you. Best food to get at any time of day.",
+      "Best food to get at any time of day.",
     author: "Sean Meer",
     reviewerStats: "Local Guide · 14 reviews · 5 photos",
     locationVisited: "Coronado",
@@ -152,7 +152,7 @@ export const reviews = [
   },
   {
     quote:
-      "Super fast service and the burritos are packed. The crack tri-tip taco is still my number one every time.",
+      "Super fast service and the burritos are packed.",
     author: "Ariana M.",
     reviewerStats: "Local Guide · 27 reviews · 18 photos",
     locationVisited: "Mission Valley",
@@ -240,12 +240,12 @@ export const faqItems = [
   {
     question: "Are you a San Diego based taco shop?",
     answer:
-      "Yes. Crack Taco Shop is San Diego based and currently serves guests in Mission Valley, Seaport Village, Encinitas, and Coronado.",
+      "Yes. Prime Tacos is San Diego based and currently serves guests in Mission Valley, Seaport Village, Encinitas, and Coronado.",
   },
   {
-    question: "What makes Crack Taco Shop different?",
+    question: "What makes Prime Tacos different?",
     answer:
-      "We are known for tacos and burritos built with the world famous Burgundy Pepper Tri-Tip, plus fast ordering and made-fresh flavors across all locations.",
+      "Our tacos and burritos feature burgundy pepper tri-tip, handmade tortillas, and fresh salsa.",
   },
   {
     question: "How do I order online?",

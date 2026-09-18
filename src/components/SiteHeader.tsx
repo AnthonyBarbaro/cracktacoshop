@@ -5,7 +5,11 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 
+import LocationOpenBadge from "@/components/LocationOpenBadge";
+import SiteIcon from "@/components/SiteIcon";
+import StoreLocationSearch from "@/components/StoreLocationSearch";
 import { locations } from "@/data/locations";
+import { site } from "@/data/site-content";
 import { getGoogleMapsDirectionsUrl } from "@/lib/google-maps";
 import { findNearestLocationFromBrowser } from "@/lib/nearest-location";
 import {
@@ -48,9 +52,11 @@ export default function SiteHeader({
     getShoppingLocationSlugServerSnapshot,
   );
   const [menuLocationSlug, setMenuLocationSlug] = useState<string>("");
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [nearestStoreSlug, setNearestStoreSlug] = useState<string | null>(null);
+  const [activeDrawer, setActiveDrawer] = useState<"menu" | "locations" | null>(null);
+  const isMenuOpen = activeDrawer !== null;
+  const isLocationPickerOpen = activeDrawer === "locations";
   const [isFindingNearest, setIsFindingNearest] = useState(false);
-  const [nearestMessage, setNearestMessage] = useState<string | null>(null);
   const [nearestError, setNearestError] = useState<string | null>(null);
   const mobileMenuPanelRef = useRef<HTMLElement | null>(null);
   const mobileMenuCloseButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -76,12 +82,9 @@ export default function SiteHeader({
     () => locations.find((location) => location.slug === menuLocationSlug),
     [menuLocationSlug],
   );
-  const fallbackLocationSlug = locations[0]?.slug;
-  const shoppingMenuHref = shoppingSlug
-    ? `/menu/${shoppingSlug}/embed`
-    : fallbackLocationSlug
-      ? `/menu/${fallbackLocationSlug}/embed`
-      : "/order-online";
+  const shoppingMenuHref = shoppingLocation
+    ? `/menu/${shoppingLocation.slug}/embed`
+    : "/order-online";
   const primaryCtaHref = ctaHref === "/order-online" ? shoppingMenuHref : ctaHref;
   const drawerOrderHref = menuLocationSlug
     ? `/menu/${menuLocationSlug}/embed`
@@ -89,6 +92,9 @@ export default function SiteHeader({
   const drawerCtaHref = ctaHref === "/order-online" ? drawerOrderHref : ctaHref;
 
   const shoppingLabel = shoppingLocation?.name ?? "Select a location";
+  const pickerLocations = nearestStoreSlug
+    ? [...locations].sort((a, b) => Number(b.slug === nearestStoreSlug) - Number(a.slug === nearestStoreSlug))
+    : locations;
   const selectedDirectionsUrl = shoppingLocation
     ? getGoogleMapsDirectionsUrl({
         address: shoppingLocation.address,
@@ -110,12 +116,19 @@ export default function SiteHeader({
 
     return pathname === href || pathname.startsWith(`${href}/`);
   };
+  const getNavigationHref = (href: string): string => (
+    href === "/menu" && shoppingLocation ? shoppingMenuHref : href
+  );
 
   const openMenu = () => {
     setMenuLocationSlug(shoppingSlug ?? "");
-    setNearestMessage(null);
-    setIsMenuOpen(true);
+    setActiveDrawer("menu");
     setNearestError(null);
+  };
+
+  const openLocationPicker = (): void => {
+    setNearestStoreSlug(null);
+    setActiveDrawer("locations");
   };
 
   const applyShoppingLocation = (slug: string) => {
@@ -124,14 +137,21 @@ export default function SiteHeader({
     }
 
     setStoredShoppingLocationSlug(slug);
-    setNearestMessage(null);
     setNearestError(null);
   };
 
   const closeMenu = () => {
-    setIsMenuOpen(false);
-    setNearestMessage(null);
+    setActiveDrawer(null);
     setNearestError(null);
+  };
+
+  const handleSelectStore = (slug: string): void => {
+    applyShoppingLocation(slug);
+    closeMenu();
+
+    if (routeLocationSlug && routeLocationSlug !== slug) {
+      router.push(pathname.startsWith("/menu/") ? `/menu/${slug}/embed` : `/locations/${slug}`);
+    }
   };
 
   const handleViewSelectedLocation = () => {
@@ -148,7 +168,6 @@ export default function SiteHeader({
 
   const handleFindNearestLocation = async () => {
     setIsFindingNearest(true);
-    setNearestMessage(null);
     setNearestError(null);
 
     const result = await findNearestLocationFromBrowser(locations);
@@ -176,12 +195,7 @@ export default function SiteHeader({
       return;
     }
 
-    const nearestLocation = locations.find((location) => location.slug === result.slug);
-    applyShoppingLocation(result.slug);
-    setMenuLocationSlug(result.slug);
-    setNearestMessage(
-      nearestLocation ? `Nearest store selected: ${nearestLocation.name}.` : "Nearest store selected.",
-    );
+    handleSelectStore(result.slug);
   };
 
   useEffect(() => {
@@ -250,7 +264,7 @@ export default function SiteHeader({
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault();
-        setIsMenuOpen(false);
+        setActiveDrawer(null);
         setNearestError(null);
         return;
       }
@@ -293,259 +307,124 @@ export default function SiteHeader({
     };
   }, [isMenuOpen]);
 
+  const phone = shoppingLocation?.phone ?? site.phone;
+  const deliveryHref = shoppingLocation && (shoppingLocation.doorDash || shoppingLocation.grubHub || shoppingLocation.uberEats)
+    ? `/menu/${shoppingLocation.slug}/embed#order-options`
+    : "/order-online";
+
   return (
     <>
-      <a href="#main-content" className="skip-link">
-        Skip to main content
-      </a>
-      <header className="sticky top-0 z-40 border-b border-white/10 bg-black/78 backdrop-blur-md">
-        <div className="section-shell flex h-16 items-center justify-between gap-3 sm:h-[4.5rem]">
-          <Link href="/" className="flex shrink-0 items-center">
-            <Image
-              src="/logo.png"
-              alt="Crack Taco Shop"
-              width={138}
-              height={52}
-              priority
-              className="h-auto w-[112px] sm:w-[138px]"
-            />
+      <a href="#main-content" className="skip-link">Skip to main content</a>
+      <header className="site-header">
+        <div className="section-shell flex h-20 items-center justify-between gap-4">
+          <Link href="/" className="shrink-0" aria-label="Prime Tacos home">
+            <Image src="/newlogo.png" alt="Prime Tacos" width={3822} height={2378} sizes="106px" priority className="site-logo" />
           </Link>
 
-          <nav aria-label="Primary navigation" className="hidden gap-3 text-xs font-semibold text-white/80 xl:flex">
-            {links.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                aria-current={isLinkActive(link.href) ? "page" : undefined}
-                className="transition hover:text-white"
-              >
+          <nav className="hidden items-center gap-6 xl:flex" aria-label="Primary navigation">
+            {links.filter((link) => !["/", "/faq", "/careers"].includes(link.href)).map((link) => (
+              <Link key={link.href} href={getNavigationHref(link.href)} className="header-link" aria-current={isLinkActive(link.href) ? "page" : undefined}>
                 {link.label}
               </Link>
             ))}
           </nav>
 
-          <div className="ml-auto flex items-center gap-2">
-            <div className="hidden 2xl:flex items-center gap-2">
-              <Link
-                href={selectedDirectionsUrl ?? "/locations"}
-                className="brand-btn-directions px-4 py-2 text-sm"
-              >
-                Get Directions
-              </Link>
-
-              <Link href={primaryCtaHref} className="brand-btn px-3 py-2 text-xs sm:px-4 sm:text-sm">
-                {ctaLabel}
-              </Link>
-
-              <Link href="/locations" className="brand-btn-muted px-4 py-2 text-sm">
-                Change Location
-              </Link>
-            </div>
-
-            <button
-              ref={menuToggleButtonRef}
-              type="button"
-              onClick={() => (isMenuOpen ? closeMenu() : openMenu())}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-black/45 text-white 2xl:hidden"
-              aria-haspopup="dialog"
-              aria-expanded={isMenuOpen}
-              aria-controls="mobile-site-menu"
-              aria-label="Toggle navigation menu"
-            >
-              <span className="relative block h-4 w-5">
-                <span
-                  className={`absolute left-0 top-0 block h-0.5 w-5 bg-current transition ${
-                    isMenuOpen ? "translate-y-[7px] rotate-45" : ""
-                  }`}
-                />
-                <span
-                  className={`absolute left-0 top-[7px] block h-0.5 w-5 bg-current transition ${
-                    isMenuOpen ? "opacity-0" : ""
-                  }`}
-                />
-                <span
-                  className={`absolute left-0 top-[14px] block h-0.5 w-5 bg-current transition ${
-                    isMenuOpen ? "-translate-y-[7px] -rotate-45" : ""
-                  }`}
-                />
-              </span>
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+            <button type="button" onClick={openLocationPicker} className="header-location inline-flex min-w-0 text-left" aria-expanded={isLocationPickerOpen} aria-controls="mobile-site-menu" aria-haspopup="dialog">
+              <SiteIcon name="pin" className="h-5 w-5 shrink-0" />
+              <span className="min-w-0 leading-tight">{shoppingLabel}</span>
             </button>
-          </div>
-        </div>
-
-        <div className="border-t border-white/10 bg-black/62">
-          <div className="section-shell py-2">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-white/70">
-              Shopping At: <span className="text-brand-yellow">{shoppingLabel}</span>
-            </p>
-
-            <div className="mt-2 flex items-center gap-1.5 2xl:hidden">
-              <Link
-                href={selectedDirectionsUrl ?? "/locations"}
-                className="brand-btn-directions min-h-9 flex-1 px-2 py-1.5 text-[11px] leading-none whitespace-nowrap"
-              >
-                Get Directions
-              </Link>
-
-              <Link
-                href={primaryCtaHref}
-                className="brand-btn min-h-9 flex-1 px-2 py-1.5 text-[11px] leading-none whitespace-nowrap"
-              >
-                {ctaLabel}
-              </Link>
-
-              <button
-                type="button"
-                onClick={openMenu}
-                className="brand-btn-muted min-h-9 flex-1 px-2 py-1.5 text-[11px] leading-none whitespace-nowrap"
-              >
-                Change Location
-              </button>
-            </div>
+            <Link href={primaryCtaHref} className="brand-btn hidden px-5 py-3 text-xs md:inline-flex">
+              {ctaLabel}
+            </Link>
+            <button ref={menuToggleButtonRef} type="button" onClick={openMenu} className="menu-toggle shrink-0" aria-label="Open menu" aria-expanded={activeDrawer === "menu"} aria-controls="mobile-site-menu">
+              <SiteIcon name="menu" className="h-6 w-6" />
+            </button>
           </div>
         </div>
       </header>
 
-      <div
-        className={`fixed inset-0 z-50 transition ${
-          isMenuOpen ? "pointer-events-auto" : "pointer-events-none"
-        }`}
-      >
-        <button
-          type="button"
-          onClick={closeMenu}
-          className={`absolute inset-0 bg-black/70 transition-opacity ${
-            isMenuOpen ? "opacity-100" : "opacity-0"
-          }`}
-          aria-label="Close menu overlay"
-        />
-
-        <aside
-          ref={mobileMenuPanelRef}
-          id="mobile-site-menu"
-          className={`absolute right-0 top-0 h-full w-[min(90vw,23rem)] overflow-y-auto border-l border-white/15 bg-[#0e0e0e] shadow-2xl shadow-black/50 transition-transform ${
-            isMenuOpen ? "translate-x-0" : "translate-x-full"
-          }`}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="mobile-menu-title"
-          aria-label="Mobile navigation panel"
-        >
-          <div className="flex items-center justify-between border-b border-white/10 px-4 py-4">
-            <p id="mobile-menu-title" className="font-display text-2xl text-white">
-              Menu
-            </p>
-            <button
-              ref={mobileMenuCloseButtonRef}
-              type="button"
-              onClick={closeMenu}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/20 bg-black/45 text-xl text-white"
-              aria-label="Close menu"
-            >
-              ×
+      <div className={`site-drawer-layer ${isMenuOpen ? "is-open" : ""}`} inert={!isMenuOpen} aria-hidden={!isMenuOpen}>
+        <button type="button" onClick={closeMenu} className="site-drawer-backdrop" aria-label={isLocationPickerOpen ? "Close store selector overlay" : "Close menu overlay"} tabIndex={-1} />
+        <aside ref={mobileMenuPanelRef} id="mobile-site-menu" className="site-drawer" role="dialog" aria-modal="true" aria-labelledby="mobile-menu-title">
+          <div className="flex items-center justify-between border-b border-black/15 pb-4">
+            <p id="mobile-menu-title" className="font-display text-xl">{isLocationPickerOpen ? "Choose a Store" : "Prime Tacos"}</p>
+            <button ref={mobileMenuCloseButtonRef} type="button" onClick={closeMenu} className="menu-toggle shrink-0" aria-label={isLocationPickerOpen ? "Close store selector" : "Close menu"}>
+              <SiteIcon name="close" />
             </button>
           </div>
 
-          <div className="space-y-5 p-4">
-            <section className="rounded-2xl border border-white/12 bg-black/35 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-yellow">
-                Shopping Location
-              </p>
-              <p className="mt-1 text-lg font-semibold text-white">{shoppingLabel}</p>
+          {isLocationPickerOpen ? (
+            <>
+              <StoreLocationSearch onNearestLocation={setNearestStoreSlug} />
+              <ul className="store-picker-list" aria-label="Stores">
+                {pickerLocations.map((location) => {
+                  const isSelected = location.slug === shoppingSlug;
 
-              <label htmlFor="header-location-picker" className="mt-3 block text-xs text-white/70">
-                Choose location
-              </label>
-              <select
-                id="header-location-picker"
-                value={menuLocationSlug}
-                onChange={(event) => {
-                  const slug = event.target.value;
-                  setMenuLocationSlug(slug);
-                  applyShoppingLocation(slug);
-                }}
-                className="brand-input mt-2 px-3 py-2 text-sm"
-              >
-                <option value="" disabled>
-                  Select a location...
-                </option>
-                {locations.map((location) => (
-                  <option key={location.slug} value={location.slug}>
-                    {location.name}
-                  </option>
+                  return (
+                    <li key={location.slug}>
+                      <button type="button" onClick={() => handleSelectStore(location.slug)} className="store-picker-card" aria-pressed={isSelected} aria-label={`${isSelected ? "Selected store:" : "Select store:"} ${location.name}`} aria-describedby={`store-${location.slug}-status store-${location.slug}-details`}>
+                        <span className="flex flex-wrap items-center justify-between gap-2">
+                          <span className="text-base font-extrabold">{location.name}</span>
+                          <span id={`store-${location.slug}-status`}><LocationOpenBadge slug={location.slug} /></span>
+                        </span>
+                        <span id={`store-${location.slug}-details`} className="mt-2 block text-neutral-600">
+                          <span className="block text-sm">{location.address}</span>
+                          <span className="block text-xs">{location.hours}</span>
+                          {location.phone && <span className="block text-xs">{location.phone}</span>}
+                        </span>
+                        <span className="mt-3 inline-flex items-center gap-2 text-xs font-extrabold text-brand-green">
+                          {isSelected ? "Selected" : "Select this store"}
+                          {!isSelected && <SiteIcon name="arrow" className="h-4 w-4" />}
+                        </span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </>
+          ) : (
+            <>
+              <nav aria-label="Site sections" className="drawer-links">
+                {links.map((link) => (
+                    <Link key={link.href} href={getNavigationHref(link.href)} aria-current={isLinkActive(link.href) ? "page" : undefined} onClick={closeMenu}>
+                    {link.label}<SiteIcon name="arrow" />
+                  </Link>
                 ))}
-              </select>
+              </nav>
 
-              <div className="mt-3 flex flex-col gap-2">
-                <button
-                  type="button"
-                  onClick={handleFindNearestLocation}
-                  disabled={isFindingNearest}
-                  className="brand-btn-directions w-full px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-45"
-                >
-                  {isFindingNearest ? "Finding nearest..." : "Use My Current Location"}
+              <section className="drawer-location">
+                <label htmlFor="header-location-picker" className="eyebrow">Your location</label>
+                <select id="header-location-picker" value={menuLocationSlug} onChange={(event) => {
+                  const slug = event.target.value;
+                  handleSelectStore(slug);
+                }} className="brand-input mt-3 px-3 py-3 text-sm">
+                  <option value="" disabled>Choose a location</option>
+                  {locations.map((location) => <option key={location.slug} value={location.slug}>{location.name}</option>)}
+                </select>
+                <button type="button" onClick={handleFindNearestLocation} disabled={isFindingNearest} className="mt-3 min-h-11 text-sm font-bold text-brand-green disabled:opacity-50">
+                  {isFindingNearest ? "Finding nearest…" : "Use my current location"}
                 </button>
-
-                <button
-                  type="button"
-                  onClick={handleViewSelectedLocation}
-                  disabled={!menuLocationSlug && !storedShoppingSlug && !routeLocationSlug}
-                  className="brand-btn w-full px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-45"
-                >
-                  View Location
-                </button>
-
-                <Link href={drawerCtaHref} onClick={closeMenu} className="brand-btn w-full px-4 py-2 text-sm">
-                  {ctaLabel}
-                </Link>
-
-                {menuDirectionsUrl && (
-                  <a
-                    href={menuDirectionsUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="brand-btn-muted w-full px-4 py-2 text-sm"
-                  >
-                    Directions to {menuLocation?.name}
-                  </a>
-                )}
-
-                {menuLocation?.phone && (
-                  <a
-                    href={`tel:${menuLocation.phone}`}
-                    className="brand-btn-muted w-full px-4 py-2 text-sm"
-                  >
-                    Call {menuLocation.phone}
-                  </a>
-                )}
-              </div>
-
-              {(nearestMessage || nearestError) && (
-                <p
-                  role={nearestError ? "alert" : "status"}
-                  className={`mt-3 text-xs ${nearestError ? "text-red-300" : "text-emerald-300"}`}
-                >
-                  {nearestError ?? nearestMessage}
-                </p>
-              )}
-            </section>
-
-            <nav aria-label="Site sections" className="space-y-2">
-              {links.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  aria-current={isLinkActive(link.href) ? "page" : undefined}
-                  onClick={closeMenu}
-                  className="block rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm font-semibold text-white/85 transition hover:border-white/25 hover:text-white"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
-          </div>
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  <Link href={drawerCtaHref} onClick={closeMenu} className="brand-btn px-3 py-3 text-xs">{ctaLabel}</Link>
+                  <button type="button" onClick={handleViewSelectedLocation} disabled={!menuLocationSlug && !storedShoppingSlug && !routeLocationSlug} className="brand-btn-muted px-3 py-3 text-xs disabled:opacity-45">View location</button>
+                </div>
+                {menuDirectionsUrl && <a href={menuDirectionsUrl} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex min-h-11 items-center gap-2 text-sm font-bold text-brand-green"><SiteIcon name="pin" />Directions to {menuLocation?.name}</a>}
+                {nearestError && <p role="alert" className="mt-3 text-sm text-brand-red">{nearestError}</p>}
+              </section>
+            </>
+          )}
         </aside>
       </div>
+
+      {shoppingLocation && (
+        <nav aria-label="Mobile quick actions" className="mobile-bottom-bar" inert={isMenuOpen}>
+          <a href={`tel:${phone}`} aria-label={`Call ${shoppingLocation.name}`}><SiteIcon name="phone" /><span>Call</span></a>
+          <Link href={shoppingMenuHref} className="is-featured"><SiteIcon name="bag" /><span>Order online</span></Link>
+          <Link href={deliveryHref}><SiteIcon name="delivery" /><span>Delivery</span></Link>
+          <Link href={selectedDirectionsUrl ?? "/locations"} target={selectedDirectionsUrl ? "_blank" : undefined} rel={selectedDirectionsUrl ? "noopener noreferrer" : undefined}><SiteIcon name="pin" /><span>Directions</span></Link>
+        </nav>
+      )}
     </>
   );
 }

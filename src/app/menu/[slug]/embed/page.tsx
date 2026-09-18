@@ -24,20 +24,20 @@ export async function generateMetadata({ params }: MenuEmbedPageProps): Promise<
 
   if (!location) {
     return {
-      title: "Menu Not Found | Crack Taco Shop",
+      title: "Menu Not Found | Prime Tacos",
     };
   }
 
   const canonicalUrl = `${site.url}/menu/${location.slug}/embed`;
 
   return {
-    title: `${location.name} Menu | Crack Taco Shop`,
+    title: `${location.name} Menu | Prime Tacos`,
     description: `Browse the ${location.name} menu for tacos, burritos, and location-specific ordering links.`,
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: `${location.name} Menu | Crack Taco Shop`,
+      title: `${location.name} Menu | Prime Tacos`,
       description: `Order ${location.name} favorites online and view the latest menu categories.`,
       url: canonicalUrl,
       siteName: site.shortName,
@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: MenuEmbedPageProps): Promise<
           url: `${site.url}${location.image}`,
           width: 1600,
           height: 1000,
-          alt: `${location.name} Crack Taco Shop menu`,
+          alt: `${location.name} Prime Tacos menu`,
         },
       ],
     },
@@ -82,18 +82,18 @@ export default async function MenuEmbedPage({ params }: MenuEmbedPageProps) {
   return (
     <>
       <SiteHeader ctaHref="/order-online" ctaLabel="Order Online" />
-      <main id="main-content" className="min-h-screen pb-16 pt-10 text-white sm:pt-12">
+      <main id="main-content" className="min-h-screen pb-16 pt-10 text-neutral-950 sm:pt-12">
         <div id="menu-top" className="section-shell space-y-4">
-          <header className="rounded-2xl border border-white/15 bg-black/65 p-4 sm:p-5">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-yellow">Our Menu</p>
-            <h1 className="mt-2 font-display text-3xl text-white sm:text-4xl">{location.name}</h1>
-            <p className="mt-2 text-sm text-white/80">{location.hours}</p>
-            <p className="mt-1 text-sm text-white/70">
+          <header className="py-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-green">Our Menu</p>
+            <h1 className="mt-2 font-display text-3xl text-neutral-950 sm:text-4xl">{location.name}</h1>
+            <p className="mt-2 text-sm text-neutral-600">{location.hours}</p>
+            <p className="mt-1 text-sm text-neutral-600">
               {location.phone ? `Call us at ${location.phone}. ` : ""}
               Visit us at {location.address}
             </p>
 
-            <div className="mt-3 flex flex-wrap gap-2">
+            <div id="order-options" className="mt-4 flex scroll-mt-24 flex-wrap gap-2">
               {quickLinks.map((entry) => (
                 <a
                   key={entry.name}
@@ -121,24 +121,17 @@ export default async function MenuEmbedPage({ params }: MenuEmbedPageProps) {
                 </a>
               )}
             </div>
-
-            <p className="mt-3 text-xs text-white/55">
-              Price source:{" "}
-              {menu.priceSource === "manual"
-                ? "Manual website pricing"
-                : "Location-specific live/attached menus"}
-            </p>
           </header>
 
           {hasManualSections ? (
             <>
-              <nav className="sticky top-[7.9rem] z-20 overflow-hidden rounded-xl border border-white/12 bg-black/85 backdrop-blur-sm">
+              <nav aria-label="Menu categories" className="sticky top-20 z-20 overflow-hidden rounded-lg border border-neutral-200 bg-white">
                 <div className="flex gap-2 overflow-x-auto px-2 py-2 sm:flex-wrap sm:overflow-visible sm:px-3">
                   {menu.nav.map((section) => (
                     <a
                       key={section.sectionId}
                       href={`#${section.sectionId}`}
-                      className="shrink-0 rounded-lg border border-white/20 bg-white/5 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white hover:border-[#f0be3e]/60 hover:bg-[#f0be3e]/15"
+                      className="shrink-0 rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-neutral-950 hover:border-brand-green hover:bg-green-50"
                     >
                       {section.label}
                     </a>
@@ -151,40 +144,40 @@ export default async function MenuEmbedPage({ params }: MenuEmbedPageProps) {
                   <section
                     id={section.id}
                     key={section.id}
-                    className="rounded-2xl border border-white/12 bg-black/35 p-3 sm:p-4"
+                    className="scroll-mt-36 border-t border-neutral-200 py-5"
                   >
-                    <h2 className="font-display text-2xl text-white sm:text-3xl">{section.title}</h2>
+                    <h2 className="font-display text-2xl text-neutral-950 sm:text-3xl">{section.title}</h2>
 
                     <div className="mt-3 grid gap-3 lg:grid-cols-2">
                       {section.groups.map((group) => (
                         <article
                           key={`${section.id}-${group.title}`}
-                          className="overflow-hidden rounded-xl border border-white/10 bg-black/40"
+                          className="overflow-hidden rounded-lg border border-neutral-200 bg-white"
                         >
-                          <header className="border-b border-white/10 px-3 py-2">
-                            <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-yellow">
+                          <header className="border-b border-neutral-200 px-3 py-2">
+                            <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-green">
                               {group.title}
                             </h3>
                           </header>
 
-                          <ul className="divide-y divide-white/10">
+                          <ul className="divide-y divide-neutral-200">
                             {group.items.map((item) => (
                               <li key={`${section.id}-${group.title}-${item.name}`} className="px-3 py-2.5">
                                 <div className="flex items-start justify-between gap-3">
                                   <div>
                                     <div className="flex flex-wrap items-center gap-2">
-                                      <p className="text-sm font-semibold text-white sm:text-base">{item.name}</p>
+                                      <p className="text-sm font-semibold text-neutral-950 sm:text-base">{item.name}</p>
                                       {item.badge && (
-                                        <span className="rounded-full bg-brand-yellow px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-black">
+                                        <span className="rounded-full bg-green-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-brand-green">
                                           {item.badge}
                                         </span>
                                       )}
                                     </div>
                                     {item.description && (
-                                      <p className="mt-1 text-xs text-white/70 sm:text-sm">{item.description}</p>
+                                      <p className="mt-1 text-xs text-neutral-600 sm:text-sm">{item.description}</p>
                                     )}
                                   </div>
-                                  <p className="shrink-0 text-sm font-semibold text-brand-yellow sm:text-base">
+                                  <p className="shrink-0 text-sm font-semibold text-brand-green sm:text-base">
                                     {item.price}
                                   </p>
                                 </div>
@@ -199,21 +192,19 @@ export default async function MenuEmbedPage({ params }: MenuEmbedPageProps) {
               </div>
             </>
           ) : (
-            <section className="space-y-4 rounded-2xl border border-white/12 bg-black/35 p-4 sm:p-5">
+            <section className="space-y-4 rounded-lg border border-neutral-200 bg-white p-4 sm:p-5">
               <div>
-                <h2 className="font-display text-2xl text-white sm:text-3xl">Location-Specific Pricing</h2>
-                <p className="mt-2 text-sm text-white/75">
-                  {location.name} uses its own pricing. Use the linked live menus and attached menu
-                  files below.
+                <h2 className="font-display text-2xl text-neutral-950 sm:text-3xl">View the menu</h2>
+                <p className="mt-2 text-sm text-neutral-600">
+                  Browse the {location.name} menu below or order online for current prices.
                 </p>
               </div>
 
               {location.toastUrl && (
-                <article className="rounded-xl border border-white/12 bg-black/70 p-4">
-                  <h3 className="text-sm font-semibold text-white">Toast Online Ordering</h3>
-                  <p className="mt-2 text-sm text-white/75">
-                    Toast embeds are blocked on some devices and browsers. Open the location&apos;s
-                    Toast menu directly.
+                <article className="rounded-lg border border-neutral-200 bg-white p-4">
+                  <h3 className="text-sm font-semibold text-neutral-950">Toast Online Ordering</h3>
+                  <p className="mt-2 text-sm text-neutral-600">
+                    Choose your favorites and place a pickup order from {location.name}.
                   </p>
                   <a
                     href={location.toastUrl}
@@ -227,9 +218,9 @@ export default async function MenuEmbedPage({ params }: MenuEmbedPageProps) {
               )}
 
               {menu.printedMenuUrl && (
-                <article className="overflow-hidden rounded-xl border border-white/12 bg-black/70">
-                  <header className="border-b border-white/10 px-4 py-3">
-                    <p className="text-sm font-semibold text-white">Attached Menu</p>
+                <article className="overflow-hidden rounded-lg border border-neutral-200 bg-white">
+                  <header className="border-b border-neutral-200 px-4 py-3">
+                    <p className="text-sm font-semibold text-neutral-950">Attached Menu</p>
                   </header>
                   <a href={menu.printedMenuUrl} target="_blank" rel="noopener noreferrer">
                     <Image
@@ -246,16 +237,16 @@ export default async function MenuEmbedPage({ params }: MenuEmbedPageProps) {
           )}
 
           <footer>
-            <div className="rounded-xl border border-white/12 bg-black/45 px-4 py-3">
+            <div className="rounded-lg border border-neutral-200 bg-white px-4 py-3">
               {menu.notes.map((note) => (
-                <p key={note} className="text-xs text-white/60">
+                <p key={note} className="text-xs text-neutral-600">
                   {note}
                 </p>
               ))}
-              <p className="mt-1 text-xs text-white/45">{site.shortName}</p>
+              <p className="mt-1 text-xs text-neutral-600">{site.shortName}</p>
               <a
                 href="#menu-top"
-                className="mt-3 inline-flex rounded-lg border border-white/20 bg-white/6 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white hover:border-[#f0be3e]/60 hover:bg-[#f0be3e]/15"
+                className="mt-3 inline-flex rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-neutral-950 hover:border-brand-green hover:bg-green-50"
               >
                 Back to top
               </a>

@@ -6,7 +6,7 @@ import SiteHeader from "@/components/SiteHeader";
 
 export const metadata: Metadata = {
   title: "Careers",
-  description: "Apply for open positions at Crack Taco Shop locations.",
+  description: "Apply for open positions at Prime Tacos locations.",
   alternates: {
     canonical: "/careers",
   },
@@ -18,14 +18,14 @@ export default function CareersPage() {
       <SiteHeader ctaHref="/order-online" ctaLabel="Order Online" />
       <main id="main-content" className="pb-20 pt-10 sm:pt-12">
         <section className="section-shell">
-          <div className="rounded-3xl border border-white/10 bg-black/35 p-6 sm:p-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-yellow">
+          <div className="py-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-green">
               Careers
             </p>
-            <h1 className="mt-3 max-w-3xl font-display text-3xl text-white sm:text-4xl lg:text-5xl">
-              Join the Crack Taco Shop Team
+            <h1 className="mt-3 max-w-3xl font-display text-3xl text-neutral-950 sm:text-4xl lg:text-5xl">
+              Join our team
             </h1>
-            <p className="mt-3 max-w-2xl text-sm text-white/75 sm:text-base">
+            <p className="mt-3 max-w-2xl text-sm text-neutral-600 sm:text-base">
               We are hiring team members who care about hospitality, food quality, and speed. Fill
               out the application below and our team will review it.
             </p>
@@ -33,17 +33,9 @@ export default function CareersPage() {
         </section>
 
         <section className="section-shell mt-10">
-          <div className="rounded-2xl border border-white/10 bg-black/30 p-5">
-            <p className="text-sm text-white/80">
-              Simple application. Please include your contact info, preferred location, and resume.
-            </p>
-          </div>
-        </section>
-
-        <section className="section-shell mt-10">
-          <div className="rounded-3xl border border-white/10 bg-black/30 p-6 sm:p-8">
-            <h2 className="font-display text-3xl text-white sm:text-4xl">Career Application</h2>
-            <p className="mt-2 text-sm text-white/70">
+          <div className="max-w-3xl border-t border-neutral-200 pt-6">
+            <h2 className="font-display text-2xl text-neutral-950 sm:text-3xl">Apply now</h2>
+            <p className="mt-2 text-sm text-neutral-600">
               Submit your name, email, phone, preferred location, and resume. Message is optional.
               Accepted resume formats: PDF or DOCX (max 10MB).
             </p>

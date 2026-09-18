@@ -18,7 +18,7 @@ export default function LocationCard({ location }: Props) {
     location.toastUrl ?? location.doorDash ?? location.grubHub ?? location.uberEats;
 
   return (
-    <article className="overflow-hidden rounded-3xl border border-white/10 bg-black/30 shadow-2xl shadow-black/30 backdrop-blur-sm">
+    <article className="overflow-hidden rounded-lg border border-neutral-200 bg-white">
       <div className="relative h-52 w-full sm:h-60">
         <Image
           src={location.image}
@@ -27,17 +27,16 @@ export default function LocationCard({ location }: Props) {
           sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 25vw"
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
       </div>
 
-      <div className="space-y-4 p-5 text-white sm:p-6">
-        <h3 className="font-display text-xl text-white sm:text-2xl">{location.name}</h3>
+      <div className="space-y-4 p-5 text-neutral-950 sm:p-6">
+        <h2 className="font-display text-xl text-neutral-950 sm:text-2xl">{location.name}</h2>
 
-        <p className="text-sm text-white/85">{location.address}</p>
-        <p className="text-sm text-white/75">{location.hours}</p>
+        <p className="text-sm text-neutral-600">{location.address}</p>
+        <p className="text-sm text-neutral-600">{location.hours}</p>
 
         {location.phone && (
-          <a href={`tel:${location.phone}`} className="inline-flex text-sm font-semibold text-brand-yellow hover:text-white">
+          <a href={`tel:${location.phone}`} className="inline-flex text-sm font-semibold text-brand-green hover:text-neutral-950">
             Call {location.phone}
           </a>
         )}
