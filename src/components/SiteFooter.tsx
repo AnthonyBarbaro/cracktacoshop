@@ -6,6 +6,7 @@ import Link from "next/link";
 import { locations } from "@/data/locations";
 import { site } from "@/data/site-content";
 import SiteIcon from "@/components/SiteIcon";
+import { openCookieSettings } from "@/lib/cookie-preferences";
 import { useShoppingLocation } from "@/lib/use-shopping-location";
 
 export default function SiteFooter() {
@@ -62,7 +63,11 @@ export default function SiteFooter() {
           ))}
         </ul>
       </section>
-      <div className="section-shell footer-bottom"><p>© {new Date().getFullYear()} Prime Tacos. All rights reserved.</p><p>San Diego, California</p></div>
+      <div className="section-shell footer-bottom">
+        <p>© {new Date().getFullYear()} Prime Tacos. All rights reserved.</p>
+        <button type="button" onClick={openCookieSettings} className="min-h-11 underline underline-offset-4">Cookie settings</button>
+        <p>San Diego, California</p>
+      </div>
     </footer>
   );
 }

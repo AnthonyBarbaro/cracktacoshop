@@ -16,6 +16,7 @@ import {
   getGoogleMapsSearchUrl,
 } from "@/lib/google-maps";
 import LocationOpenBadge from "@/components/LocationOpenBadge";
+import GoogleMapEmbed from "@/components/GoogleMapEmbed";
 
 type Props = {
   locations: Location[];
@@ -86,12 +87,9 @@ export default function LocationsMapPanel({ locations }: Props) {
 
         <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white">
           <div className="relative min-h-72">
-            <iframe
+            <GoogleMapEmbed
               title={`${activeLocation.name} map`}
               src={embedSrc}
-              className="absolute inset-0 h-full w-full"
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
             />
           </div>
 

@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import Script from "next/script";
 
 import LocationOpenBadge from "@/components/LocationOpenBadge";
+import GoogleMapEmbed from "@/components/GoogleMapEmbed";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 import { locations } from "@/data/locations";
@@ -228,13 +229,10 @@ export default async function LocationPage({ params }: LocationPageProps) {
             </div>
 
             <div className="relative min-h-72">
-              <iframe
+              <GoogleMapEmbed
                 title={`${location.name} location map`}
                 src={mapEmbedUrl}
-                className="absolute inset-0 h-full w-full"
-                loading="lazy"
                 allowFullScreen
-                referrerPolicy="no-referrer-when-downgrade"
               />
             </div>
 

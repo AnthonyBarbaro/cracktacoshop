@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactElement } from "react";
 
+import HeroPhotoCarousel from "@/components/HeroPhotoCarousel";
 import LocationOpenBadge from "@/components/LocationOpenBadge";
 import SiteIcon from "@/components/SiteIcon";
 import { locations } from "@/data/locations";
@@ -23,7 +24,6 @@ export default function HomeContent(): ReactElement {
 
   return (
     <main id="main-content">
-      <div className="home-announcement">{shoppingLocation ? `Your Prime Tacos in ${shoppingLocation.name}` : "San Diego, meet Prime Tacos."}</div>
       <section className="prime-hero" aria-labelledby="hero-title">
         <div className="prime-hero-copy">
           <p className="eyebrow">Home of the tri-tip taco</p>
@@ -36,10 +36,7 @@ export default function HomeContent(): ReactElement {
           </div>
           <Link href={shoppingLocation ? `/locations/${shoppingLocation.slug}` : "#locations"} className="hero-location-link"><SiteIcon name="pin" />{shoppingLocation ? "Hours & location details" : "Four San Diego locations"}</Link>
         </div>
-        <div className="prime-hero-media">
-          <Image src={shoppingLocation?.image ?? "/images/al-pastor-street-tacos.jpg"} alt={shoppingLocation ? `${shoppingLocation.name} location` : "Al pastor taco piled with guacamole, pineapple, onion, and cilantro"} fill priority sizes="(max-width: 1023px) 100vw, 50vw" className="object-cover" />
-          <span className="hero-photo-label">{shoppingLocation?.name ?? "Tacos done right."}</span>
-        </div>
+        <HeroPhotoCarousel key={shoppingLocation?.slug ?? "all-locations"} location={shoppingLocation} />
       </section>
 
       <section id="favorites" className="home-section section-shell" aria-labelledby="favorites-title">

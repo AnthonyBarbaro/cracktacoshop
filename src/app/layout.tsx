@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Bungee, Plus_Jakarta_Sans } from "next/font/google";
 import Script from "next/script";
 
+import CookieNotice from "@/components/CookieNotice";
 import { locations } from "@/data/locations";
 import { site } from "@/data/site-content";
 
@@ -157,6 +158,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(globalSchema) }}
         />
         {children}
+        <CookieNotice />
       </body>
     </html>
   );

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 
 import LocationOpenBadge from "@/components/LocationOpenBadge";
 import SiteIcon from "@/components/SiteIcon";
@@ -24,6 +24,8 @@ type Props = {
   ctaHref?: string;
   ctaLabel?: string;
 };
+
+const LOCATION_PROMPT_SESSION_KEY = "cts-location-prompt-shown";
 
 function getRouteLocationSlug(pathname: string): string | undefined {
   const segments = pathname.split("/").filter(Boolean);
@@ -61,6 +63,16 @@ export default function SiteHeader({
   const mobileMenuPanelRef = useRef<HTMLElement | null>(null);
   const mobileMenuCloseButtonRef = useRef<HTMLButtonElement | null>(null);
   const menuToggleButtonRef = useRef<HTMLButtonElement | null>(null);
+  const locationButtonRef = useRef<HTMLButtonElement | null>(null);
+  const locationPromptHandledRef = useRef(false);
+  const markLocationPromptHandled = useCallback((): void => {
+    locationPromptHandledRef.current = true;
+    try {
+      window.sessionStorage.setItem(LOCATION_PROMPT_SESSION_KEY, "true");
+    } catch {
+      // The ref still prevents repeated prompts when session storage is unavailable.
+    }
+  }, []);
 
   const links = [
     { href: "/", label: "Home" },
@@ -121,12 +133,14 @@ export default function SiteHeader({
   );
 
   const openMenu = () => {
+    markLocationPromptHandled();
     setMenuLocationSlug(shoppingSlug ?? "");
     setActiveDrawer("menu");
     setNearestError(null);
   };
 
   const openLocationPicker = (): void => {
+    markLocationPromptHandled();
     setNearestStoreSlug(null);
     setActiveDrawer("locations");
   };
@@ -210,6 +224,38 @@ export default function SiteHeader({
   }, [routeLocationSlug]);
 
   useEffect(() => {
+    if (activeDrawer || shoppingLocation || locationPromptHandledRef.current) {
+      return;
+    }
+
+    try {
+      if (window.sessionStorage.getItem(LOCATION_PROMPT_SESSION_KEY) === "true") {
+        locationPromptHandledRef.current = true;
+        return;
+      }
+    } catch {
+      // Continue using the in-memory guard if session storage is unavailable.
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      const savedSlug = getShoppingLocationSlugSnapshot();
+      const hasLocation = locations.some((location) => (
+        location.slug === routeLocationSlug || location.slug === savedSlug
+      ));
+
+      if (hasLocation || locationPromptHandledRef.current) {
+        return;
+      }
+
+      markLocationPromptHandled();
+      setNearestStoreSlug(null);
+      setActiveDrawer("locations");
+    }, 300);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [activeDrawer, shoppingLocation, routeLocationSlug, markLocationPromptHandled]);
+
+  useEffect(() => {
     const onShoppingLocationChange = (event: Event) => {
       const customEvent = event as CustomEvent<{ slug?: string }>;
       const slug = customEvent.detail?.slug;
@@ -257,6 +303,7 @@ export default function SiteHeader({
     }
 
     const fallbackToggleButton = menuToggleButtonRef.current;
+    const fallbackLocationButton = locationButtonRef.current;
     const previousFocusedElement =
       document.activeElement instanceof HTMLElement ? document.activeElement : null;
     mobileMenuCloseButtonRef.current?.focus();
@@ -299,10 +346,10 @@ export default function SiteHeader({
 
     return () => {
       window.removeEventListener("keydown", onKeyDown);
-      if (previousFocusedElement) {
+      if (previousFocusedElement && previousFocusedElement !== document.body && previousFocusedElement.isConnected) {
         previousFocusedElement.focus();
       } else {
-        fallbackToggleButton?.focus();
+        (fallbackLocationButton ?? fallbackToggleButton)?.focus();
       }
     };
   }, [isMenuOpen]);
@@ -330,7 +377,7 @@ export default function SiteHeader({
           </nav>
 
           <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-            <button type="button" onClick={openLocationPicker} className="header-location inline-flex min-w-0 text-left" aria-expanded={isLocationPickerOpen} aria-controls="mobile-site-menu" aria-haspopup="dialog">
+            <button ref={locationButtonRef} type="button" onClick={openLocationPicker} className="header-location inline-flex min-w-0 text-left" aria-expanded={isLocationPickerOpen} aria-controls="mobile-site-menu" aria-haspopup="dialog">
               <SiteIcon name="pin" className="h-5 w-5 shrink-0" />
               <span className="min-w-0 leading-tight">{shoppingLabel}</span>
             </button>
@@ -346,7 +393,7 @@ export default function SiteHeader({
 
       <div className={`site-drawer-layer ${isMenuOpen ? "is-open" : ""}`} inert={!isMenuOpen} aria-hidden={!isMenuOpen}>
         <button type="button" onClick={closeMenu} className="site-drawer-backdrop" aria-label={isLocationPickerOpen ? "Close store selector overlay" : "Close menu overlay"} tabIndex={-1} />
-        <aside ref={mobileMenuPanelRef} id="mobile-site-menu" className="site-drawer" role="dialog" aria-modal="true" aria-labelledby="mobile-menu-title">
+        <aside ref={mobileMenuPanelRef} id="mobile-site-menu" className="site-drawer" role="dialog" aria-modal="true" aria-labelledby="mobile-menu-title" aria-describedby={isLocationPickerOpen && !shoppingLocation ? "store-picker-description" : undefined}>
           <div className="flex items-center justify-between border-b border-black/15 pb-4">
             <p id="mobile-menu-title" className="font-display text-xl">{isLocationPickerOpen ? "Choose a Store" : "Prime Tacos"}</p>
             <button ref={mobileMenuCloseButtonRef} type="button" onClick={closeMenu} className="menu-toggle shrink-0" aria-label={isLocationPickerOpen ? "Close store selector" : "Close menu"}>
@@ -356,6 +403,7 @@ export default function SiteHeader({
 
           {isLocationPickerOpen ? (
             <>
+              {!shoppingLocation && <p id="store-picker-description" className="mt-4 text-sm text-neutral-600">Select a store to see its menu, hours, and ordering options.</p>}
               <StoreLocationSearch onNearestLocation={setNearestStoreSlug} />
               <ul className="store-picker-list" aria-label="Stores">
                 {pickerLocations.map((location) => {

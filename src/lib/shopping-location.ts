@@ -1,3 +1,9 @@
+import {
+  COOKIE_PREFERENCE_CHANGE_EVENT,
+  COOKIE_PREFERENCE_STORAGE_KEY,
+  getCookiePreferenceSnapshot,
+} from "@/lib/cookie-preferences";
+
 type LocationPoint = {
   slug: string;
   latitude: number;
@@ -7,14 +13,38 @@ type LocationPoint = {
 export const SHOPPING_LOCATION_STORAGE_KEY = "cts-shopping-location-slug";
 export const SHOPPING_LOCATION_CHANGE_EVENT = "cts-shopping-location-change";
 const SHOPPING_LOCATION_STORAGE_EVENT = "storage";
+let currentLocationSlug: string | undefined;
+let hasTemporaryLocation = false;
+
+function persistShoppingLocation(): void {
+  try {
+    if (getCookiePreferenceSnapshot() === "enabled") {
+      if (currentLocationSlug) {
+        window.localStorage.setItem(SHOPPING_LOCATION_STORAGE_KEY, currentLocationSlug);
+        hasTemporaryLocation = false;
+      }
+    } else {
+      window.localStorage.removeItem(SHOPPING_LOCATION_STORAGE_KEY);
+    }
+  } catch {
+    // Store selection remains available in memory when storage is blocked.
+  }
+}
 
 export function getStoredShoppingLocationSlug(): string | undefined {
   if (typeof window === "undefined") {
     return undefined;
   }
 
-  const value = window.localStorage.getItem(SHOPPING_LOCATION_STORAGE_KEY);
-  return value ?? undefined;
+  if (getCookiePreferenceSnapshot() === "enabled" && !hasTemporaryLocation) {
+    try {
+      currentLocationSlug = window.localStorage.getItem(SHOPPING_LOCATION_STORAGE_KEY) ?? currentLocationSlug;
+    } catch {
+      // Use the selection from this visit when storage is unavailable.
+    }
+  }
+
+  return currentLocationSlug;
 }
 
 export function setStoredShoppingLocationSlug(slug: string): void {
@@ -22,7 +52,9 @@ export function setStoredShoppingLocationSlug(slug: string): void {
     return;
   }
 
-  window.localStorage.setItem(SHOPPING_LOCATION_STORAGE_KEY, slug);
+  currentLocationSlug = slug;
+  hasTemporaryLocation = true;
+  persistShoppingLocation();
   window.dispatchEvent(new CustomEvent(SHOPPING_LOCATION_CHANGE_EVENT, { detail: { slug } }));
 }
 
@@ -34,13 +66,37 @@ export function subscribeToShoppingLocationChanges(callback: () => void): () => 
   const handler = () => {
     callback();
   };
+  const handlePreferenceChange = (): void => {
+    persistShoppingLocation();
+    callback();
+  };
+  const handleStorage = (event: StorageEvent): void => {
+    if (event.key === null) {
+      currentLocationSlug = undefined;
+      hasTemporaryLocation = false;
+      callback();
+    } else if (event.key === COOKIE_PREFERENCE_STORAGE_KEY) {
+      if (getCookiePreferenceSnapshot() !== "enabled") {
+        persistShoppingLocation();
+      }
+      callback();
+    } else if (event.key === SHOPPING_LOCATION_STORAGE_KEY) {
+      if (getCookiePreferenceSnapshot() === "enabled") {
+        currentLocationSlug = event.newValue ?? undefined;
+        hasTemporaryLocation = false;
+      }
+      callback();
+    }
+  };
 
   window.addEventListener(SHOPPING_LOCATION_CHANGE_EVENT, handler as EventListener);
-  window.addEventListener(SHOPPING_LOCATION_STORAGE_EVENT, handler);
+  window.addEventListener(COOKIE_PREFERENCE_CHANGE_EVENT, handlePreferenceChange);
+  window.addEventListener(SHOPPING_LOCATION_STORAGE_EVENT, handleStorage);
 
   return () => {
     window.removeEventListener(SHOPPING_LOCATION_CHANGE_EVENT, handler as EventListener);
-    window.removeEventListener(SHOPPING_LOCATION_STORAGE_EVENT, handler);
+    window.removeEventListener(COOKIE_PREFERENCE_CHANGE_EVENT, handlePreferenceChange);
+    window.removeEventListener(SHOPPING_LOCATION_STORAGE_EVENT, handleStorage);
   };
 }
 
