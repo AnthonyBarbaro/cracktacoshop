@@ -1,14 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import type { ReactElement } from "react";
+import { useState, type ReactElement } from "react";
+
+import DeliveryLinks from "@/components/DeliveryLinks";
 
 import { locations } from "@/data/locations";
 import { getGoogleMapsDirectionsUrl } from "@/lib/google-maps";
+import { setStoredShoppingLocationSlug } from "@/lib/shopping-location";
 import { useShoppingLocation } from "@/lib/use-shopping-location";
 
 export default function OrderOnlineContent(): ReactElement {
-  const selectedLocation = useShoppingLocation();
+  const shoppingLocation = useShoppingLocation();
+  const [showAllLocations, setShowAllLocations] = useState(false);
+  const selectedLocation = showAllLocations ? undefined : shoppingLocation;
   const displayedLocations = selectedLocation ? [selectedLocation] : locations;
 
   return (
@@ -26,16 +31,31 @@ export default function OrderOnlineContent(): ReactElement {
               ? `Choose an available ordering option for ${selectedLocation.name}.`
               : "Select a location below and choose your preferred ordering provider."}
           </p>
-          {selectedLocation && (
-            <Link href="/locations" className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-brand-green hover:underline">
-              All locations
-            </Link>
-          )}
+          <div className="mt-6 max-w-sm">
+            <label htmlFor="order-location" className="block text-sm font-semibold text-neutral-950">
+              Your location
+            </label>
+            <select
+              id="order-location"
+              value={selectedLocation?.slug ?? ""}
+              onChange={(event) => {
+                const slug = event.target.value;
+                setShowAllLocations(!slug);
+                if (slug) setStoredShoppingLocationSlug(slug);
+              }}
+              className="mt-2 min-h-12 w-full rounded border border-neutral-300 bg-white px-3 text-base text-neutral-950"
+            >
+              <option value="">All locations</option>
+              {locations.map((location) => (
+                <option key={location.slug} value={location.slug}>{location.name}</option>
+              ))}
+            </select>
+          </div>
         </div>
       </section>
 
       <section className="section-shell mt-10">
-        <div className={`grid gap-4 ${selectedLocation ? "max-w-2xl" : "md:grid-cols-2 xl:grid-cols-4"}`}>
+        <div className={`grid gap-4 ${selectedLocation ? "max-w-2xl" : "md:grid-cols-2"}`}>
           {displayedLocations.map((location) => {
             const directionsUrl = getGoogleMapsDirectionsUrl({
               address: location.address,
@@ -48,7 +68,7 @@ export default function OrderOnlineContent(): ReactElement {
                 key={location.slug}
                 className="rounded-lg border border-neutral-200 bg-white p-5 text-neutral-950"
               >
-                <p className="font-display text-2xl text-neutral-950">{location.name}</p>
+                <h2 className="font-display text-2xl text-neutral-950">{location.name}</h2>
                 <p className="mt-2 text-sm text-neutral-600">{location.address}</p>
                 <p className="mt-2 text-xs text-neutral-600">{location.hours}</p>
 
@@ -71,37 +91,11 @@ export default function OrderOnlineContent(): ReactElement {
                       Toast Pickup
                     </a>
                   )}
-                  {location.doorDash && (
-                    <a
-                      href={location.doorDash}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="brand-btn-muted w-full px-3 py-2 text-sm sm:w-auto"
-                    >
-                      DoorDash
-                    </a>
-                  )}
-                  {location.grubHub && (
-                    <a
-                      href={location.grubHub}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="brand-btn-muted w-full px-3 py-2 text-sm sm:w-auto"
-                    >
-                      GrubHub
-                    </a>
-                  )}
-                  {location.uberEats && (
-                    <a
-                      href={location.uberEats}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="brand-btn-muted w-full px-3 py-2 text-sm sm:w-auto"
-                    >
-                      Uber Eats
-                    </a>
-                  )}
                 </div>
+
+                <h3 className="mt-6 text-xs font-semibold uppercase tracking-[0.14em] text-brand-green">Delivery</h3>
+                <DeliveryLinks location={location} className="mt-3 grid gap-2 sm:grid-cols-2" />
+                <p className="mt-3 text-xs text-neutral-600">Availability and fees depend on your delivery address.</p>
 
                 <Link
                   href={`/locations/${location.slug}`}

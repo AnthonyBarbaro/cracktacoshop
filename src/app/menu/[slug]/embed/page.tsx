@@ -2,6 +2,7 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import DeliveryLinks from "@/components/DeliveryLinks";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 import { getMenuForLocation } from "@/data/menu";
@@ -45,10 +46,10 @@ export async function generateMetadata({ params }: MenuEmbedPageProps): Promise<
       type: "website",
       images: [
         {
-          url: `${site.url}${location.image}`,
-          width: 1600,
-          height: 1000,
-          alt: `${location.name} Prime Tacos menu`,
+          url: `${site.url}/newlogo.png`,
+          width: 3822,
+          height: 2378,
+          alt: "Prime Tacos",
         },
       ],
     },
@@ -70,15 +71,6 @@ export default async function MenuEmbedPage({ params }: MenuEmbedPageProps) {
   const menu = getMenuForLocation(slug);
   const hasManualSections = menu.sections.length > 0;
 
-  const quickLinks = [
-    { name: "Toast Pickup", url: location.toastUrl, kind: "primary" as const },
-    { name: "DoorDash", url: location.doorDash, kind: "muted" as const },
-    { name: "GrubHub", url: location.grubHub, kind: "muted" as const },
-    { name: "Uber Eats", url: location.uberEats, kind: "muted" as const },
-  ].filter((entry): entry is { name: string; url: string; kind: "primary" | "muted" } =>
-    Boolean(entry.url),
-  );
-
   return (
     <>
       <SiteHeader ctaHref="/order-online" ctaLabel="Order Online" />
@@ -94,21 +86,17 @@ export default async function MenuEmbedPage({ params }: MenuEmbedPageProps) {
             </p>
 
             <div id="order-options" className="mt-4 flex scroll-mt-24 flex-wrap gap-2">
-              {quickLinks.map((entry) => (
+              {location.toastUrl && (
                 <a
-                  key={entry.name}
-                  href={entry.url}
+                  href={location.toastUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={
-                    entry.kind === "primary"
-                      ? "brand-btn w-full px-3 py-2 text-sm sm:w-auto"
-                      : "brand-btn-muted w-full px-3 py-2 text-sm sm:w-auto"
-                  }
+                  className="brand-btn w-full px-3 py-2 text-sm sm:w-auto"
                 >
-                  {entry.name}
+                  Toast Pickup
                 </a>
-              ))}
+              )}
+              <DeliveryLinks location={location} className="flex w-full flex-wrap gap-2" />
 
               {menu.printedMenuUrl && (
                 <a

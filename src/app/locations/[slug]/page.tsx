@@ -1,9 +1,9 @@
-import Image from "next/image";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Script from "next/script";
 
+import DeliveryLinks from "@/components/DeliveryLinks";
 import LocationOpenBadge from "@/components/LocationOpenBadge";
 import GoogleMapEmbed from "@/components/GoogleMapEmbed";
 import SiteFooter from "@/components/SiteFooter";
@@ -15,6 +15,7 @@ import {
   getGoogleMapsEmbedUrl,
   getGoogleMapsSearchUrl,
 } from "@/lib/google-maps";
+import { getMenuHref } from "@/lib/menu-link";
 
 type LocationPageProps = {
   params: Promise<{ slug: string }>;
@@ -53,10 +54,10 @@ export async function generateMetadata({ params }: LocationPageProps): Promise<M
       type: "website",
       images: [
         {
-          url: `${site.url}${location.image}`,
-          width: 1600,
-          height: 1000,
-          alt: `${location.name} location`,
+          url: `${site.url}/newlogo.png`,
+          width: 3822,
+          height: 2378,
+          alt: "Prime Tacos",
         },
       ],
     },
@@ -95,7 +96,7 @@ export default async function LocationPage({ params }: LocationPageProps) {
     "@type": "Restaurant",
     "@id": `${schemaUrl}#restaurant`,
     name: `${site.shortName} ${location.name}`,
-    image: `${site.url}${location.image}`,
+    image: `${site.url}/newlogo.png`,
     servesCuisine: ["Mexican", "Tri-Tip Tacos", "Burritos"],
     url: schemaUrl,
     telephone: location.phone,
@@ -134,17 +135,7 @@ export default async function LocationPage({ params }: LocationPageProps) {
               ← Back to locations
             </Link>
 
-            <div className="mt-5 grid gap-6 lg:grid-cols-[1.1fr_1fr] lg:items-center">
-              <div className="relative h-60 w-full overflow-hidden rounded-lg sm:h-80 lg:h-[28rem]">
-                <Image
-                  src={location.image}
-                  alt={location.name}
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 60vw"
-                  className="object-cover"
-                />
-              </div>
-
+            <div className="mt-5 border-y border-neutral-200 py-8 sm:py-10">
               <div className="space-y-4">
                 <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-green">
                   Prime Tacos
@@ -179,38 +170,7 @@ export default async function LocationPage({ params }: LocationPageProps) {
                   )}
                 </div>
 
-                <div className="flex flex-wrap gap-2 pt-1">
-                  {location.doorDash && (
-                    <a
-                      href={location.doorDash}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="brand-btn-muted w-full px-4 py-2 text-sm sm:w-auto"
-                    >
-                      DoorDash
-                    </a>
-                  )}
-                  {location.grubHub && (
-                    <a
-                      href={location.grubHub}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="brand-btn-muted w-full px-4 py-2 text-sm sm:w-auto"
-                    >
-                      GrubHub
-                    </a>
-                  )}
-                  {location.uberEats && (
-                    <a
-                      href={location.uberEats}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="brand-btn-muted w-full px-4 py-2 text-sm sm:w-auto"
-                    >
-                      Uber Eats
-                    </a>
-                  )}
-                </div>
+                <DeliveryLinks location={location} className="flex flex-wrap gap-2 pt-1" />
               </div>
             </div>
           </section>
@@ -273,7 +233,7 @@ export default async function LocationPage({ params }: LocationPageProps) {
             </div>
 
             <div className="flex flex-wrap gap-2">
-              <Link href={menuEmbedUrl} className="brand-btn w-full px-4 py-3 text-sm sm:w-auto">
+              <Link href={getMenuHref(location)} className="brand-btn w-full px-4 py-3 text-sm sm:w-auto">
                 Open Full Menu
               </Link>
               <Link

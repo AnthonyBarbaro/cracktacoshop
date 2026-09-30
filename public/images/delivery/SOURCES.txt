@@ -1,0 +1,8 @@
+Delivery brand assets
+
+doordash.svg: https://github.com/simple-icons/simple-icons/blob/develop/icons/doordash.svg
+ubereats.svg: https://github.com/simple-icons/simple-icons/blob/develop/icons/ubereats.svg
+postmates.svg: https://github.com/simple-icons/simple-icons/blob/develop/icons/postmates.svg
+grubhub.svg: https://media-cdn.grubhub.com/grubhub-assets/image/upload/v1744684421/wonderful/grubhub/GH_Logotype_Rebrand_Orange_RGB.svg (linked by https://www.grubhub.com/)
+
+Brand marks belong to their respective owners.

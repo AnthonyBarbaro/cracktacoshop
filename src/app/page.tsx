@@ -62,7 +62,7 @@ export default function HomePage() {
         "@type": "Restaurant",
         "@id": `${site.url}/locations/${location.slug}#restaurant`,
         name: `${site.shortName} ${location.name}`,
-        image: `${site.url}${location.image}`,
+        image: `${site.url}/newlogo.png`,
         url: `${site.url}/locations/${location.slug}`,
         telephone: location.phone,
         openingHours: location.hours,
@@ -83,7 +83,7 @@ export default function HomePage() {
       <SiteHeader />
       <Script id="homepage-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
       <HomeContent />
-      <SiteFooter />
+      <SiteFooter variant="minimal" />
     </>
   );
 }

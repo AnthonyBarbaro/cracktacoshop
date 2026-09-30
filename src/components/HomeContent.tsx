@@ -2,78 +2,143 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import type { ReactElement } from "react";
+import { useEffect, useRef, type ReactElement } from "react";
 
-import HeroPhotoCarousel from "@/components/HeroPhotoCarousel";
-import LocationOpenBadge from "@/components/LocationOpenBadge";
+import DeliveryButton from "@/components/DeliveryButton";
+import HomeLogoIntro from "@/components/HomeLogoIntro";
+import DeliveryLinks from "@/components/DeliveryLinks";
+import HomeHeroVideo from "@/components/HomeHeroVideo";
 import SiteIcon from "@/components/SiteIcon";
 import { locations } from "@/data/locations";
+import { site } from "@/data/site-content";
+import { getGoogleMapsDirectionsUrl } from "@/lib/google-maps";
+import { getMenuHref } from "@/lib/menu-link";
 import { useShoppingLocation } from "@/lib/use-shopping-location";
 
 export default function HomeContent(): ReactElement {
   const shoppingLocation = useShoppingLocation();
-  const visibleLocations = shoppingLocation ? [shoppingLocation] : locations;
-  const menuHref = shoppingLocation ? `/menu/${shoppingLocation.slug}/embed` : "/menu";
-  const orderHref = shoppingLocation ? menuHref : "/order-online";
-  const favorites = [
-    { name: "Tri-tip tacos", image: "/images/food-1.jpg", description: "Our signature bite.", alt: "Tri-tip taco with guacamole, onion, and fresh salsa" },
-    { name: "Al pastor", image: "/images/al-pastor-street-tacos.jpg", description: "A little sweet. A little heat.", alt: "Al pastor taco with pineapple and guacamole" },
-    { name: "Quesadillas", image: "/images/beef-quesadilla.jpg", description: "All the cheesy goodness.", alt: "Beef quesadilla with guacamole and crema" },
-    { name: "Breakfast burritos", image: "/images/legacy/breakfast-burrito.jpg", description: "Start your day the Prime way.", alt: "Breakfast burrito served with fresh toppings" },
-  ];
+  const menuHref = getMenuHref(shoppingLocation);
+  const mainRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const main = mainRef.current;
+    if (!main) return;
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const sections = main.querySelectorAll<HTMLElement>("[data-reveal]");
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08 });
+    sections.forEach((section) => observer.observe(section));
+    main.classList.add("motion-ready");
+
+    let frame = 0;
+    const update = (): void => {
+      frame = 0;
+      const progress = preference.matches ? 0 : Math.min(window.scrollY / 700, 1);
+      main.style.setProperty("--hero-shift", `${progress * 70}px`);
+    };
+    const onScroll = (): void => {
+      if (!frame) frame = window.requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    preference.addEventListener("change", onScroll);
+    return () => {
+      observer.disconnect();
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      preference.removeEventListener("change", onScroll);
+      main.classList.remove("motion-ready");
+    };
+  }, []);
 
   return (
-    <main id="main-content">
-      <section className="prime-hero" aria-labelledby="hero-title">
-        <div className="prime-hero-copy">
-          <p className="eyebrow">Home of the tri-tip taco</p>
-          <h1 id="hero-title">{shoppingLocation ? <>Prime Tacos.<br /><span>{shoppingLocation.name}.</span></> : <>Big flavor.<br /><span>Prime tacos.</span></>}</h1>
-          <p className="hero-description">{shoppingLocation ? shoppingLocation.address : "Tri-tip tacos. Handmade tortillas. Your new everyday favorite, right here in San Diego."}</p>
-          {shoppingLocation && <p className="mt-2 text-sm text-white/80">{shoppingLocation.hours}</p>}
-          <div className="hero-actions">
-            <Link href={orderHref} className="brand-btn px-6 py-4 text-sm">Order online<SiteIcon name="arrow" /></Link>
-            <Link href={menuHref} className="hero-menu-link">Explore the menu<SiteIcon name="arrow" /></Link>
+    <main ref={mainRef} id="main-content" className="home-editorial">
+      <section className="home-hero" aria-labelledby="home-title">
+        <div className="home-hero-media">
+          <Image src="/images/food-3.jpg" alt="Fresh tacos with guacamole, onion, and cilantro" fill sizes="(min-width: 800px) 60vw, 100vw" priority className="home-hero-photo" />
+        </div>
+        <div className="home-hero-inner">
+          <div className="home-hero-copy">
+            <p className="home-kicker">San Diego, California</p>
+            <HomeLogoIntro />
+            <h1 id="home-title">San Diego roots.<br /><em>Prime tacos.</em></h1>
+            <p className="home-hero-description">Burgundy pepper tri-tip. Handmade tortillas.<br />Your next favorite taco.</p>
+            <div className="home-hero-actions">
+              <Link href={menuHref} className="home-button">Explore the menu<SiteIcon name="arrow" /></Link>
+              <DeliveryButton className="home-button is-outline">Order delivery<SiteIcon name="delivery" /></DeliveryButton>
+            </div>
           </div>
-          <Link href={shoppingLocation ? `/locations/${shoppingLocation.slug}` : "#locations"} className="hero-location-link"><SiteIcon name="pin" />{shoppingLocation ? "Hours & location details" : "Four San Diego locations"}</Link>
-        </div>
-        <HeroPhotoCarousel key={shoppingLocation?.slug ?? "all-locations"} location={shoppingLocation} />
-      </section>
-
-      <section id="favorites" className="home-section section-shell" aria-labelledby="favorites-title">
-        <div className="section-heading-row">
-          <div><p className="eyebrow">Fresh from our kitchen</p><h2 id="favorites-title">Find your favorite.</h2></div>
-          <Link href={menuHref} className="text-link">Full menu<SiteIcon name="arrow" /></Link>
-        </div>
-        <div className="favorites-grid">
-          {favorites.map((item) => (
-            <Link key={item.name} href={menuHref} className="favorite-card">
-              <div className="favorite-image"><Image src={item.image} alt={item.alt} fill sizes="(max-width: 639px) 50vw, (max-width: 1023px) 45vw, 25vw" className="object-cover" /></div>
-              <div className="favorite-copy"><h3>{item.name}</h3><p>{item.description}</p><span className="favorite-arrow"><SiteIcon name="arrow" /></span></div>
-            </Link>
-          ))}
+          <a href="#locations" className="home-scroll-link"><span>Find your neighborhood</span><SiteIcon name="arrow" /></a>
         </div>
       </section>
 
-      <section className="prime-story-band">
-        <div className="section-shell story-band-inner">
-          <div><p className="eyebrow">Good food. Good company.</p><h2>A San Diego original.<br />A fresh new name.</h2></div>
-          <div><p>Meet Prime Tacos. Burgundy pepper tri-tip, homemade corn tortillas, and the flavors you come back for.</p><Link href="/our-story" className="text-link">Our story<SiteIcon name="arrow" /></Link></div>
-        </div>
-      </section>
+      <div className="home-welcome-line"><span>Good food. Good company.</span><span>Always a good idea.</span></div>
 
-      <section id="locations" className="home-section section-shell" aria-labelledby="locations-title">
-        <div className="section-heading-row">
-          <div><p className="eyebrow">Your next taco stop</p><h2 id="locations-title">{shoppingLocation ? `Visit ${shoppingLocation.name}.` : "Find your Prime."}</h2></div>
-          <Link href="/locations" className="text-link">All locations<SiteIcon name="arrow" /></Link>
+      <section id="locations" className="home-shops home-section-shell" aria-labelledby="home-locations-title">
+        <div className="home-section-intro" data-reveal>
+          <p className="home-kicker">Four locations. One San Diego.</p>
+          <h2 id="home-locations-title">See you <em>at Prime.</em></h2>
+          <p>Stop by your neighborhood shop. We’ll take care of the tacos.</p>
         </div>
-        <div className="home-locations">
-          {visibleLocations.map((location, index) => (
-            <article key={location.slug} className="home-location-row">
-              <span className="location-number" aria-hidden="true">0{index + 1}</span>
-              <div className="location-info"><div className="flex flex-wrap items-center gap-3"><h3>{location.name}</h3><LocationOpenBadge slug={location.slug} /></div><p>{location.address}</p><p className="location-hours">{location.hours}</p></div>
-              <div className="location-actions"><Link href={`/locations/${location.slug}`} className="text-link" aria-label={`View ${location.name} details`}>Details<SiteIcon name="arrow" /></Link><Link href={`/menu/${location.slug}/embed`} className="brand-btn px-5 py-3 text-xs" aria-label={`Order from ${location.name}`}>Order online</Link></div>
+        <div className="home-shop-grid">
+          {locations.map((location) => (
+            <article key={location.slug} className="home-shop" data-reveal>
+              <div className="home-shop-heading">
+                {shoppingLocation?.slug === location.slug && <span className="home-selected-store">Your store</span>}
+              </div>
+              <h3><Link href={`/locations/${location.slug}`}>{location.name}</Link></h3>
+              <p className="home-shop-address">{location.address}</p>
+              <p className="home-shop-hours">{location.hours}</p>
+              <div className="home-shop-links">
+                <Link href={getMenuHref(location)} aria-label={`View ${location.name} menu`}>Menu<SiteIcon name="arrow" /></Link>
+                {location.phone && <a href={`tel:${location.phone}`} aria-label={`Call ${location.name}`}><SiteIcon name="phone" />Call</a>}
+                <a href={getGoogleMapsDirectionsUrl(location)} target="_blank" rel="noopener noreferrer" aria-label={`Directions to ${location.name}`}><SiteIcon name="pin" />Directions</a>
+              </div>
+              <DeliveryButton locationSlug={location.slug} className="home-shop-delivery">Order delivery<SiteIcon name="arrow" /></DeliveryButton>
             </article>
           ))}
+        </div>
+      </section>
+
+      <section id="delivery" className="home-delivery" aria-labelledby="home-delivery-title">
+        <div className="home-section-shell">
+          <div className="home-section-intro" data-reveal>
+            <p className="home-kicker">Your tacos. Your way.</p>
+            <h2 id="home-delivery-title">From our kitchen<br /><em>to wherever you are.</em></h2>
+            <p>Pick up at the shop or choose your favorite delivery service.</p>
+          </div>
+          <div className="home-delivery-list">
+            {locations.map((location) => (
+              <article id={`delivery-${location.slug}`} key={location.slug} className="home-delivery-row" data-reveal>
+                <h3>{location.name}</h3>
+                <div className="home-delivery-options">
+                  {location.toastUrl && <a href={location.toastUrl} target="_blank" rel="noopener noreferrer" className="home-pickup-link" aria-label={`Order pickup from ${location.name}`}>Order pickup<SiteIcon name="bag" /></a>}
+                  <DeliveryLinks location={location} className="home-provider-links" />
+                </div>
+              </article>
+            ))}
+          </div>
+          <p className="home-delivery-note">Delivery availability depends on your address and the shop’s hours.</p>
+        </div>
+      </section>
+
+      <section className="home-kitchen home-section-shell" aria-labelledby="home-kitchen-title">
+        <div className="home-kitchen-copy" data-reveal>
+          <p className="home-kicker">A little more Prime</p>
+          <h2 id="home-kitchen-title">Made with care.<br /><em>Gone in a few bites.</em></h2>
+          <p>Fresh salsa, handmade tortillas, and our signature burgundy pepper tri-tip. The good stuff, made for everyday.</p>
+          <Link href="/our-story" className="home-text-link">Our story<SiteIcon name="arrow" /></Link>
+          <a href={site.instagram} target="_blank" rel="noopener noreferrer" className="home-text-link">Follow along on Instagram<SiteIcon name="arrow" /></a>
+        </div>
+        <div className="home-kitchen-film" data-reveal>
+          <HomeHeroVideo />
+          <p>A little look inside the kitchen.</p>
         </div>
       </section>
     </main>

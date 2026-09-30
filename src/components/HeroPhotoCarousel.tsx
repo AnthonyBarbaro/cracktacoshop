@@ -28,9 +28,7 @@ type Props = {
 };
 
 export default function HeroPhotoCarousel({ location }: Props): ReactElement {
-  const photos: HeroPhoto[] = location
-    ? [{ src: location.image, alt: `${location.name} location`, label: location.name }, ...heroFoodPhotos]
-    : heroFoodPhotos;
+  const photos: HeroPhoto[] = heroFoodPhotos;
   const [activeIndex, setActiveIndex] = useState(0);
   const [playback, setPlayback] = useState<boolean | null>(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -68,7 +66,7 @@ export default function HeroPhotoCarousel({ location }: Props): ReactElement {
       className="prime-hero-media hero-carousel"
       role="region"
       aria-roledescription="carousel"
-      aria-label={location ? `${location.name} and food photos` : "Prime Tacos food photos"}
+      aria-label={location ? `${location.name} food photos` : "Prime Tacos food photos"}
       onPointerEnter={(event) => { if (event.pointerType === "mouse") setIsHovered(true); }}
       onPointerLeave={(event) => { if (event.pointerType === "mouse") setIsHovered(false); }}
       onFocusCapture={(event) => {

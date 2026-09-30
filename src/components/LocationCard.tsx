@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 
 import type { Location } from "@/data/locations";
@@ -19,16 +18,6 @@ export default function LocationCard({ location }: Props) {
 
   return (
     <article className="overflow-hidden rounded-lg border border-neutral-200 bg-white">
-      <div className="relative h-52 w-full sm:h-60">
-        <Image
-          src={location.image}
-          alt={location.name}
-          fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 25vw"
-          className="object-cover"
-        />
-      </div>
-
       <div className="space-y-4 p-5 text-neutral-950 sm:p-6">
         <h2 className="font-display text-xl text-neutral-950 sm:text-2xl">{location.name}</h2>
 

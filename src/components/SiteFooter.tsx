@@ -2,16 +2,22 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import type { ReactElement } from "react";
 
 import { locations } from "@/data/locations";
 import { site } from "@/data/site-content";
 import SiteIcon from "@/components/SiteIcon";
 import { openCookieSettings } from "@/lib/cookie-preferences";
+import { getMenuHref } from "@/lib/menu-link";
 import { useShoppingLocation } from "@/lib/use-shopping-location";
 
-export default function SiteFooter() {
+type Props = {
+  variant?: "default" | "minimal";
+};
+
+export default function SiteFooter({ variant = "default" }: Props): ReactElement {
   const shoppingLocation = useShoppingLocation();
-  const menuHref = shoppingLocation ? `/menu/${shoppingLocation.slug}/embed` : "/menu";
+  const menuHref = getMenuHref(shoppingLocation);
   const footerLinks = [
     { href: menuHref, label: "Menu" },
     { href: "/locations", label: "Locations" },
@@ -21,6 +27,33 @@ export default function SiteFooter() {
     { href: "/faq", label: "FAQ" },
     { href: "/contact", label: "Contact" },
   ];
+
+  if (variant === "minimal") {
+    return (
+      <footer className="site-footer is-editorial">
+        <div className="section-shell footer-main">
+          <div>
+            <Link href="/" aria-label="Prime Tacos home"><Image src="/newlogo.png" alt="Prime Tacos" width={3822} height={2378} sizes="144px" className="footer-logo" /></Link>
+            <p>{site.tagline}<br />San Diego, California.</p>
+          </div>
+          <nav aria-label="Footer navigation" className="footer-links">
+            {footerLinks.map((link) => <Link key={link.href} href={link.href}>{link.label}</Link>)}
+          </nav>
+          <div className="footer-order">
+            <Link href="/order-online" className="brand-btn px-6 py-3 text-xs">Order online<SiteIcon name="arrow" className="h-4 w-4" /></Link>
+            <div className="mt-5 flex gap-5 text-sm">
+              <a href={site.instagram} target="_blank" rel="noopener noreferrer">Instagram</a>
+              <a href={site.facebook} target="_blank" rel="noopener noreferrer">Facebook</a>
+            </div>
+          </div>
+        </div>
+        <div className="section-shell footer-bottom">
+          <p>© {new Date().getFullYear()} Prime Tacos.</p>
+          <button type="button" onClick={openCookieSettings} className="min-h-11 underline underline-offset-4">Cookie settings</button>
+        </div>
+      </footer>
+    );
+  }
 
   return (
     <footer className="site-footer">
@@ -34,7 +67,7 @@ export default function SiteFooter() {
         </nav>
         <div className="footer-order">
           <p className="font-display text-2xl">Hungry yet?</p>
-          <Link href={shoppingLocation ? menuHref : "/order-online"} className="brand-btn mt-4 gap-3 px-6 py-4 text-sm">Order online<SiteIcon name="arrow" /></Link>
+          <Link href="/order-online" className="brand-btn mt-4 gap-3 px-6 py-4 text-sm">Order online<SiteIcon name="arrow" /></Link>
           <div className="mt-5 flex gap-5 text-sm text-white/75">
             <a href={site.instagram} target="_blank" rel="noopener noreferrer">Instagram</a>
             <a href={site.facebook} target="_blank" rel="noopener noreferrer">Facebook</a>
@@ -55,7 +88,7 @@ export default function SiteFooter() {
                     <SiteIcon name="phone" className="h-4 w-4" />{location.phone}
                   </a>
                 )}
-                <Link href={`/menu/${location.slug}/embed`} aria-label={`View ${location.name} menu`} className="inline-flex min-h-11 items-center gap-2 font-semibold hover:underline hover:underline-offset-4">
+                <Link href={getMenuHref(location)} aria-label={`View ${location.name} menu`} className="inline-flex min-h-11 items-center gap-2 font-semibold hover:underline hover:underline-offset-4">
                   View menu<SiteIcon name="arrow" className="h-4 w-4" />
                 </Link>
               </div>
