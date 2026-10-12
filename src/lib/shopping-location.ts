@@ -125,7 +125,8 @@ function getDistanceInKm(
   const sinLat = Math.sin(dLat / 2);
   const sinLon = Math.sin(dLon / 2);
   const a = sinLat * sinLat + Math.cos(lat1) * Math.cos(lat2) * sinLon * sinLon;
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const clampedA = Math.min(1, Math.max(0, a));
+  const c = 2 * Math.atan2(Math.sqrt(clampedA), Math.sqrt(1 - clampedA));
 
   return earthRadiusKm * c;
 }
@@ -135,19 +136,18 @@ export function findNearestLocationSlug(
   longitude: number,
   locationPoints: LocationPoint[],
 ): string | undefined {
-  if (locationPoints.length === 0) {
+  if (!isValidCoordinate(latitude, longitude)) {
     return undefined;
   }
 
-  let nearest = locationPoints[0];
-  let shortestDistance = getDistanceInKm(
-    latitude,
-    longitude,
-    nearest.latitude,
-    nearest.longitude,
-  );
+  let nearest: LocationPoint | undefined;
+  let shortestDistance = Infinity;
 
-  for (const locationPoint of locationPoints.slice(1)) {
+  for (const locationPoint of locationPoints) {
+    if (!isValidCoordinate(locationPoint.latitude, locationPoint.longitude)) {
+      continue;
+    }
+
     const distance = getDistanceInKm(
       latitude,
       longitude,
@@ -161,5 +161,10 @@ export function findNearestLocationSlug(
     }
   }
 
-  return nearest.slug;
+  return nearest?.slug;
+}
+
+function isValidCoordinate(latitude: number, longitude: number): boolean {
+  return Number.isFinite(latitude) && Math.abs(latitude) <= 90
+    && Number.isFinite(longitude) && Math.abs(longitude) <= 180;
 }

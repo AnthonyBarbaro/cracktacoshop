@@ -173,7 +173,8 @@
   min-height: 4.25rem;
   padding: .55rem .75rem;
   border-color: #dfe6dc;
-  border-radius: .75rem;
+  border-radius: .3rem;
+  background: #fcfbf6;
   box-shadow: none;
 }
 
@@ -235,6 +236,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .provider,
+  .compact a,
   .rowArrow {
     transition: none;
   }

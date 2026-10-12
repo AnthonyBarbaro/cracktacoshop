@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Order tri-tip tacos and burritos from Prime Tacos locations.",
     start_url: "/",
     display: "standalone",
-    background_color: "#ffffff",
-    theme_color: "#e21c2a",
+    background_color: "#f8f7f1",
+    theme_color: "#173d2c",
     icons: [
       {
         src: "/newlogo.png",

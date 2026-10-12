@@ -6,18 +6,19 @@ import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 import { locations } from "@/data/locations";
 import { site } from "@/data/site-content";
+import { getLocationOpeningHoursSpecification } from "@/lib/location-hours";
 
 export const metadata: Metadata = {
   title: { absolute: "Prime Tacos | Tri-Tip Tacos & Burritos in San Diego" },
   description:
-    "Order online from Prime Tacos San Diego. Find locations, browse menu options, and enjoy the world famous Burgundy Pepper Tri-Tip.",
+    "Order online from Prime Tacos San Diego. Find locations, browse menu options, and enjoy our burgundy pepper tri-tip.",
   alternates: {
     canonical: site.url,
   },
   openGraph: {
     title: "Prime Tacos San Diego",
     description:
-      "Home of the best tri-tip tacos and burritos. Order online and pick your nearest location.",
+      "Tri-tip tacos and burritos across San Diego. Order online and pick your nearest location.",
     url: site.url,
     siteName: site.shortName,
     locale: "en_US",
@@ -65,10 +66,10 @@ export default function HomePage() {
         image: `${site.url}/newlogo.png`,
         url: `${site.url}/locations/${location.slug}`,
         telephone: location.phone,
-        openingHours: location.hours,
+        openingHoursSpecification: getLocationOpeningHoursSpecification(location.slug),
         address: {
           "@type": "PostalAddress",
-          streetAddress: location.address.split(",")[0],
+          streetAddress: location.address.split(location.city)[0].replace(/[,\s]+$/, ""),
           addressLocality: location.city,
           addressRegion: location.state,
           postalCode: location.postalCode,

@@ -5,5 +5,5 @@ export function getMenuHref(location?: Location): string {
     return "/menu";
   }
 
-  return location.toastUrl ?? location.menuUrl ?? `/menu/${location.slug}/embed`;
+  return location.menuUrl ?? `/menu/${location.slug}/embed`;
 }

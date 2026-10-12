@@ -5,12 +5,11 @@ import Link from "next/link";
 import { useEffect, useRef, type ReactElement } from "react";
 
 import DeliveryButton from "@/components/DeliveryButton";
+import LocationOpenBadge from "@/components/LocationOpenBadge";
 import HomeLogoIntro from "@/components/HomeLogoIntro";
-import DeliveryLinks from "@/components/DeliveryLinks";
-import HomeHeroVideo from "@/components/HomeHeroVideo";
 import SiteIcon from "@/components/SiteIcon";
 import { locations } from "@/data/locations";
-import { site } from "@/data/site-content";
+import { signatureDishes } from "@/data/site-content";
 import { getGoogleMapsDirectionsUrl } from "@/lib/google-maps";
 import { getMenuHref } from "@/lib/menu-link";
 import { useShoppingLocation } from "@/lib/use-shopping-location";
@@ -61,7 +60,7 @@ export default function HomeContent(): ReactElement {
     <main ref={mainRef} id="main-content" className="home-editorial">
       <section className="home-hero" aria-labelledby="home-title">
         <div className="home-hero-media">
-          <Image src="/images/food-3.jpg" alt="Fresh tacos with guacamole, onion, and cilantro" fill sizes="(min-width: 800px) 60vw, 100vw" priority className="home-hero-photo" />
+          <Image src="/images/al-pastor-street-tacos.jpg" alt="Al pastor taco with pineapple, guacamole, onion, and lime" fill sizes="(min-width: 800px) 65vw, 100vw" priority className="home-hero-photo" />
         </div>
         <div className="home-hero-inner">
           <div className="home-hero-copy">
@@ -78,18 +77,46 @@ export default function HomeContent(): ReactElement {
         </div>
       </section>
 
-      <div className="home-welcome-line"><span>Good food. Good company.</span><span>Always a good idea.</span></div>
+      <div className="home-welcome-line"><span>Handmade tortillas</span><span>Burgundy pepper tri-tip</span><span>Four San Diego shops</span></div>
+
+      <section className="home-menu home-section-shell" aria-labelledby="home-menu-title">
+        <div className="home-menu-intro" data-reveal>
+          <div>
+            <p className="home-kicker">From our kitchen</p>
+            <h2 id="home-menu-title">Simple ingredients.<br /><em>Something special.</em></h2>
+          </div>
+          <div className="home-menu-intro-copy">
+            <p>Handmade tortillas, fresh salsa, and our signature burgundy pepper tri-tip. A few of the favorites that bring us together.</p>
+            <Link href={menuHref} className="home-text-link">Explore the menu<SiteIcon name="arrow" /></Link>
+          </div>
+        </div>
+        <div className="home-dish-grid">
+          {signatureDishes.map((dish, index) => (
+            <figure key={dish.src} className="home-dish" data-reveal>
+              <Link href={menuHref} className="home-dish-photo" aria-label={`Explore the menu for ${dish.name.toLowerCase()}`}>
+                <Image src={dish.src} alt={dish.alt} fill sizes={index === 0 ? "(min-width: 800px) 55vw, 100vw" : "(min-width: 800px) 40vw, 100vw"} />
+              </Link>
+              <figcaption className="home-dish-caption">
+                <span className="home-dish-number">0{index + 1}</span>
+                <div><h3>{dish.name}</h3><p>{dish.description}</p></div>
+                <Link href={menuHref} aria-label={`View menu for ${dish.name.toLowerCase()}`}><SiteIcon name="arrow" /></Link>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
 
       <section id="locations" className="home-shops home-section-shell" aria-labelledby="home-locations-title">
         <div className="home-section-intro" data-reveal>
           <p className="home-kicker">Four locations. One San Diego.</p>
           <h2 id="home-locations-title">See you <em>at Prime.</em></h2>
-          <p>Stop by your neighborhood shop. We’ll take care of the tacos.</p>
+          <p>Find your neighborhood shop for local menus, hours, and directions.</p>
         </div>
         <div className="home-shop-grid">
           {locations.map((location) => (
             <article key={location.slug} className="home-shop" data-reveal>
               <div className="home-shop-heading">
+                <LocationOpenBadge slug={location.slug} />
                 {shoppingLocation?.slug === location.slug && <span className="home-selected-store">Your store</span>}
               </div>
               <h3><Link href={`/locations/${location.slug}`}>{location.name}</Link></h3>
@@ -104,43 +131,25 @@ export default function HomeContent(): ReactElement {
             </article>
           ))}
         </div>
+        <p className="home-hours-note">Hours may vary on holidays. Call your shop before visiting.</p>
       </section>
 
-      <section id="delivery" className="home-delivery" aria-labelledby="home-delivery-title">
-        <div className="home-section-shell">
-          <div className="home-section-intro" data-reveal>
-            <p className="home-kicker">Your tacos. Your way.</p>
-            <h2 id="home-delivery-title">From our kitchen<br /><em>to wherever you are.</em></h2>
-            <p>Pick up at the shop or choose your favorite delivery service.</p>
+      <section id="delivery" className="home-ordering" aria-labelledby="home-delivery-title">
+        <div className="home-section-shell home-ordering-inner" data-reveal>
+          <div>
+            <p className="home-kicker">Make it Prime</p>
+            <h2 id="home-delivery-title">At our place.<br /><em>Or yours.</em></h2>
           </div>
-          <div className="home-delivery-list">
-            {locations.map((location) => (
-              <article id={`delivery-${location.slug}`} key={location.slug} className="home-delivery-row" data-reveal>
-                <div className="home-delivery-shop">
-                  <h3>{location.name}</h3>
-                  {location.toastUrl && <a href={location.toastUrl} target="_blank" rel="noopener noreferrer" className="home-pickup-link" aria-label={`Order pickup from ${location.name} (opens in a new tab)`}>Order pickup<SiteIcon name="bag" /></a>}
-                </div>
-                <div className="home-delivery-options">
-                  <DeliveryLinks location={location} variant="compact" />
-                </div>
-              </article>
-            ))}
+          <div className="home-ordering-copy">
+            <p>Pick up from your neighborhood shop, or let your favorite delivery service bring Prime to you.</p>
+            <div className="home-ordering-actions">
+              {shoppingLocation?.toastUrl
+                ? <a href={shoppingLocation.toastUrl} target="_blank" rel="noopener noreferrer" className="home-button">Order pickup<SiteIcon name="bag" /></a>
+                : <Link href="/order-online" className="home-button">Order pickup<SiteIcon name="bag" /></Link>}
+              <DeliveryButton className="home-button is-outline">Order delivery<SiteIcon name="delivery" /></DeliveryButton>
+            </div>
+            <p className="home-ordering-note">Availability depends on your address and the shop’s hours.</p>
           </div>
-          <p className="home-delivery-note">Delivery availability depends on your address and the shop’s hours.</p>
-        </div>
-      </section>
-
-      <section className="home-kitchen home-section-shell" aria-labelledby="home-kitchen-title">
-        <div className="home-kitchen-copy" data-reveal>
-          <p className="home-kicker">A little more Prime</p>
-          <h2 id="home-kitchen-title">Made with care.<br /><em>Gone in a few bites.</em></h2>
-          <p>Fresh salsa, handmade tortillas, and our signature burgundy pepper tri-tip. The good stuff, made for everyday.</p>
-          <Link href="/our-story" className="home-text-link">Our story<SiteIcon name="arrow" /></Link>
-          <a href={site.instagram} target="_blank" rel="noopener noreferrer" className="home-text-link">Follow along on Instagram<SiteIcon name="arrow" /></a>
-        </div>
-        <div className="home-kitchen-film" data-reveal>
-          <HomeHeroVideo />
-          <p>A little look inside the kitchen.</p>
         </div>
       </section>
     </main>

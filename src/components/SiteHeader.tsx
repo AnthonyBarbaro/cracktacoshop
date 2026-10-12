@@ -273,7 +273,7 @@ export default function SiteHeader({
               </span>
               <span className="header-location-chevron" aria-hidden="true" />
             </button>
-            <Link href={primaryCtaHref} className="brand-btn hidden px-5 py-3 text-xs md:inline-flex">
+            <Link href={primaryCtaHref} className="brand-btn hidden px-5 py-3 text-xs sm:inline-flex">
               {ctaLabel}
             </Link>
             <button ref={menuToggleButtonRef} type="button" onClick={openMenu} className="menu-toggle shrink-0" aria-label="Open menu" aria-expanded={activeDrawer === "menu"} aria-controls="mobile-site-menu">

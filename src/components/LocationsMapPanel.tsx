@@ -13,7 +13,6 @@ import {
 import {
   getGoogleMapsDirectionsUrl,
   getGoogleMapsEmbedUrl,
-  getGoogleMapsSearchUrl,
 } from "@/lib/google-maps";
 import LocationOpenBadge from "@/components/LocationOpenBadge";
 import GoogleMapEmbed from "@/components/GoogleMapEmbed";
@@ -42,11 +41,6 @@ export default function LocationsMapPanel({ locations }: Props) {
     apiKey: googleMapsApiKey,
   });
   const directionsUrl = getGoogleMapsDirectionsUrl({
-    address: activeLocation.address,
-    placeId: activeLocation.placeId,
-    googleMapsUrl: activeLocation.googleMapsUrl,
-  });
-  const googleListingUrl = getGoogleMapsSearchUrl({
     address: activeLocation.address,
     placeId: activeLocation.placeId,
     googleMapsUrl: activeLocation.googleMapsUrl,
@@ -116,17 +110,14 @@ export default function LocationsMapPanel({ locations }: Props) {
               >
                 Location Details
               </Link>
-              <a
-                href={googleListingUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="brand-btn-muted px-4 py-2 text-sm"
-              >
-                Google Reviews
-              </a>
-              <Link href={`/menu/${activeLocation.slug}/embed`} className="brand-btn px-4 py-2 text-sm">
-                Start Order
+              <Link href={`/menu/${activeLocation.slug}/embed`} className="brand-btn-muted px-4 py-2 text-sm">
+                View menu
               </Link>
+              {activeLocation.toastUrl && (
+                <a href={activeLocation.toastUrl} target="_blank" rel="noopener noreferrer" className="brand-btn px-4 py-2 text-sm">
+                  Order pickup
+                </a>
+              )}
             </div>
           </div>
         </div>

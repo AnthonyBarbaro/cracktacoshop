@@ -35,17 +35,12 @@ export function getGoogleMapsSearchUrl({
 export function getGoogleMapsDirectionsUrl({
   address,
   placeId,
-  googleMapsUrl,
   origin,
 }: MapsDirectionsOptions): string {
-  const normalizedGoogleMapsUrl = googleMapsUrl?.trim();
-  if (normalizedGoogleMapsUrl) {
-    return normalizedGoogleMapsUrl;
-  }
-
   const normalizedPlaceId = placeId?.trim();
   const destination = encodeURIComponent(address);
-  const originParam = origin ? `&origin=${encodeURIComponent(origin)}` : "";
+  const normalizedOrigin = origin?.trim();
+  const originParam = normalizedOrigin ? `&origin=${encodeURIComponent(normalizedOrigin)}` : "";
 
   if (normalizedPlaceId) {
     return `https://www.google.com/maps/dir/?api=1&destination=${destination}${originParam}&destination_place_id=${encodeURIComponent(normalizedPlaceId)}`;

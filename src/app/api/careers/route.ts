@@ -2,6 +2,7 @@ import nodemailer from "nodemailer";
 import { fileTypeFromBuffer } from "file-type";
 import { NextResponse } from "next/server";
 
+import { locations } from "@/data/locations";
 import { getCareersRecipientEmail } from "@/lib/careers-config";
 
 export const runtime = "nodejs";
@@ -73,9 +74,17 @@ function getOptionalFromAddress(smtpUser: string): string | undefined {
 }
 
 export async function POST(request: Request) {
+  let form: FormData;
   try {
-    const form = await request.formData();
+    form = await request.formData();
+  } catch {
+    return NextResponse.json(
+      { ok: false, message: "Please submit a valid application form." },
+      { status: 400 },
+    );
+  }
 
+  try {
     const name = normalizeValue(form.get("name"));
     const email = normalizeValue(form.get("email"));
     const phone = normalizeValue(form.get("phone"));
@@ -102,6 +111,13 @@ export async function POST(request: Request) {
       );
     }
 
+    if (!locations.some((location) => location.name === preferredLocation)) {
+      return NextResponse.json(
+        { ok: false, message: "Please choose one of our locations." },
+        { status: 400 },
+      );
+    }
+
     if (!(resume instanceof File)) {
       return NextResponse.json(
         { ok: false, message: "Please attach your resume (PDF or DOCX)." },
@@ -112,6 +128,13 @@ export async function POST(request: Request) {
     if (resume.size > MAX_BYTES) {
       return NextResponse.json(
         { ok: false, message: "Resume too large. Max file size is 10MB." },
+        { status: 400 },
+      );
+    }
+
+    if (resume.size === 0) {
+      return NextResponse.json(
+        { ok: false, message: "Your resume is empty. Please choose a PDF or DOCX file." },
         { status: 400 },
       );
     }
@@ -135,15 +158,14 @@ export async function POST(request: Request) {
 
     const resumeBuffer = Buffer.from(await resume.arrayBuffer());
     const sniffed = await fileTypeFromBuffer(resumeBuffer);
-    const declaredMime = resume.type || "application/octet-stream";
-    let resumeMime = sniffed?.mime ?? declaredMime;
+    const resumeMime = sniffed?.mime;
 
-    if (sniffed?.mime === "application/zip" && lowerName.endsWith(".docx")) {
-      resumeMime =
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-    }
-
-    if (!ALLOWED_MIME.has(resumeMime)) {
+    if (
+      !resumeMime ||
+      !ALLOWED_MIME.has(resumeMime) ||
+      (resumeMime === "application/pdf" &&
+        !/^%PDF-\d\.\d/.test(resumeBuffer.subarray(0, 8).toString("ascii")))
+    ) {
       return NextResponse.json(
         { ok: false, message: "Unsupported resume file type. Allowed: PDF or DOCX." },
         { status: 400 },
@@ -161,11 +183,12 @@ export async function POST(request: Request) {
     const smtpSecure = process.env.SMTP_SECURE === "true" || smtpPort === 465;
 
     if (!smtpHost || !smtpUser || !smtpPass) {
+      console.error("Careers email service is unavailable.");
       return NextResponse.json(
         {
           ok: false,
           message:
-            "Email is not configured yet. Set SMTP_HOST, SMTP_PORT, SMTP_USER, and SMTP_PASS.",
+            "Applications are temporarily unavailable. Please try again later.",
         },
         { status: 500 },
       );
@@ -235,8 +258,8 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ ok: true });
-  } catch (error) {
-    console.error("Careers API error", error);
+  } catch {
+    console.error("Careers application could not be processed.");
 
     return NextResponse.json(
       { ok: false, message: "We could not submit your application. Please try again." },

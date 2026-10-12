@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
+import SiteIcon from "@/components/SiteIcon";
 import { foodShowcase, highlights, site } from "@/data/site-content";
 
 export const metadata: Metadata = {
@@ -12,97 +13,111 @@ export const metadata: Metadata = {
   alternates: {
     canonical: `${site.url}/our-story`,
   },
+  openGraph: {
+    title: "Our Story",
+    description: "Learn the story behind Prime Tacos and our tri-tip taco tradition.",
+    url: `${site.url}/our-story`,
+    images: ["/newlogo.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Our Story",
+    description: "Learn the story behind Prime Tacos and our tri-tip taco tradition.",
+    images: ["/newlogo.png"],
+  },
 };
 
 export default function OurStoryPage() {
+  const kitchenPhotos = foodShowcase.filter((item) =>
+    ["/images/food-1.jpg", "/images/food-3.jpg", "/images/beef-quesadilla.jpg"].includes(item.src),
+  );
+
   return (
     <>
       <SiteHeader ctaHref="/order-online" ctaLabel="Order Online" />
-      <main id="main-content" className="pb-20 pt-10 sm:pt-12">
-        <section className="section-shell">
-          <div className="py-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-green">
-              Our Story
-            </p>
-            <h1 className="mt-3 max-w-4xl font-display text-3xl text-neutral-950 sm:text-4xl lg:text-5xl">
-              Welcome to Prime Tacos
-            </h1>
-            <p className="mt-4 max-w-3xl text-sm text-neutral-600 sm:text-base">{site.story}</p>
-            <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-3">
-              <Link href="/order-online" className="brand-btn w-full px-5 py-3 text-sm sm:w-auto">
-                Order Online
+      <main id="main-content" className="secondary-page story-page">
+        <section className="section-shell page-intro story-hero" aria-labelledby="story-title">
+          <div className="story-hero-copy">
+            <p className="page-kicker">Our Story</p>
+            <h1 id="story-title" className="page-title">San Diego roots.<br /><em>Prime flavor.</em></h1>
+            <p className="page-description">{site.story}</p>
+            <div className="story-hero-actions">
+              <Link href="/order-online" className="brand-btn px-5 py-3 text-sm">
+                Order online<SiteIcon name="arrow" className="h-4 w-4" />
               </Link>
-              <Link href="/locations" className="brand-btn-muted w-full px-5 py-3 text-sm sm:w-auto">
-                View Locations
+              <Link href="/locations" className="text-link">
+                Find your Prime<SiteIcon name="arrow" className="h-4 w-4" />
               </Link>
             </div>
           </div>
+          <figure className="story-hero-photo">
+            <div className="story-hero-image relative aspect-[4/5] overflow-hidden">
+              <Image
+                src="/images/al-pastor-street-tacos.jpg"
+                alt="Al pastor street taco with pineapple, guacamole, onion, cilantro, and lime"
+                fill
+                sizes="(max-width: 800px) 100vw, 45vw"
+                className="object-cover"
+                priority
+              />
+            </div>
+            <figcaption>Al pastor street tacos, from our kitchen.</figcaption>
+          </figure>
         </section>
 
-        <section className="section-shell mt-10">
-          <div className="grid gap-4 md:grid-cols-3">
-            {highlights.map((item) => (
-              <article
-                key={item.title}
-                className="rounded-lg border border-neutral-200 bg-white p-5 text-neutral-600"
-              >
-                <h2 className="font-display text-2xl text-neutral-950">{item.title}</h2>
-                <p className="mt-2 text-sm text-neutral-600">{item.description}</p>
+        <section className="section-shell page-section" aria-label="What makes Prime Tacos">
+          <div className="story-values">
+            {highlights.map((item, index) => (
+              <article key={item.title} className="story-value">
+                <span className="story-value-number" aria-hidden="true">0{index + 1}</span>
+                <h2>{item.title}</h2>
+                <p>{item.description}</p>
               </article>
             ))}
           </div>
         </section>
 
-        <section className="section-shell mt-10">
-          <div className="grid items-stretch gap-5 lg:grid-cols-[1.05fr_0.95fr]">
-            <figure className="overflow-hidden rounded-lg border border-neutral-200 bg-white p-2 sm:p-3">
-              <div className="relative h-[24rem] overflow-hidden rounded-lg bg-white sm:h-[30rem] lg:h-[38rem]">
-                <Image
-                  src="/images/family.png"
-                  alt="Prime Tacos team celebrating the Coronado opening"
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 55vw"
-                  className="object-contain"
-                  priority
-                />
-              </div>
-            </figure>
-
-            <article className="py-4 lg:px-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-green">
-                San Diego Roots
-              </p>
-              <h2 className="mt-3 font-display text-3xl text-neutral-950 sm:text-4xl">
-                Rooted in San Diego
+        <section className="section-shell page-section" aria-labelledby="story-roots-title">
+          <div className="story-note">
+            <div className="story-note-heading">
+              <p className="page-kicker">What matters to us</p>
+              <h2 id="story-roots-title">
+                Good food.<br /><em>Good company.</em>
               </h2>
-              <p className="mt-4 text-sm text-neutral-600 sm:text-base">
+            </div>
+            <div className="story-note-copy">
+              <p>
                 Prime Tacos is proudly San Diego based, built around quality food, fast service, and a team that
                 treats guests like regulars from day one.
               </p>
-              <p className="mt-3 text-sm text-neutral-600 sm:text-base">
+              <p>
                 From grand openings to daily lunch rushes, we keep the same goal: bold flavor, consistent execution,
                 and a welcoming vibe in every shop.
               </p>
-            </article>
+            </div>
           </div>
         </section>
 
-        <section className="section-shell mt-10">
-          <h2 className="font-display text-3xl text-neutral-950 sm:text-4xl">From our kitchen</h2>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {foodShowcase.map((item) => (
-              <figure
-                key={item.src}
-                className="overflow-hidden rounded-lg border border-neutral-200 bg-white"
-              >
+        <section className="section-shell page-section" aria-labelledby="story-kitchen-title">
+          <div className="story-gallery-heading">
+            <div>
+              <p className="page-kicker">From our kitchen</p>
+              <h2 id="story-kitchen-title">A taste of Prime.</h2>
+            </div>
+            <Link href="/menu" className="text-link">Explore the menu<SiteIcon name="arrow" className="h-4 w-4" /></Link>
+          </div>
+          <div className="story-gallery">
+            {kitchenPhotos.map((item) => (
+              <figure key={item.src} className="story-gallery-photo">
                 <Image
                   src={item.src}
                   alt={item.alt}
                   width={860}
                   height={820}
-                  className="h-64 w-full object-cover"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  className="aspect-[4/5] w-full object-cover"
                 />
-                <figcaption className="px-4 py-3 text-sm text-neutral-600">{item.label}</figcaption>
+                <figcaption>{item.label}</figcaption>
               </figure>
             ))}
           </div>

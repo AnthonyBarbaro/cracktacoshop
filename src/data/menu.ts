@@ -2,6 +2,7 @@ export type MenuItem = {
   name: string;
   description?: string;
   price: string;
+  priceOptions?: Array<{ label: string; price: string }>;
   badge?: string;
 };
 
@@ -20,7 +21,7 @@ export type LocationMenu = {
   sections: MenuSection[];
   nav: Array<{ sectionId: string; label: string }>;
   notes: string[];
-  priceSource: "manual" | "location-menu-link";
+  priceSource: "manual" | "printed-menu" | "location-menu-link";
   hasLocationSpecificPricing: boolean;
   printedMenuUrl?: string;
 };
@@ -536,13 +537,231 @@ const missionValleySections: MenuSection[] = [
   },
 ];
 
-const emptySections: MenuSection[] = [];
+function tacoPrices(single: string, pair: string): Array<{ label: string; price: string }> {
+  return [{ label: "1 taco", price: single }, { label: "2 tacos", price: pair }];
+}
+
+// Transcribed from the printed menu linked by the official Seaport Village page.
+const seaportVillageSections: MenuSection[] = [
+  {
+    id: "tacos", title: "Tacos", groups: [
+      { title: "Meat", items: [
+        { name: "Tri-Tip Taco", description: "Onion, guacamole, cilantro", price: "$6.95", priceOptions: tacoPrices("$6.95", "$12.95"), badge: "Signature" },
+        { name: "Al Pastor Taco", description: "Onion, cilantro, guacamole", price: "$6.95", priceOptions: tacoPrices("$6.95", "$12.95") },
+        { name: "Pollo Asada Taco", description: "Onion, cilantro, guacamole", price: "$5.95", priceOptions: tacoPrices("$5.95", "$11.50") },
+      ] },
+      { title: "Seafood", items: [
+        { name: "Baja Shrimp Taco", description: "Cabbage, pico, chipotle", price: "$6.95", priceOptions: tacoPrices("$6.95", "$12.95") },
+        { name: "Battered Fish Taco", description: "Cabbage, pico, chipotle", price: "$5.95", priceOptions: tacoPrices("$5.95", "$11.50") },
+        { name: "Grilled Fish Taco", description: "Cabbage, pico, chipotle", price: "$5.95", priceOptions: tacoPrices("$5.95", "$11.50") },
+      ] },
+      { title: "Vegetarian", items: [
+        { name: "Potato Taco", description: "Cabbage, pico, cotija cheese", price: "$5.95", priceOptions: tacoPrices("$5.95", "$11.50") },
+      ] },
+    ],
+  },
+  {
+    id: "burritos", title: "Burritos", groups: [
+      { title: "Meat & seafood", items: [
+        { name: "Tri-Tip Burrito", description: "Guacamole, pico", price: "$18.95" },
+        { name: "Al Pastor Burrito", description: "Pineapple, guacamole, pico", price: "$17.95" },
+        { name: "Pollo Asado Burrito", description: "Guacamole, pico", price: "$17.95" },
+        { name: "Baja Shrimp Burrito", description: "Rice, cabbage, pico, chipotle aioli", price: "$18.95" },
+        { name: "California Burrito", description: "Fries, guacamole, cheese, sour cream, tri-tip", price: "$18.95" },
+      ] },
+      { title: "Vegetarian", items: [
+        { name: "Veggie Burrito", description: "Rice, beans, lettuce, pico, guacamole", price: "$15.95" },
+        { name: "Bean & Cheese Burrito", description: "Beans, cheddar cheese", price: "$11.95" },
+      ] },
+    ],
+  },
+  {
+    id: "breakfast", title: "Breakfast", groups: [
+      { title: "Burritos", items: [
+        { name: "Tri-Tip Breakfast Burrito", description: "Eggs, potatoes, cheese", price: "$18.95" },
+        { name: "Sausage Burrito", description: "Eggs, potatoes, cheese", price: "$16.95" },
+        { name: "Bacon Burrito", description: "Eggs, potatoes, cheese", price: "$16.95" },
+        { name: "Ham Burrito", description: "Eggs, potatoes, cheese", price: "$16.95" },
+        { name: "Potato Burrito", description: "Eggs, potatoes, cheese", price: "$15.95" },
+      ] },
+      { title: "Chilaquiles", items: [
+        { name: "Chilaquiles", description: "Red or green salsa, served with two eggs", price: "$16.95" },
+        { name: "Add chicken, tri-tip, or al pastor", price: "$5.00" },
+      ] },
+    ],
+  },
+  {
+    id: "quesadillas", title: "Quesadillas", groups: [
+      { title: "Served with sour cream & guacamole", items: [
+        { name: "Tri-Tip Quesadilla", price: "$17.95" },
+        { name: "Al Pastor Quesadilla", price: "$16.95" },
+        { name: "Pollo Asado Quesadilla", price: "$16.95" },
+        { name: "Shrimp Quesadilla", price: "$17.95" },
+      ] },
+    ],
+  },
+  {
+    id: "rolled-tacos", title: "Rolled tacos", groups: [
+      { title: "Beef or chicken", items: [
+        { name: "3 Rolled Tacos", description: "Guacamole, pico, lettuce, cheese", price: "$9.95" },
+        { name: "6 Rolled Tacos", description: "Guacamole, pico, lettuce, cheese", price: "$16.95" },
+      ] },
+    ],
+  },
+  {
+    id: "specials", title: "Specials", groups: [
+      { title: "Nachos, fries & more", items: [
+        { name: "Tri-Tip Nachos", price: "$17.95" },
+        { name: "Tri-Tip French Fries", price: "$17.95" },
+        { name: "Chicken Nachos", price: "$16.95" },
+        { name: "Chicken Fries", price: "$16.95" },
+        { name: "Fish & Chips", price: "$19.95" },
+      ] },
+    ],
+  },
+  {
+    id: "sides-desserts", title: "Sides & desserts", groups: [
+      { title: "Sides", items: [
+        { name: "Mexican Street Corn", price: "$6.95" },
+        { name: "Side of Rice", price: "$6.95" },
+        { name: "Side of Beans", price: "$6.95" },
+        { name: "French Fries", price: "$5.95" },
+        { name: "Chips & Guacamole", price: "$13.95" },
+      ] },
+      { title: "Dessert", items: [
+        { name: "2 Churros", price: "$9.95" },
+      ] },
+    ],
+  },
+];
+
+// Transcribed from the printed menu linked by the official Encinitas page.
+const encinitasSections: MenuSection[] = [
+  {
+    id: "tacos", title: "Tacos", groups: [
+      { title: "Meat", items: [
+        { name: "Tri-Tip Taco", price: "$6.75", priceOptions: tacoPrices("$6.75", "$12.00"), badge: "Signature" },
+        { name: "Pollo Asada Taco", price: "$5.95", priceOptions: tacoPrices("$5.95", "$11.00") },
+        { name: "Al Pastor Taco", price: "$6.95", priceOptions: tacoPrices("$6.95", "$12.00") },
+        { name: "Birria Taco", price: "$6.95", priceOptions: tacoPrices("$6.95", "$12.00") },
+      ] },
+      { title: "Seafood", items: [
+        { name: "Baja Shrimp Taco", price: "$6.95", priceOptions: tacoPrices("$6.95", "$12.00") },
+        { name: "Battered Fish Taco", price: "$6.95", priceOptions: tacoPrices("$6.95", "$12.00") },
+        { name: "Grilled Fish Taco", price: "$6.95", priceOptions: tacoPrices("$6.95", "$12.00") },
+      ] },
+      { title: "Vegetarian", items: [
+        { name: "Potato Taco", price: "$5.95", priceOptions: tacoPrices("$5.95", "$11.00") },
+      ] },
+    ],
+  },
+  {
+    id: "burritos", title: "Burritos", groups: [
+      { title: "Meat & seafood", items: [
+        { name: "Tri-Tip Burrito", description: "Tri-tip, guacamole, pico", price: "$17.95" },
+        { name: "Al Pastor Burrito", description: "Al pastor, guacamole, pico", price: "$15.95" },
+        { name: "Pollo Asada Burrito", description: "Pollo asada, guacamole, pico", price: "$15.95" },
+        { name: "California Burrito", description: "Tri-tip, fries, guacamole, sour cream, cheese", price: "$17.95" },
+        { name: "Surf & Turf Burrito", description: "Tri-tip, shrimp, cabbage, chipotle aioli, pico", price: "$18.95" },
+        { name: "Baja Shrimp Burrito", description: "Shrimp, rice, chipotle aioli, cabbage, pico", price: "$17.95" },
+      ] },
+      { title: "Vegetarian", items: [
+        { name: "Veggie Burrito", description: "Rice, beans, lettuce, pico, guacamole", price: "$14.95" },
+        { name: "Bean & Cheese Burrito", description: "Beans, cheddar cheese", price: "$10.95" },
+      ] },
+    ],
+  },
+  {
+    id: "breakfast", title: "Breakfast", groups: [
+      { title: "Burritos", items: [
+        { name: "Tri-Tip Breakfast Burrito", description: "Tri-tip, eggs, potatoes, cheese", price: "$16.95" },
+        { name: "Sausage Burrito", description: "Sausage, eggs, potatoes, cheese", price: "$15.95" },
+        { name: "Bacon Burrito", description: "Bacon, eggs, potatoes, cheese", price: "$15.95" },
+        { name: "Ham Burrito", description: "Ham, eggs, potatoes, cheese", price: "$15.95" },
+        { name: "Chorizo Burrito", description: "Chorizo, eggs, potatoes, cheese", price: "$15.95" },
+        { name: "Potato Burrito", description: "Eggs, potatoes, cheese", price: "$13.95" },
+      ] },
+      { title: "Chilaquiles", items: [
+        { name: "Chilaquiles", description: "Red or green sauce", price: "$12.95" },
+        { name: "Add tri-tip, chicken, or al pastor", price: "$5.00" },
+      ] },
+    ],
+  },
+  {
+    id: "quesadillas", title: "Quesadillas", groups: [
+      { title: "Served with sour cream & guacamole", items: [
+        { name: "Tri-Tip Quesadilla", price: "$15.95" },
+        { name: "Pollo Asada Quesadilla", price: "$14.95" },
+        { name: "Al Pastor Quesadilla", price: "$14.95" },
+        { name: "Baja Shrimp Quesadilla", price: "$15.95" },
+        { name: "Cheese Quesadilla", price: "$9.95" },
+        { name: "Birria Quesadilla", price: "$15.95" },
+      ] },
+    ],
+  },
+  {
+    id: "rolled-tacos", title: "Rolled tacos", groups: [
+      { title: "Chicken or beef", items: [
+        { name: "3 Rolled Tacos", description: "Lettuce, guacamole, cheese", price: "$9.95" },
+        { name: "5 Rolled Tacos", description: "Lettuce, guacamole, cheese", price: "$14.95" },
+      ] },
+    ],
+  },
+  {
+    id: "specials", title: "Specials", groups: [
+      { title: "Nachos & fries", items: [
+        { name: "Tri-Tip Nachos", price: "$16.95" },
+        { name: "Pollo Asado Nachos", price: "$15.95" },
+        { name: "Al Pastor Nachos", price: "$16.95" },
+        { name: "Tri-Tip Fries", price: "$16.95" },
+        { name: "Pollo Asado Fries", price: "$15.95" },
+        { name: "Al Pastor Fries", price: "$14.95" },
+        { name: "Fish & Chips", price: "$19.95" },
+      ] },
+    ],
+  },
+  {
+    id: "sides-desserts", title: "Sides & desserts", groups: [
+      { title: "Sides", items: [
+        { name: "Chips & Guacamole", price: "$11.95" },
+        { name: "Chips & Salsa", price: "$7.95" },
+        { name: "Side of Rice", price: "$5.95" },
+        { name: "Side of Beans", price: "$5.95" },
+        { name: "French Fries", price: "$6.95" },
+        { name: "Hot Carrots", description: "With jalapeños", price: "$4.95" },
+        { name: "Mexican Street Corn", price: "$6.95" },
+      ] },
+      { title: "Dessert", items: [
+        { name: "2 Churros", price: "$6.95" },
+      ] },
+    ],
+  },
+  {
+    id: "beverages", title: "Drinks", groups: [
+      { title: "Beverages", items: [
+        { name: "Fountain Drink", price: "$3.95" },
+        { name: "Bottled Water", description: "20 oz.", price: "$2.95" },
+        { name: "Agua Frescas", price: "$4.95" },
+        { name: "Jarritos", price: "$4.95" },
+        { name: "Topo Chico", price: "$4.95" },
+      ] },
+    ],
+  },
+];
+
+const unavailableMenu: LocationMenu = {
+  sections: [],
+  nav: [],
+  notes: ["Choose a location to browse its menu."],
+  priceSource: "location-menu-link",
+  hasLocationSpecificPricing: false,
+};
 
 const missionValleyMenu: LocationMenu = {
   sections: missionValleySections,
   nav: missionValleySections.map((section) => ({ sectionId: section.id, label: section.title })),
   notes: [
-    "Mission Valley pricing is maintained directly in this website menu.",
+    "These prices apply to Mission Valley.",
     "Prices and availability can still change by ordering provider.",
   ],
   priceSource: "manual",
@@ -552,30 +771,30 @@ const missionValleyMenu: LocationMenu = {
 const locationMenus: Record<string, LocationMenu> = {
   "mission-valley": missionValleyMenu,
   "seaport-village": {
-    sections: emptySections,
-    nav: [],
+    sections: seaportVillageSections,
+    nav: seaportVillageSections.map((section) => ({ sectionId: section.id, label: section.title })),
     notes: [
-      "Seaport Village has location-specific pricing.",
-      "Use the attached menu link or delivery providers for the latest prices.",
+      "Items and prices are transcribed from the printed menu linked by Seaport Village.",
+      "Printed prices are a reference. Confirm current prices and availability when ordering.",
     ],
-    priceSource: "location-menu-link",
+    priceSource: "printed-menu",
     hasLocationSpecificPricing: true,
     printedMenuUrl: "https://cracktacoshop.com/wp-content/uploads/2024/05/cracktaco-menu-seaport.jpg",
   },
   encinitas: {
-    sections: emptySections,
-    nav: [],
+    sections: encinitasSections,
+    nav: encinitasSections.map((section) => ({ sectionId: section.id, label: section.title })),
     notes: [
-      "Encinitas has location-specific pricing.",
-      "Use Toast or the attached menu image for the latest prices.",
+      "Items and prices are transcribed from the printed menu linked by Encinitas.",
+      "Printed prices are a reference. Confirm current prices and availability when ordering.",
     ],
-    priceSource: "location-menu-link",
+    priceSource: "printed-menu",
     hasLocationSpecificPricing: true,
     printedMenuUrl:
       "https://cracktacoshop.com/wp-content/uploads/2025/10/CrackTaco-Menu-Small-Front-scaled.jpg",
   },
   coronado: {
-    sections: emptySections,
+    sections: [],
     nav: [],
     notes: [
       "Coronado has location-specific pricing.",
@@ -587,7 +806,7 @@ const locationMenus: Record<string, LocationMenu> = {
 };
 
 export function getMenuForLocation(slug: string): LocationMenu {
-  return locationMenus[slug] ?? missionValleyMenu;
+  return Object.prototype.hasOwnProperty.call(locationMenus, slug) ? locationMenus[slug] : unavailableMenu;
 }
 
 export function getFlattenedMenuItems(sections: MenuSection[]): MenuItem[] {

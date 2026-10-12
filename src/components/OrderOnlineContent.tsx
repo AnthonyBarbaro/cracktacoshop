@@ -1,9 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, type ReactElement } from "react";
 
 import DeliveryLinks from "@/components/DeliveryLinks";
+import LocationOpenBadge from "@/components/LocationOpenBadge";
+import SiteIcon from "@/components/SiteIcon";
 
 import { locations } from "@/data/locations";
 import { getGoogleMapsDirectionsUrl } from "@/lib/google-maps";
@@ -17,16 +20,16 @@ export default function OrderOnlineContent(): ReactElement {
   const displayedLocations = selectedLocation ? [selectedLocation] : locations;
 
   return (
-    <main id="main-content" className="pb-20 pt-10 sm:pt-12">
-      <section className="section-shell">
-        <div className="py-2">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-green">
+    <main id="main-content" className="page-main">
+      <section className="section-shell page-intro order-intro">
+        <div>
+          <p className="page-kicker">
             Order Online
           </p>
-          <h1 className="mt-3 max-w-4xl font-display text-3xl text-neutral-950 sm:text-4xl lg:text-5xl">
+          <h1 className="page-title">
             {selectedLocation ? `Order from ${selectedLocation.name}` : "Order online"}
           </h1>
-          <p className="mt-4 max-w-2xl text-sm text-neutral-600 sm:text-base">
+          <p className="page-description">
             {selectedLocation
               ? `Choose an available ordering option for ${selectedLocation.name}.`
               : "Select a location below and choose your preferred ordering provider."}
@@ -43,7 +46,7 @@ export default function OrderOnlineContent(): ReactElement {
                 setShowAllLocations(!slug);
                 if (slug) setStoredShoppingLocationSlug(slug);
               }}
-              className="mt-2 min-h-12 w-full rounded border border-neutral-300 bg-white px-3 text-base text-neutral-950"
+              className="brand-input mt-2 px-3 text-base"
             >
               <option value="">All locations</option>
               {locations.map((location) => (
@@ -52,9 +55,10 @@ export default function OrderOnlineContent(): ReactElement {
             </select>
           </div>
         </div>
+        <figure className="order-intro-photo"><Image src="/images/legacy/breakfast-burrito.jpg" alt="Breakfast burrito halves filled with eggs and meat" fill sizes="(min-width: 800px) 40vw, 100vw" priority /></figure>
       </section>
 
-      <section className="section-shell mt-10">
+      <section className="section-shell order-options-section">
         <div className={`grid gap-4 ${selectedLocation ? "max-w-2xl" : "md:grid-cols-2"}`}>
           {displayedLocations.map((location) => {
             const directionsUrl = getGoogleMapsDirectionsUrl({
@@ -66,9 +70,9 @@ export default function OrderOnlineContent(): ReactElement {
             return (
               <article
                 key={location.slug}
-                className="rounded-lg border border-neutral-200 bg-white p-5 text-neutral-950"
+                className="surface-panel order-shop-panel"
               >
-                <h2 className="font-display text-2xl text-neutral-950">{location.name}</h2>
+                <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="font-display text-3xl">{location.name}</h2><LocationOpenBadge slug={location.slug} /></div>
                 <p className="mt-2 text-sm text-neutral-600">{location.address}</p>
                 <p className="mt-2 text-xs text-neutral-600">{location.hours}</p>
 
@@ -77,7 +81,7 @@ export default function OrderOnlineContent(): ReactElement {
                     href={directionsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="brand-btn-directions w-full px-3 py-2 text-sm sm:w-auto"
+                    className="brand-btn-muted w-full px-4 py-3 text-sm sm:w-auto"
                   >
                     Get Directions
                   </a>
@@ -86,20 +90,20 @@ export default function OrderOnlineContent(): ReactElement {
                       href={location.toastUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="brand-btn w-full px-3 py-2 text-sm sm:w-auto"
+                      className="brand-btn w-full px-4 py-3 text-sm sm:w-auto"
                     >
-                      Toast Pickup
+                      Order pickup<SiteIcon name="bag" />
                     </a>
                   )}
                 </div>
 
                 <h3 className="mt-6 text-xs font-semibold uppercase tracking-[0.14em] text-brand-green">Delivery</h3>
-                <DeliveryLinks location={location} className="mt-3 grid gap-2 sm:grid-cols-2" />
+                <DeliveryLinks location={location} variant="rows" className="mt-3" />
                 <p className="mt-3 text-xs text-neutral-600">Availability and fees depend on your delivery address.</p>
 
                 <Link
                   href={`/locations/${location.slug}`}
-                  className="brand-btn-muted mt-4 inline-flex w-full px-3 py-2 text-sm sm:w-auto"
+                  className="text-link mt-4"
                 >
                   Location details
                 </Link>

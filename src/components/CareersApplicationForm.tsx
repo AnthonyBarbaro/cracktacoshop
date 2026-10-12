@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { type ChangeEvent, type FormEvent, useRef, useState } from "react";
 
 import { locations } from "@/data/locations";
 
@@ -22,14 +22,43 @@ const INITIAL_FORM_STATE: FormState = {
   website: "",
 };
 
+const MAX_RESUME_BYTES = 10 * 1024 * 1024;
+
+function getResumeError(file: File): string | null {
+  if (file.size === 0) {
+    return "Your resume is empty. Please choose a PDF or DOCX file.";
+  }
+
+  if (file.size > MAX_RESUME_BYTES) {
+    return "Resume too large. Max file size is 10MB.";
+  }
+
+  if (!/\.(pdf|docx)$/i.test(file.name)) {
+    return "Please choose a PDF or DOCX resume.";
+  }
+
+  return null;
+}
+
 export default function CareersApplicationForm() {
   const resumeInputRef = useRef<HTMLInputElement | null>(null);
   const [formState, setFormState] = useState<FormState>(INITIAL_FORM_STATE);
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleResumeChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    const file = event.target.files?.[0];
+    event.target.setCustomValidity(file ? getResumeError(file) ?? "" : "");
+    setStatus("idle");
+    setErrorMessage("");
+  };
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
+    if (status === "submitting") {
+      return;
+    }
+
     setStatus("submitting");
     setErrorMessage("");
 
@@ -39,6 +68,14 @@ export default function CareersApplicationForm() {
       if (!resumeFile) {
         setStatus("error");
         setErrorMessage("Please attach your resume (PDF or DOCX).");
+        return;
+      }
+
+      const resumeError = getResumeError(resumeFile);
+      if (resumeError) {
+        setStatus("error");
+        setErrorMessage(resumeError);
+        resumeInputRef.current?.focus();
         return;
       }
 
@@ -78,119 +115,129 @@ export default function CareersApplicationForm() {
   const isSubmitting = status === "submitting";
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-      <div className="grid gap-4 md:grid-cols-2">
-        <label className="text-sm text-neutral-600">
-          Name
-          <input
-            required
-            type="text"
-            name="name"
-            value={formState.name}
-            onChange={(event) =>
-              setFormState((current) => ({ ...current, name: event.target.value }))
-            }
-            className="brand-input mt-2 px-3 py-2 text-sm"
-            placeholder="Your full name"
-          />
-        </label>
+    <form onSubmit={handleSubmit} className="space-y-5" aria-busy={isSubmitting}>
+      <p className="text-xs text-[#626b60]">All fields are required unless marked optional.</p>
+      <fieldset disabled={isSubmitting} className="space-y-5 disabled:opacity-70">
+        <legend className="sr-only">Your application</legend>
+        <div className="grid gap-5 md:grid-cols-2">
+          <label className="block text-sm font-medium text-brand-green">
+            Full name
+            <input
+              required
+              type="text"
+              name="name"
+              autoComplete="name"
+              value={formState.name}
+              onChange={(event) =>
+                setFormState((current) => ({ ...current, name: event.target.value }))
+              }
+              className="brand-input mt-2 px-4 py-3 text-base sm:text-sm"
+              placeholder="Your full name"
+            />
+          </label>
 
-        <label className="text-sm text-neutral-600">
-          Email
-          <input
-            required
-            type="email"
-            name="email"
-            value={formState.email}
-            onChange={(event) =>
-              setFormState((current) => ({ ...current, email: event.target.value }))
-            }
-            className="brand-input mt-2 px-3 py-2 text-sm"
-            placeholder="you@example.com"
-          />
-        </label>
+          <label className="block text-sm font-medium text-brand-green">
+            Email address
+            <input
+              required
+              type="email"
+              name="email"
+              autoComplete="email"
+              value={formState.email}
+              onChange={(event) =>
+                setFormState((current) => ({ ...current, email: event.target.value }))
+              }
+              className="brand-input mt-2 px-4 py-3 text-base sm:text-sm"
+              placeholder="you@example.com"
+            />
+          </label>
 
-        <label className="text-sm text-neutral-600">
-          Phone Number
-          <input
-            required
-            type="tel"
-            name="phone"
-            value={formState.phone}
-            onChange={(event) =>
-              setFormState((current) => ({ ...current, phone: event.target.value }))
-            }
-            className="brand-input mt-2 px-3 py-2 text-sm"
-            placeholder="(619) 000-0000"
-          />
-        </label>
+          <label className="block text-sm font-medium text-brand-green">
+            Phone number
+            <input
+              required
+              type="tel"
+              name="phone"
+              autoComplete="tel"
+              value={formState.phone}
+              onChange={(event) =>
+                setFormState((current) => ({ ...current, phone: event.target.value }))
+              }
+              className="brand-input mt-2 px-4 py-3 text-base sm:text-sm"
+              placeholder="(619) 000-0000"
+            />
+          </label>
 
-        <label className="text-sm text-neutral-600">
-          Location
-          <select
-            required
-            name="preferredLocation"
-            value={formState.preferredLocation}
-            onChange={(event) =>
-              setFormState((current) => ({ ...current, preferredLocation: event.target.value }))
-            }
-            className="brand-input brand-select mt-2 px-3 py-2 text-sm"
-          >
-            <option value="" disabled>
-              Select location
-            </option>
-            {locations.map((location) => (
-              <option key={location.slug} value={location.name}>
-                {location.name}
+          <label className="block text-sm font-medium text-brand-green">
+            Preferred location
+            <select
+              required
+              name="preferredLocation"
+              value={formState.preferredLocation}
+              onChange={(event) =>
+                setFormState((current) => ({ ...current, preferredLocation: event.target.value }))
+              }
+              className="brand-input brand-select mt-2 px-4 py-3 text-base sm:text-sm"
+            >
+              <option value="" disabled>
+                Select location
               </option>
-            ))}
-          </select>
+              {locations.map((location) => (
+                <option key={location.slug} value={location.name}>
+                  {location.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+
+        <label className="block text-sm font-medium text-brand-green">
+          Resume (PDF or DOCX)
+          <input
+            ref={resumeInputRef}
+            required
+            type="file"
+            name="resume"
+            onChange={handleResumeChange}
+            aria-describedby="careers-resume-help"
+            accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            className="brand-input mt-2 px-3 py-3 text-base file:mr-3 file:cursor-pointer file:border-0 file:bg-[#e6ebdf] file:px-3 file:py-2 file:text-xs file:font-semibold file:text-brand-green sm:text-sm"
+          />
+          <span id="careers-resume-help" className="mt-2 block text-xs font-normal text-[#626b60]">PDF or DOCX, up to 10MB.</span>
         </label>
-      </div>
 
-      <label className="text-sm text-neutral-600">
-        Resume (PDF or DOCX)
-        <input
-          ref={resumeInputRef}
-          required
-          type="file"
-          name="resume"
-          accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-          className="brand-input mt-2 px-3 py-2 text-sm file:mr-3 file:cursor-pointer file:rounded-md file:border-0 file:bg-brand-green file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white"
-        />
-      </label>
+        <label className="block text-sm font-medium text-brand-green">
+          Message (optional)
+          <textarea
+            name="message"
+            value={formState.message}
+            onChange={(event) =>
+              setFormState((current) => ({ ...current, message: event.target.value }))
+            }
+            className="brand-input mt-2 min-h-32 resize-y px-4 py-3 text-base sm:text-sm"
+            placeholder="Optional note to hiring team."
+          />
+        </label>
 
-      <label className="text-sm text-neutral-600">
-        Message (optional)
-        <textarea
-          name="message"
-          value={formState.message}
-          onChange={(event) =>
-            setFormState((current) => ({ ...current, message: event.target.value }))
-          }
-          className="brand-input mt-2 min-h-28 px-3 py-2 text-sm"
-          placeholder="Optional note to hiring team."
-        />
-      </label>
+        <label className="sr-only" aria-hidden="true">
+          Website
+          <input
+            type="text"
+            name="website"
+            tabIndex={-1}
+            autoComplete="off"
+            value={formState.website}
+            onChange={(event) =>
+              setFormState((current) => ({ ...current, website: event.target.value }))
+            }
+            className="hidden"
+          />
+        </label>
 
-      <label className="sr-only" aria-hidden="true">
-        Website
-        <input
-          type="text"
-          name="website"
-          tabIndex={-1}
-          autoComplete="off"
-          value={formState.website}
-          onChange={(event) =>
-            setFormState((current) => ({ ...current, website: event.target.value }))
-          }
-          className="hidden"
-        />
-      </label>
-
-      <button type="submit" disabled={isSubmitting} className="brand-btn px-5 py-2 text-sm">
-        {isSubmitting ? "Submitting..." : "Submit Application"}
-      </button>
+        <button type="submit" disabled={isSubmitting} className="brand-btn w-full px-5 py-3 text-sm sm:w-auto">
+          {isSubmitting ? "Submitting..." : "Submit Application"}
+        </button>
+      </fieldset>
 
       {status === "success" && (
         <p role="status" className="text-sm font-medium text-brand-green">

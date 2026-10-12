@@ -2,6 +2,8 @@
 
 import { useSyncExternalStore, type ReactNode } from "react";
 
+import SiteIcon from "@/components/SiteIcon";
+
 import {
   getCookiePreferenceServerSnapshot,
   getCookiePreferenceSnapshot,
@@ -24,9 +26,10 @@ export default function GoogleMapEmbed({ title, src, allowFullScreen }: Props): 
 
   if (cookiePreference !== "enabled") {
     return (
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-neutral-50 p-6 text-center">
+      <div className="map-consent absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center">
+        <SiteIcon name="pin" className="map-consent-icon" />
         <p className="max-w-xs text-sm text-neutral-600">
-          Google Maps is disabled until you allow optional cookies.
+          Use the directions link below, or allow Google Maps in cookie settings.
         </p>
         <button
           type="button"

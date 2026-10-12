@@ -1,21 +1,24 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Script from "next/script";
 
-import DeliveryLinks from "@/components/DeliveryLinks";
+import DeliveryButton from "@/components/DeliveryButton";
+import SiteIcon from "@/components/SiteIcon";
 import LocationOpenBadge from "@/components/LocationOpenBadge";
 import GoogleMapEmbed from "@/components/GoogleMapEmbed";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 import { locations } from "@/data/locations";
-import { site } from "@/data/site-content";
+import { getLocationFoodPhoto, site } from "@/data/site-content";
 import {
   getGoogleMapsDirectionsUrl,
   getGoogleMapsEmbedUrl,
   getGoogleMapsSearchUrl,
 } from "@/lib/google-maps";
 import { getMenuHref } from "@/lib/menu-link";
+import { getLocationOpeningHoursSpecification } from "@/lib/location-hours";
 
 type LocationPageProps = {
   params: Promise<{ slug: string }>;
@@ -33,17 +36,23 @@ export async function generateMetadata({ params }: LocationPageProps): Promise<M
 
   if (!location) {
     return {
-      title: "Location Not Found | Prime Tacos",
+      title: "Location Not Found",
     };
   }
 
   const url = `${site.url}/locations/${location.slug}`;
 
   return {
-    title: `${location.name} | Prime Tacos San Diego`,
+    title: location.name,
     description: `${location.name} location details, hours, phone number, online ordering, and menu.`,
     alternates: {
       canonical: url,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${location.name} | Prime Tacos`,
+      description: `${location.address}. ${location.hours}.`,
+      images: [`${site.url}/newlogo.png`],
     },
     openGraph: {
       title: `${location.name} | Prime Tacos`,
@@ -90,6 +99,7 @@ export default async function LocationPage({ params }: LocationPageProps) {
     apiKey: googleMapsApiKey,
   });
   const pickupOrderUrl = location.toastUrl;
+  const photo = getLocationFoodPhoto(location.slug);
   const schemaUrl = `${site.url}/locations/${location.slug}`;
   const schema = {
     "@context": "https://schema.org",
@@ -102,14 +112,14 @@ export default async function LocationPage({ params }: LocationPageProps) {
     telephone: location.phone,
     address: {
       "@type": "PostalAddress",
-      streetAddress: location.address.split(",")[0],
+      streetAddress: location.address.split(location.city)[0].replace(/[,\s]+$/, ""),
       addressLocality: location.city,
       addressRegion: location.state,
       postalCode: location.postalCode,
       addressCountry: "US",
     },
-    openingHours: location.hours,
-    menu: pickupOrderUrl ?? `${site.url}${menuEmbedUrl}`,
+    openingHoursSpecification: getLocationOpeningHoursSpecification(location.slug),
+    menu: new URL(menuEmbedUrl, site.url).href,
     potentialAction: pickupOrderUrl
       ? {
           "@type": "OrderAction",
@@ -121,35 +131,36 @@ export default async function LocationPage({ params }: LocationPageProps) {
 
   return (
     <>
-      <SiteHeader ctaHref="#menu" ctaLabel="Order Online" />
+      <SiteHeader ctaHref={pickupOrderUrl ?? "/order-online"} ctaLabel="Order pickup" />
       <Script
         id={`restaurant-schema-${location.slug}`}
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
 
-      <main id="main-content" className="pb-20 pt-10 text-neutral-950 sm:pt-12">
+      <main id="main-content" className="page-main location-detail-page">
         <div className="section-shell space-y-8">
           <section>
-            <Link href="/locations" className="text-sm font-semibold text-brand-green hover:text-neutral-950">
+            <Link href="/locations" className="text-sm font-semibold text-brand-green hover:text-brand-green">
               ← Back to locations
             </Link>
 
-            <div className="mt-5 border-y border-neutral-200 py-8 sm:py-10">
-              <div className="space-y-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-green">
+            <div className="location-detail-intro">
+              <div className="page-intro">
+                <p className="page-kicker">
                   Prime Tacos
                 </p>
-                <h1 className="font-display text-3xl text-neutral-950 sm:text-4xl lg:text-5xl">{location.name}</h1>
+                <h1 className="page-title">{location.name}</h1>
                 <p className="text-neutral-600">{location.address}</p>
                 <p className="text-neutral-600">{location.hours}</p>
+                <p className="location-holiday-note">Hours may vary on holidays. Call the shop before visiting.</p>
 
                 <div className="flex flex-wrap gap-2 pt-2">
                   <a
-                    href={directionsUrl}
+                    href={mapsDirectionsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="brand-btn-directions w-full px-4 py-2 text-sm sm:w-auto"
+                    className="brand-btn-muted w-full px-4 py-3 text-sm sm:w-auto"
                   >
                     Get Directions
                   </a>
@@ -158,30 +169,31 @@ export default async function LocationPage({ params }: LocationPageProps) {
                       href={pickupOrderUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="brand-btn w-full px-4 py-2 text-sm sm:w-auto"
+                      className="brand-btn w-full px-4 py-3 text-sm sm:w-auto"
                     >
                       Order pickup
                     </a>
                   )}
                   {location.phone && (
-                    <a href={`tel:${location.phone}`} className="brand-btn w-full px-4 py-2 text-sm sm:w-auto">
+                    <a href={`tel:${location.phone}`} className="text-link w-full py-2 sm:w-auto">
                       Call {location.phone}
                     </a>
                   )}
                 </div>
 
-                <DeliveryLinks location={location} className="flex flex-wrap gap-2 pt-1" />
+                <DeliveryButton locationSlug={location.slug} className="text-link">Order delivery<SiteIcon name="delivery" /></DeliveryButton>
               </div>
+              <div className="location-detail-photo"><Image src={photo.src} alt={photo.alt} fill sizes="(min-width: 1024px) 45vw, 100vw" priority /><span className="location-photo-label">From our kitchen</span></div>
             </div>
           </section>
 
-          <section className="overflow-hidden rounded-lg border border-neutral-200 bg-white">
+          <section className="surface-panel overflow-hidden">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-200 px-5 py-4 sm:px-6">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-green">
+                <p className="page-kicker">
                   Map + Directions
                 </p>
-                <h2 className="mt-1 font-display text-2xl text-neutral-950 sm:text-3xl">
+                <h2 className="mt-1 font-display text-2xl text-brand-green sm:text-3xl">
                   {location.name}
                 </h2>
               </div>
@@ -221,10 +233,10 @@ export default async function LocationPage({ params }: LocationPageProps) {
 
           <section id="menu" className="space-y-4">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-green">
+              <p className="page-kicker">
                 Full Menu
               </p>
-              <h2 className="mt-2 font-display text-3xl text-neutral-950 sm:text-4xl">
+              <h2 className="mt-2 font-display text-3xl text-brand-green sm:text-4xl">
                 Our menu
               </h2>
               <p className="mt-2 text-sm text-neutral-600 sm:text-base">

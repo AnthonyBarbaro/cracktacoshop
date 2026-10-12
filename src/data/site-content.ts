@@ -26,36 +26,63 @@ export const highlights = [
   },
 ];
 
+export const signatureDishes = [
+  {
+    name: "Quesadillas",
+    src: "/images/beef-quesadilla.jpg",
+    alt: "Quesadilla wedges served with guacamole and crema",
+    description: "Golden tortillas, melted cheese, and your favorite filling.",
+  },
+  {
+    name: "Al pastor tacos",
+    src: "/images/al-pastor-street-tacos.jpg",
+    alt: "Al pastor taco with pineapple, guacamole, onion, and lime",
+    description: "Al pastor, pineapple, and guacamole on a handmade tortilla.",
+  },
+  {
+    name: "Breakfast burritos",
+    src: "/images/legacy/breakfast-burrito.jpg",
+    alt: "Breakfast burrito halves filled with eggs and meat",
+    description: "A little Prime to start your day.",
+  },
+];
+
+const locationFoodPhotos: Record<string, { src: string; alt: string }> = {
+  "mission-valley": { src: "/images/food-1.jpg", alt: "Taco served with three house salsas" },
+  "seaport-village": { src: "/images/al-pastor-street-tacos.jpg", alt: "Al pastor taco with pineapple, guacamole, onion, and lime" },
+  encinitas: { src: "/images/beef-quesadilla.jpg", alt: "Quesadilla wedges served with guacamole and crema" },
+  coronado: { src: "/images/legacy/breakfast-burrito.jpg", alt: "Breakfast burrito halves filled with eggs and meat" },
+};
+
+export function getLocationFoodPhoto(slug: string): { src: string; alt: string } {
+  return locationFoodPhotos[slug] ?? locationFoodPhotos["mission-valley"];
+}
+
 export const foodShowcase = [
   {
     src: "/images/food-1.jpg",
-    alt: "Fresh tri-tip tacos on the grill",
+    alt: "Taco served with three house salsas",
     label: "Tri-Tip Tacos",
   },
   {
     src: "/images/food-2.jpg",
-    alt: "Loaded burrito with house salsa",
-    label: "Loaded Burritos",
+    alt: "Nachos with beef, guacamole, jalapeños, and melted cheese",
+    label: "Loaded Nachos",
   },
   {
     src: "/images/food-3.jpg",
-    alt: "Fresh corn tortillas and toppings",
-    label: "Handmade Tortillas",
-  },
-  {
-    src: "/images/food-4.jpg",
-    alt: "Street taco platter with guacamole",
-    label: "Street Plates",
+    alt: "Three tacos with guacamole, onion, and cilantro",
+    label: "Handmade Tacos",
   },
   {
     src: "/images/food-5.jpg",
-    alt: "Taco and burrito spread for sharing",
-    label: "Family Trays",
+    alt: "Three bowls with fresh toppings",
+    label: "Fresh Bowls",
   },
   {
     src: "/images/food-6.jpg",
-    alt: "Late-night taco order packed to-go",
-    label: "Late Night Eats",
+    alt: "Three tacos served beside a drink",
+    label: "Tacos & Sides",
   },
   {
     src: "/images/al-pastor-street-tacos.jpg",

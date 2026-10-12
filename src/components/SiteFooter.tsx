@@ -30,24 +30,34 @@ export default function SiteFooter({ variant = "minimal" }: Props): ReactElement
     return (
       <footer className="site-footer is-editorial">
         <div className="section-shell footer-main">
-          <div>
-            <Link href="/" aria-label="Prime Tacos home"><Image src="/newlogo.png" alt="Prime Tacos" width={3822} height={2378} sizes="144px" className="footer-logo" /></Link>
-            <p>{site.tagline}<br />San Diego, California.</p>
+          <div className="footer-brand">
+            <Link href="/" aria-label="Prime Tacos home">
+              <Image src="/newlogo.png" alt="Prime Tacos" width={3822} height={2378} sizes="144px" className="footer-logo" />
+            </Link>
+            <p className="footer-description">{site.tagline}<br />San Diego, California.</p>
           </div>
-          <nav aria-label="Footer navigation" className="footer-links">
-            {footerLinks.map((link) => <Link key={link.href} href={link.href}>{link.label}</Link>)}
+          <nav aria-label="Footer navigation" className="footer-navigation">
+            <p className="footer-label">Explore</p>
+            <div className="footer-links">
+              {footerLinks.map((link) => (
+                <Link key={link.href} href={link.href}>{link.label}</Link>
+              ))}
+            </div>
           </nav>
           <div className="footer-order">
-            <Link href="/order-online" className="brand-btn px-6 py-3 text-xs">Order online<SiteIcon name="arrow" className="h-4 w-4" /></Link>
-            <div className="mt-5 flex gap-5 text-sm">
-              <a href={site.instagram} target="_blank" rel="noopener noreferrer">Instagram</a>
-              <a href={site.facebook} target="_blank" rel="noopener noreferrer">Facebook</a>
-            </div>
+            <h2 className="footer-heading">Come hungry.</h2>
+            <Link href="/order-online" className="brand-btn px-6 py-3 text-xs">
+              Order online<SiteIcon name="arrow" className="h-4 w-4" />
+            </Link>
+            <nav aria-label="Social media" className="footer-socials">
+              <a href={site.instagram} target="_blank" rel="noopener noreferrer" aria-label="Prime Tacos on Instagram (opens in a new tab)">Instagram</a>
+              <a href={site.facebook} target="_blank" rel="noopener noreferrer" aria-label="Prime Tacos on Facebook (opens in a new tab)">Facebook</a>
+            </nav>
           </div>
         </div>
         <div className="section-shell footer-bottom">
           <p>© {new Date().getFullYear()} Prime Tacos.</p>
-          <button type="button" onClick={openCookieSettings} className="min-h-11 underline underline-offset-4">Cookie settings</button>
+          <button type="button" onClick={openCookieSettings} className="footer-cookie-settings">Cookie settings</button>
         </div>
       </footer>
     );

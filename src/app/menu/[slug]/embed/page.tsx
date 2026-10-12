@@ -1,8 +1,11 @@
 import Image from "next/image";
+import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import DeliveryLinks from "@/components/DeliveryLinks";
+import DeliveryButton from "@/components/DeliveryButton";
+import LocationOpenBadge from "@/components/LocationOpenBadge";
+import SiteIcon from "@/components/SiteIcon";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 import { getMenuForLocation } from "@/data/menu";
@@ -25,17 +28,23 @@ export async function generateMetadata({ params }: MenuEmbedPageProps): Promise<
 
   if (!location) {
     return {
-      title: "Menu Not Found | Prime Tacos",
+      title: "Menu Not Found",
     };
   }
 
   const canonicalUrl = `${site.url}/menu/${location.slug}/embed`;
 
   return {
-    title: `${location.name} Menu | Prime Tacos`,
+    title: `${location.name} Menu`,
     description: `Browse the ${location.name} menu for tacos, burritos, and location-specific ordering links.`,
     alternates: {
       canonical: canonicalUrl,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${location.name} Menu | Prime Tacos`,
+      description: `Browse the ${location.name} menu and choose pickup or delivery.`,
+      images: [`${site.url}/newlogo.png`],
     },
     openGraph: {
       title: `${location.name} Menu | Prime Tacos`,
@@ -69,57 +78,59 @@ export default async function MenuEmbedPage({ params }: MenuEmbedPageProps) {
   }
 
   const menu = getMenuForLocation(slug);
-  const hasManualSections = menu.sections.length > 0;
+  const hasMenuSections = menu.sections.length > 0;
 
   return (
     <>
       <SiteHeader ctaHref="/order-online" ctaLabel="Order Online" />
-      <main id="main-content" className="min-h-screen pb-16 pt-10 text-neutral-950 sm:pt-12">
-        <div id="menu-top" className="section-shell space-y-4">
-          <header className="py-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-green">Our Menu</p>
-            <h1 className="mt-2 font-display text-3xl text-neutral-950 sm:text-4xl">{location.name}</h1>
-            <p className="mt-2 text-sm text-neutral-600">{location.hours}</p>
-            <p className="mt-1 text-sm text-neutral-600">
-              {location.phone ? `Call us at ${location.phone}. ` : ""}
-              Visit us at {location.address}
-            </p>
+      <main id="main-content" className="page-main menu-detail-page">
+        <div id="menu-top" className="section-shell">
+          <header className="page-intro menu-detail-intro">
+            <Link href="/menu" className="text-link">All menus<SiteIcon name="arrow" /></Link>
+            <div className="menu-detail-heading">
+              <div>
+                <p className="page-kicker">The menu</p>
+                <h1 className="page-title">{location.name}<span>.</span></h1>
+              </div>
+              <div className="menu-detail-meta">
+                <LocationOpenBadge slug={location.slug} />
+                <p>{location.address}</p>
+                <p>{location.hours}</p>
+              </div>
+            </div>
 
-            <div id="order-options" className="mt-4 flex scroll-mt-24 flex-wrap gap-2">
+            <div id="order-options" className="menu-detail-actions">
               {location.toastUrl && (
                 <a
                   href={location.toastUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="brand-btn w-full px-3 py-2 text-sm sm:w-auto"
+                  className="brand-btn"
                 >
-                  Toast Pickup
+                  Order pickup<SiteIcon name="bag" />
                 </a>
               )}
-              <DeliveryLinks location={location} className="flex w-full flex-wrap gap-2" />
-
-              {menu.printedMenuUrl && (
-                <a
-                  href={menu.printedMenuUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="brand-btn-directions w-full px-3 py-2 text-sm sm:w-auto"
-                >
-                  View Attached Menu
-                </a>
-              )}
+              <DeliveryButton locationSlug={location.slug} className="brand-btn-muted">Order delivery<SiteIcon name="delivery" /></DeliveryButton>
+              <Link href={`/locations/${location.slug}`} className="text-link">Location details<SiteIcon name="arrow" /></Link>
             </div>
+            {hasMenuSections && (
+              <p className="menu-price-note">
+                {menu.priceSource === "printed-menu"
+                  ? "From this shop’s printed menu. Confirm current prices and availability when ordering."
+                  : "Mission Valley menu. Prices and availability may change when ordering."}
+              </p>
+            )}
           </header>
 
-          {hasManualSections ? (
+          {hasMenuSections ? (
             <>
-              <nav aria-label="Menu categories" className="sticky top-20 z-20 overflow-hidden rounded-lg border border-neutral-200 bg-white">
-                <div className="flex gap-2 overflow-x-auto px-2 py-2 sm:flex-wrap sm:overflow-visible sm:px-3">
+              <nav aria-label="Menu categories" className="menu-category-nav">
+                <div className="menu-category-links">
                   {menu.nav.map((section) => (
                     <a
                       key={section.sectionId}
                       href={`#${section.sectionId}`}
-                      className="shrink-0 rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-neutral-950 hover:border-brand-green hover:bg-green-50"
+                      className="menu-category-link"
                     >
                       {section.label}
                     </a>
@@ -127,48 +138,54 @@ export default async function MenuEmbedPage({ params }: MenuEmbedPageProps) {
                 </div>
               </nav>
 
-              <div className="space-y-4 pb-6">
-                {menu.sections.map((section) => (
+              <div className="menu-book">
+                {menu.sections.map((section, index) => (
                   <section
                     id={section.id}
                     key={section.id}
-                    className="scroll-mt-36 border-t border-neutral-200 py-5"
+                    className="menu-category-section menu-book-section"
                   >
-                    <h2 className="font-display text-2xl text-neutral-950 sm:text-3xl">{section.title}</h2>
+                    <div className="menu-section-heading">
+                      <span className="menu-section-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+                      <h2>{section.title}</h2>
+                    </div>
 
-                    <div className="mt-3 grid gap-3 lg:grid-cols-2">
+                    <div className="menu-section-groups">
                       {section.groups.map((group) => (
                         <article
                           key={`${section.id}-${group.title}`}
-                          className="overflow-hidden rounded-lg border border-neutral-200 bg-white"
+                          className="menu-book-group"
                         >
-                          <header className="border-b border-neutral-200 px-3 py-2">
-                            <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-green">
-                              {group.title}
-                            </h3>
-                          </header>
+                          <h3>{group.title}</h3>
 
-                          <ul className="divide-y divide-neutral-200">
+                          <ul className="menu-items">
                             {group.items.map((item) => (
-                              <li key={`${section.id}-${group.title}-${item.name}`} className="px-3 py-2.5">
-                                <div className="flex items-start justify-between gap-3">
-                                  <div>
-                                    <div className="flex flex-wrap items-center gap-2">
-                                      <p className="text-sm font-semibold text-neutral-950 sm:text-base">{item.name}</p>
-                                      {item.badge && (
-                                        <span className="rounded-full bg-green-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-brand-green">
-                                          {item.badge}
-                                        </span>
-                                      )}
-                                    </div>
-                                    {item.description && (
-                                      <p className="mt-1 text-xs text-neutral-600 sm:text-sm">{item.description}</p>
+                              <li key={`${section.id}-${group.title}-${item.name}`} className="menu-item">
+                                <div>
+                                  <div className="menu-item-heading">
+                                    <h4 className="menu-item-name">{item.name}</h4>
+                                    {item.badge && (
+                                      <span className="menu-item-badge">
+                                        {item.badge}
+                                      </span>
                                     )}
                                   </div>
-                                  <p className="shrink-0 text-sm font-semibold text-brand-green sm:text-base">
-                                    {item.price}
-                                  </p>
+                                  {item.description && (
+                                    <p className="menu-item-description">{item.description}</p>
+                                  )}
                                 </div>
+                                {item.priceOptions ? (
+                                  <div className="menu-item-price-options">
+                                    {item.priceOptions.map((option) => (
+                                      <p key={option.label} className="menu-item-price-option">
+                                        <span className="menu-item-price-label">{option.label}</span>
+                                        <span className="menu-item-price">{option.price}</span>
+                                      </p>
+                                    ))}
+                                  </div>
+                                ) : (
+                                  <span className="menu-item-price">{item.price}</span>
+                                )}
                               </li>
                             ))}
                           </ul>
@@ -180,65 +197,59 @@ export default async function MenuEmbedPage({ params }: MenuEmbedPageProps) {
               </div>
             </>
           ) : (
-            <section className="space-y-4 rounded-lg border border-neutral-200 bg-white p-4 sm:p-5">
+            <section className="menu-provider-panel" aria-labelledby="provider-menu-title">
               <div>
-                <h2 className="font-display text-2xl text-neutral-950 sm:text-3xl">View the menu</h2>
-                <p className="mt-2 text-sm text-neutral-600">
-                  Browse the {location.name} menu below or order online for current prices.
+                <p className="page-kicker">Fresh from {location.name}</p>
+                <h2 id="provider-menu-title">Your next favorite<br />is on the menu.</h2>
+                <p>
+                  Browse this shop’s current menu through pickup ordering, or choose delivery.
                 </p>
               </div>
 
               {location.toastUrl && (
-                <article className="rounded-lg border border-neutral-200 bg-white p-4">
-                  <h3 className="text-sm font-semibold text-neutral-950">Toast Online Ordering</h3>
-                  <p className="mt-2 text-sm text-neutral-600">
-                    Choose your favorites and place a pickup order from {location.name}.
-                  </p>
+                <div>
                   <a
                     href={location.toastUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="brand-btn mt-3 inline-flex w-full px-4 py-2 text-sm sm:w-auto"
+                    className="brand-btn"
                   >
-                    Open Toast Menu
+                    Browse pickup menu<SiteIcon name="arrow" />
                   </a>
-                </article>
-              )}
-
-              {menu.printedMenuUrl && (
-                <article className="overflow-hidden rounded-lg border border-neutral-200 bg-white">
-                  <header className="border-b border-neutral-200 px-4 py-3">
-                    <p className="text-sm font-semibold text-neutral-950">Attached Menu</p>
-                  </header>
-                  <a href={menu.printedMenuUrl} target="_blank" rel="noopener noreferrer">
-                    <Image
-                      src={menu.printedMenuUrl}
-                      alt={`${location.name} attached menu`}
-                      width={1600}
-                      height={2400}
-                      className="block h-auto w-full"
-                    />
-                  </a>
-                </article>
+                  <p>Item availability and prices are confirmed before checkout.</p>
+                </div>
               )}
             </section>
           )}
 
-          <footer>
-            <div className="rounded-lg border border-neutral-200 bg-white px-4 py-3">
-              {menu.notes.map((note) => (
-                <p key={note} className="text-xs text-neutral-600">
-                  {note}
-                </p>
-              ))}
-              <p className="mt-1 text-xs text-neutral-600">{site.shortName}</p>
-              <a
-                href="#menu-top"
-                className="mt-3 inline-flex rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-neutral-950 hover:border-brand-green hover:bg-green-50"
-              >
-                Back to top
+          {menu.printedMenuUrl && (
+            <details className="menu-print-source">
+              <summary>View the original printed menu</summary>
+              <p>Published by the shop. Printed prices may differ from current pickup and delivery prices.</p>
+              <a href={menu.printedMenuUrl} target="_blank" rel="noopener noreferrer" aria-label={`Open ${location.name} printed menu at full size`}>
+                <Image
+                  src={menu.printedMenuUrl}
+                  alt={`${location.name} printed menu. The items and prices are transcribed above.`}
+                  width={location.slug === "encinitas" ? 2560 : 1000}
+                  height={location.slug === "encinitas" ? 1525 : 1000}
+                  sizes="(max-width: 1200px) 100vw, 1200px"
+                  className="block h-auto w-full"
+                  unoptimized
+                />
               </a>
-            </div>
+              <a href={menu.printedMenuUrl} target="_blank" rel="noopener noreferrer" className="text-link">Open full-size menu<SiteIcon name="arrow" /></a>
+            </details>
+          )}
+
+          <footer className="menu-detail-footer">
+            {menu.notes.map((note) => (
+              <p key={note}>
+                {note}
+              </p>
+            ))}
+            <a href="#menu-top" className="text-link">
+              Back to top
+            </a>
           </footer>
         </div>
       </main>

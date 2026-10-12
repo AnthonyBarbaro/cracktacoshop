@@ -10,38 +10,47 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/careers",
   },
+  openGraph: {
+    title: "Careers",
+    description: "Apply for open positions at Prime Tacos locations.",
+    url: "/careers",
+    images: ["/newlogo.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Careers",
+    description: "Apply for open positions at Prime Tacos locations.",
+    images: ["/newlogo.png"],
+  },
 };
 
 export default function CareersPage() {
   return (
     <>
       <SiteHeader ctaHref="/order-online" ctaLabel="Order Online" />
-      <main id="main-content" className="pb-20 pt-10 sm:pt-12">
-        <section className="section-shell">
-          <div className="py-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-green">
-              Careers
-            </p>
-            <h1 className="mt-3 max-w-3xl font-display text-3xl text-neutral-950 sm:text-4xl lg:text-5xl">
-              Join our team
-            </h1>
-            <p className="mt-3 max-w-2xl text-sm text-neutral-600 sm:text-base">
+      <main id="main-content" className="secondary-page">
+        <section className="section-shell page-intro">
+          <div className="max-w-3xl">
+            <p className="page-kicker">Careers</p>
+            <h1 className="page-title">Join <em>our team.</em></h1>
+            <p className="page-description">
               We are hiring team members who care about hospitality, food quality, and speed. Fill
               out the application below and our team will review it.
             </p>
           </div>
         </section>
 
-        <section className="section-shell mt-10">
-          <div className="max-w-3xl border-t border-neutral-200 pt-6">
-            <h2 className="font-display text-2xl text-neutral-950 sm:text-3xl">Apply now</h2>
-            <p className="mt-2 text-sm text-neutral-600">
-              Submit your name, email, phone, preferred location, and resume. Message is optional.
-              Accepted resume formats: PDF or DOCX (max 10MB).
-            </p>
-            <div className="mt-5">
-              <CareersApplicationForm />
+        <section className="section-shell page-section" aria-labelledby="application-title">
+          <div className="careers-layout">
+            <div className="careers-note">
+              <p className="page-kicker">Your application</p>
+              <h2 id="application-title">Tell us about yourself.</h2>
+              <p>
+                Submit your name, email, phone, preferred location, and resume. Message is optional.
+              </p>
+              <p>Accepted resume formats: PDF or DOCX (max 10MB).</p>
             </div>
+            <div className="surface-panel careers-form-panel"><CareersApplicationForm /></div>
           </div>
         </section>
       </main>

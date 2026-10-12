@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import Script from "next/script";
 
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
+import SiteIcon from "@/components/SiteIcon";
 import { faqItems, site } from "@/data/site-content";
 
 export const metadata: Metadata = {
@@ -10,6 +12,18 @@ export const metadata: Metadata = {
   description: "Frequently asked questions about locations, hours, menu, and online ordering.",
   alternates: {
     canonical: `${site.url}/faq`,
+  },
+  openGraph: {
+    title: "FAQ",
+    description: "Frequently asked questions about locations, hours, menu, and online ordering.",
+    url: `${site.url}/faq`,
+    images: ["/newlogo.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "FAQ",
+    description: "Frequently asked questions about locations, hours, menu, and online ordering.",
+    images: ["/newlogo.png"],
   },
 };
 
@@ -35,25 +49,25 @@ export default function FaqPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
-      <main id="main-content" className="pb-20 pt-10 sm:pt-12">
-        <section className="section-shell">
-          <div className="py-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-green">
-              FAQ
-            </p>
-            <h1 className="mt-3 max-w-4xl font-display text-3xl text-neutral-950 sm:text-4xl lg:text-5xl">
-              Common questions
-            </h1>
+      <main id="main-content" className="secondary-page">
+        <section className="section-shell page-intro faq-layout" aria-labelledby="faq-title">
+          <div className="faq-intro">
+            <p className="page-kicker">FAQ</p>
+            <h1 id="faq-title" className="page-title">Good to <em>know.</em></h1>
+            <p className="page-description">Find details about our locations, hours, menu, and online ordering.</p>
+            <Link href="/locations" className="text-link mt-6">
+              Locations and hours<SiteIcon name="arrow" className="h-4 w-4" />
+            </Link>
           </div>
-        </section>
-
-        <section className="section-shell mt-10">
-          <div className="space-y-3">
+          <div className="faq-list">
             {faqItems.map((item) => (
-              <article key={item.question} className="rounded-lg border border-neutral-200 bg-white p-5">
-                <h2 className="font-display text-2xl text-neutral-950">{item.question}</h2>
-                <p className="mt-2 text-sm text-neutral-600 sm:text-base">{item.answer}</p>
-              </article>
+              <details key={item.question} className="faq-item">
+                <summary className="faq-summary">
+                  <h2>{item.question}</h2>
+                  <span aria-hidden="true" className="faq-toggle" />
+                </summary>
+                <p className="faq-answer">{item.answer}</p>
+              </details>
             ))}
           </div>
         </section>

@@ -1,46 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-const LOCATION_HOURS: Record<string, { openMinutes: number; closeMinutes: number }> = {
-  "mission-valley": { openMinutes: 7 * 60, closeMinutes: 24 * 60 },
-  "seaport-village": { openMinutes: 7 * 60, closeMinutes: 2 * 60 },
-  encinitas: { openMinutes: 8 * 60, closeMinutes: 23 * 60 },
-  coronado: { openMinutes: 8 * 60, closeMinutes: 2 * 60 },
-};
-
-const LOCATION_TIME_ZONE = "America/Los_Angeles";
-
-function getMinutesInLocationTimeZone(date: Date): number {
-  const formatter = new Intl.DateTimeFormat("en-US", {
-    timeZone: LOCATION_TIME_ZONE,
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
-
-  const parts = formatter.formatToParts(date);
-  const hour = Number(parts.find((part) => part.type === "hour")?.value ?? "0");
-  const minute = Number(parts.find((part) => part.type === "minute")?.value ?? "0");
-
-  return hour * 60 + minute;
-}
-
-function getIsOpenNow(slug: string): boolean | null {
-  const hours = LOCATION_HOURS[slug];
-
-  if (!hours) {
-    return null;
-  }
-
-  const nowMinutes = getMinutesInLocationTimeZone(new Date());
-
-  if (hours.closeMinutes <= hours.openMinutes) {
-    return nowMinutes >= hours.openMinutes || nowMinutes < hours.closeMinutes;
-  }
-
-  return nowMinutes >= hours.openMinutes && nowMinutes < hours.closeMinutes;
-}
+import { getIsLocationOpenNow } from "@/lib/location-hours";
 
 type Props = {
   slug: string;
@@ -51,7 +12,7 @@ export default function LocationOpenBadge({ slug }: Props) {
 
   useEffect(() => {
     const updateStatus = () => {
-      setIsOpen(getIsOpenNow(slug));
+      setIsOpen(getIsLocationOpenNow(slug));
     };
 
     updateStatus();

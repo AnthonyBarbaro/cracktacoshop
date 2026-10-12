@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Bungee, Plus_Jakarta_Sans } from "next/font/google";
+import { Cormorant_Garamond, Plus_Jakarta_Sans } from "next/font/google";
 import Script from "next/script";
 
 import CookieNotice from "@/components/CookieNotice";
@@ -13,10 +13,12 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
 });
 
-const bungee = Bungee({
-  variable: "--font-sora",
-  weight: "400",
+const editorialSerif = Cormorant_Garamond({
+  variable: "--font-editorial",
+  weight: ["400", "500"],
+  style: ["normal", "italic"],
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -103,7 +105,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#ffffff",
+  themeColor: "#f8f7f1",
 };
 
 export default function RootLayout({
@@ -151,7 +153,7 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body className={`${plusJakartaSans.variable} ${bungee.variable} antialiased`}>
+      <body className={`${plusJakartaSans.variable} ${editorialSerif.variable} antialiased`}>
         <Script
           id="global-seo-schema"
           type="application/ld+json"
