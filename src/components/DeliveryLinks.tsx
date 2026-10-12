@@ -8,7 +8,7 @@ import styles from "./DeliveryLinks.module.css";
 type DeliveryLinksProps = {
   location: Location;
   className?: string;
-  variant?: "cards" | "rows";
+  variant?: "cards" | "rows" | "compact";
 };
 
 export default function DeliveryLinks({
@@ -25,6 +25,18 @@ export default function DeliveryLinks({
 
   if (!providers.some((provider) => provider.href)) {
     return null;
+  }
+
+  if (variant === "compact") {
+    return (
+      <div className={`${styles.compact}${className ? ` ${className}` : ""}`}>
+        {providers.map((provider) => provider.href && (
+          <a key={provider.name} href={provider.href} target="_blank" rel="noopener noreferrer" aria-label={`${provider.name} delivery from ${location.name} (opens in a new tab)`}>
+            {provider.name}<span aria-hidden="true">↗</span>
+          </a>
+        ))}
+      </div>
+    );
   }
 
   return (

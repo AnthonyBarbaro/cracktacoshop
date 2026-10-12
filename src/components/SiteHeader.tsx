@@ -14,13 +14,11 @@ import { locations } from "@/data/locations";
 import { OPEN_DELIVERY_OPTIONS_EVENT } from "@/lib/delivery-options";
 import { getMenuHref } from "@/lib/menu-link";
 import { getGoogleMapsDirectionsUrl } from "@/lib/google-maps";
-import { findNearestLocationFromBrowser } from "@/lib/nearest-location";
 import {
   getShoppingLocationSlugServerSnapshot,
   getShoppingLocationSlugSnapshot,
   subscribeToShoppingLocationChanges,
   setStoredShoppingLocationSlug,
-  SHOPPING_LOCATION_CHANGE_EVENT,
 } from "@/lib/shopping-location";
 
 type Props = {
@@ -55,7 +53,6 @@ export default function SiteHeader({
     getShoppingLocationSlugSnapshot,
     getShoppingLocationSlugServerSnapshot,
   );
-  const [menuLocationSlug, setMenuLocationSlug] = useState<string>("");
   const [nearestStoreSlug, setNearestStoreSlug] = useState<string | null>(null);
   const [activeDrawer, setActiveDrawer] = useState<"menu" | "locations" | "welcome" | "delivery" | null>(null);
   const [deliveryLocationSlug, setDeliveryLocationSlug] = useState<string>("");
@@ -63,8 +60,6 @@ export default function SiteHeader({
   const isWelcomeOpen = activeDrawer === "welcome";
   const isDeliveryOpen = activeDrawer === "delivery";
   const isLocationPickerOpen = activeDrawer === "locations" || isWelcomeOpen;
-  const [isFindingNearest, setIsFindingNearest] = useState(false);
-  const [nearestError, setNearestError] = useState<string | null>(null);
   const mobileMenuPanelRef = useRef<HTMLElement | null>(null);
   const mobileMenuCloseButtonRef = useRef<HTMLButtonElement | null>(null);
   const menuToggleButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -76,20 +71,12 @@ export default function SiteHeader({
     { href: "/locations", label: "Locations" },
     { href: "/menu", label: "Menu" },
     { href: "/our-story", label: "Our Story" },
-    { href: "/reviews", label: "Reviews" },
-    { href: "/careers", label: "Careers" },
-    { href: "/faq", label: "FAQ" },
-    { href: "/contact", label: "Contact" },
   ];
 
   const shoppingSlug = routeLocationSlug ?? storedShoppingSlug;
   const shoppingLocation = useMemo(
     () => locations.find((location) => location.slug === shoppingSlug),
     [shoppingSlug],
-  );
-  const menuLocation = useMemo(
-    () => locations.find((location) => location.slug === menuLocationSlug),
-    [menuLocationSlug],
   );
   const deliveryLocation = locations.find((location) => location.slug === (deliveryLocationSlug || shoppingSlug));
   const shoppingMenuHref = getMenuHref(shoppingLocation);
@@ -107,13 +94,6 @@ export default function SiteHeader({
         googleMapsUrl: shoppingLocation.googleMapsUrl,
       })
     : undefined;
-  const menuDirectionsUrl = menuLocation
-    ? getGoogleMapsDirectionsUrl({
-        address: menuLocation.address,
-        placeId: menuLocation.placeId,
-        googleMapsUrl: menuLocation.googleMapsUrl,
-      })
-    : undefined;
   const isLinkActive = (href: string) => {
     if (href === "/") {
       return pathname === "/";
@@ -126,14 +106,11 @@ export default function SiteHeader({
   );
 
   const openMenu = () => {
-    setMenuLocationSlug(shoppingSlug ?? "");
     setActiveDrawer("menu");
-    setNearestError(null);
   };
 
   const openLocationPicker = (): void => {
     setNearestStoreSlug(null);
-    setNearestError(null);
     setActiveDrawer(shoppingLocation ? "locations" : "welcome");
   };
 
@@ -143,12 +120,10 @@ export default function SiteHeader({
     }
 
     setStoredShoppingLocationSlug(slug);
-    setNearestError(null);
   };
 
   const closeMenu = () => {
     setActiveDrawer(null);
-    setNearestError(null);
   };
 
   const handleSelectStore = (slug: string): void => {
@@ -158,50 +133,6 @@ export default function SiteHeader({
     if (routeLocationSlug && routeLocationSlug !== slug) {
       router.push(pathname.startsWith("/menu/") ? `/menu/${slug}/embed` : `/locations/${slug}`);
     }
-  };
-
-  const handleViewSelectedLocation = () => {
-    const targetSlug = menuLocationSlug || storedShoppingSlug || routeLocationSlug;
-
-    if (!targetSlug) {
-      return;
-    }
-
-    applyShoppingLocation(targetSlug);
-    closeMenu();
-    router.push(`/locations/${targetSlug}`);
-  };
-
-  const handleFindNearestLocation = async () => {
-    setIsFindingNearest(true);
-    setNearestError(null);
-
-    const result = await findNearestLocationFromBrowser(locations);
-    setIsFindingNearest(false);
-
-    if (!result.ok) {
-      if (result.reason === "permission-denied") {
-        setNearestError(
-          "Location permission is blocked. Enable location access and try again.",
-        );
-        return;
-      }
-
-      if (result.reason === "unsupported") {
-        setNearestError("Location services are not available in this browser.");
-        return;
-      }
-
-      if (result.reason === "timeout") {
-        setNearestError("Location request timed out. Please try again or choose a store manually.");
-        return;
-      }
-
-      setNearestError("We could not determine a nearby location.");
-      return;
-    }
-
-    handleSelectStore(result.slug);
   };
 
   useEffect(() => {
@@ -235,29 +166,6 @@ export default function SiteHeader({
 
     window.addEventListener(OPEN_DELIVERY_OPTIONS_EVENT, onOpenDelivery);
     return () => window.removeEventListener(OPEN_DELIVERY_OPTIONS_EVENT, onOpenDelivery);
-  }, []);
-
-  useEffect(() => {
-    const onShoppingLocationChange = (event: Event) => {
-      const customEvent = event as CustomEvent<{ slug?: string }>;
-      const slug = customEvent.detail?.slug;
-
-      if (slug && locations.some((location) => location.slug === slug)) {
-        setMenuLocationSlug(slug);
-      }
-    };
-
-    window.addEventListener(
-      SHOPPING_LOCATION_CHANGE_EVENT,
-      onShoppingLocationChange as EventListener,
-    );
-
-    return () => {
-      window.removeEventListener(
-        SHOPPING_LOCATION_CHANGE_EVENT,
-        onShoppingLocationChange as EventListener,
-      );
-    };
   }, []);
 
   useEffect(() => {
@@ -298,7 +206,6 @@ export default function SiteHeader({
       if (event.key === "Escape") {
         event.preventDefault();
         setActiveDrawer(null);
-        setNearestError(null);
         return;
       }
 
@@ -343,14 +250,14 @@ export default function SiteHeader({
   return (
     <>
       <a href="#main-content" className="skip-link">Skip to main content</a>
-      <header ref={headerRef} className={`site-header${isEditorial ? " is-editorial" : ""}`}>
+      <header ref={headerRef} className={`site-header is-editorial${isEditorial ? " is-home" : ""}`}>
         <div className="section-shell header-inner flex h-20 items-center justify-between gap-4">
           <Link href="/" className="shrink-0" aria-label="Prime Tacos home">
             <Image src="/newlogo.png" alt="Prime Tacos" width={3822} height={2378} sizes="106px" priority className="site-logo" data-home-logo-target />
           </Link>
 
           <nav className="hidden items-center gap-6 xl:flex" aria-label="Primary navigation">
-            {links.filter((link) => isEditorial ? ["/locations", "/menu", "/our-story"].includes(link.href) : !["/", "/faq", "/careers"].includes(link.href)).map((link) => (
+            {links.filter((link) => link.href !== "/").map((link) => (
               <Link key={link.href} href={getNavigationHref(link.href)} className="header-link" aria-current={isLinkActive(link.href) ? "page" : undefined}>
                 {link.label}
               </Link>
@@ -376,7 +283,7 @@ export default function SiteHeader({
         </div>
       </header>
 
-      <div className={`site-drawer-layer ${isMenuOpen ? "is-open" : ""} ${isWelcomeOpen ? "is-welcome" : ""} ${isDeliveryOpen ? "is-delivery" : ""}`} inert={!isMenuOpen} aria-hidden={!isMenuOpen}>
+      <div className={`site-drawer-layer is-editorial ${isMenuOpen ? "is-open" : ""} ${isWelcomeOpen ? "is-welcome" : ""} ${isDeliveryOpen ? "is-delivery" : ""}`} inert={!isMenuOpen} aria-hidden={!isMenuOpen}>
         <button type="button" onClick={closeMenu} className="site-drawer-backdrop" aria-label={isDeliveryOpen ? "Close delivery options overlay" : isLocationPickerOpen ? "Close store selector overlay" : "Close menu overlay"} tabIndex={-1} />
         <aside ref={mobileMenuPanelRef} id="mobile-site-menu" className={`site-drawer ${isWelcomeOpen ? "store-welcome-dialog" : ""}${isDeliveryOpen ? " delivery-drawer" : ""}`} role="dialog" aria-modal="true" aria-labelledby="mobile-menu-title" aria-describedby={isDeliveryOpen ? "delivery-description" : isLocationPickerOpen ? "store-picker-description" : undefined}>
           {isWelcomeOpen ? (
@@ -398,8 +305,8 @@ export default function SiteHeader({
               <p id="delivery-description">{deliveryLocation ? "Your favorite order. Your favorite delivery service." : "Choose your location, then your delivery service."}</p>
             </div>
           ) : (
-            <div className="flex items-center justify-between border-b border-black/15 pb-4">
-              <h2 id="mobile-menu-title" className="font-display text-xl">{isLocationPickerOpen ? "Change store" : "Prime Tacos"}</h2>
+            <div className="drawer-heading">
+              <h2 id="mobile-menu-title" className="drawer-title">{isLocationPickerOpen ? "Change store" : "Prime Tacos"}</h2>
               <button ref={mobileMenuCloseButtonRef} type="button" onClick={closeMenu} className="menu-toggle shrink-0" aria-label={isLocationPickerOpen ? "Close store selector" : "Close menu"}>
                 <SiteIcon name="close" />
               </button>
@@ -480,31 +387,22 @@ export default function SiteHeader({
                 ))}
               </nav>
 
-              <section className="drawer-location">
-                <label htmlFor="header-location-picker" className="eyebrow">Your location</label>
-                <select id="header-location-picker" value={menuLocationSlug} onChange={(event) => {
-                  const slug = event.target.value;
-                  handleSelectStore(slug);
-                }} className="brand-input mt-3 px-3 py-3 text-sm">
-                  <option value="" disabled>Choose a location</option>
-                  {locations.map((location) => <option key={location.slug} value={location.slug}>{location.name}</option>)}
-                </select>
-                <button type="button" onClick={handleFindNearestLocation} disabled={isFindingNearest} className="mt-3 min-h-11 text-sm font-bold text-brand-green disabled:opacity-50">
-                  {isFindingNearest ? "Finding nearest…" : "Use my current location"}
+              <section className="drawer-location" aria-label="Your location and ordering">
+                <p className="eyebrow">Your location</p>
+                <button type="button" onClick={openLocationPicker} className="drawer-store-button" aria-haspopup="dialog">
+                  <SiteIcon name="pin" />
+                  <span>{shoppingLabel}</span>
+                  <SiteIcon name="arrow" />
                 </button>
-                <div className="mt-3 grid grid-cols-2 gap-2">
-                  <Link href={drawerCtaHref} onClick={closeMenu} className="brand-btn px-3 py-3 text-xs">{ctaLabel}</Link>
-                  <button type="button" onClick={handleViewSelectedLocation} disabled={!menuLocationSlug && !storedShoppingSlug && !routeLocationSlug} className="brand-btn-muted px-3 py-3 text-xs disabled:opacity-45">View location</button>
-                </div>
-                {menuDirectionsUrl && <a href={menuDirectionsUrl} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex min-h-11 items-center gap-2 text-sm font-bold text-brand-green"><SiteIcon name="pin" />Directions to {menuLocation?.name}</a>}
-                {nearestError && <p role="alert" className="mt-3 text-sm text-brand-red">{nearestError}</p>}
+                {shoppingLocation && <p className="drawer-store-address">{shoppingLocation.address}</p>}
+                <Link href={drawerCtaHref} onClick={closeMenu} className="brand-btn drawer-order">{ctaLabel}<SiteIcon name="arrow" /></Link>
               </section>
             </>
           )}
         </aside>
       </div>
 
-      <nav aria-label="Mobile quick actions" className={`mobile-bottom-bar${isEditorial ? " is-editorial" : ""}`} inert={isMenuOpen}>
+      <nav aria-label="Mobile quick actions" className="mobile-bottom-bar is-editorial" inert={isMenuOpen}>
         {shoppingLocation?.phone ? (
           <a href={`tel:${shoppingLocation.phone}`} aria-label={`Call ${shoppingLocation.name}`}><SiteIcon name="phone" /><span>Call</span></a>
         ) : (

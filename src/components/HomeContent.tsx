@@ -116,10 +116,12 @@ export default function HomeContent(): ReactElement {
           <div className="home-delivery-list">
             {locations.map((location) => (
               <article id={`delivery-${location.slug}`} key={location.slug} className="home-delivery-row" data-reveal>
-                <h3>{location.name}</h3>
+                <div className="home-delivery-shop">
+                  <h3>{location.name}</h3>
+                  {location.toastUrl && <a href={location.toastUrl} target="_blank" rel="noopener noreferrer" className="home-pickup-link" aria-label={`Order pickup from ${location.name} (opens in a new tab)`}>Order pickup<SiteIcon name="bag" /></a>}
+                </div>
                 <div className="home-delivery-options">
-                  {location.toastUrl && <a href={location.toastUrl} target="_blank" rel="noopener noreferrer" className="home-pickup-link" aria-label={`Order pickup from ${location.name}`}>Order pickup<SiteIcon name="bag" /></a>}
-                  <DeliveryLinks location={location} className="home-provider-links" />
+                  <DeliveryLinks location={location} variant="compact" />
                 </div>
               </article>
             ))}

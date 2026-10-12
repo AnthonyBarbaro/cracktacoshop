@@ -12,130 +12,81 @@ export default function HomeLogoIntro(): ReactElement {
     if (!source || !target) return;
 
     const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
-    let timeout: number | undefined;
-    let animation: Animation | undefined;
-    let collapseAnimation: Animation | undefined;
-    let flyingLogo: HTMLImageElement | undefined;
-    let finished = false;
+    let frame = 0;
+    let progress = Math.min(Math.max(window.scrollY, 0) / 420, 1);
+    let previousTime = performance.now();
 
-    ["visibility", "height", "margin-top", "margin-bottom"].forEach((property) => {
-      source.style.removeProperty(property);
+    // Keep the hero's space intact so docking never shifts the page.
+    const flyingLogo = source.cloneNode() as HTMLImageElement;
+    flyingLogo.removeAttribute("class");
+    flyingLogo.removeAttribute("srcset");
+    flyingLogo.removeAttribute("sizes");
+    flyingLogo.alt = "";
+    flyingLogo.setAttribute("aria-hidden", "true");
+    flyingLogo.setAttribute("data-home-logo-flight", "");
+    Object.assign(flyingLogo.style, {
+      position: "fixed",
+      top: "0",
+      left: "0",
+      maxWidth: "none",
+      margin: "0",
+      display: "none",
+      pointerEvents: "none",
+      transformOrigin: "center",
+      zIndex: "45",
     });
-    target.removeAttribute("data-home-logo-docked");
+    document.body.append(flyingLogo);
 
-    const finish = (): void => {
-      collapseAnimation?.cancel();
-      collapseAnimation = undefined;
-      if (finished) return;
-      finished = true;
-      window.clearTimeout(timeout);
-      Object.assign(source.style, {
-        visibility: "hidden",
-        height: "0px",
-        marginTop: "0px",
-        marginBottom: "1.5rem",
-      });
-      target.setAttribute("data-home-logo-docked", "");
-      animation?.cancel();
-      flyingLogo?.remove();
-    };
+    const update = (now: number): void => {
+      frame = 0;
+      const desiredProgress = Math.min(Math.max(window.scrollY, 0) / 420, 1);
+      const elapsed = Math.min(now - previousTime, 64);
+      previousTime = now;
+      progress = preference.matches
+        ? desiredProgress
+        : progress + (desiredProgress - progress) * (1 - Math.exp(-elapsed / 160));
+      if (Math.abs(desiredProgress - progress) < .001) {
+        progress = desiredProgress;
+      } else {
+        frame = window.requestAnimationFrame(update);
+      }
+      const docked = progress === 1 || (preference.matches && progress > 0);
+      target.toggleAttribute("data-home-logo-docked", docked);
+      source.style.visibility = progress === 0 || (preference.matches && !docked) ? "visible" : "hidden";
+      flyingLogo.style.display = progress > 0 && !docked ? "block" : "none";
+      if (progress === 0 || docked) return;
 
-    const land = (): void => {
-      if (finished) return;
-      const style = window.getComputedStyle(source);
-      const start = {
-        height: `${source.getBoundingClientRect().height}px`,
-        marginTop: style.marginTop,
-        marginBottom: style.marginBottom,
-      };
-      finish();
-      collapseAnimation = source.animate([
-        start,
-        { height: "0px", marginTop: "0px", marginBottom: "1.5rem" },
-      ], {
-        duration: 450,
-        easing: "cubic-bezier(.4, 0, .2, 1)",
-      });
-      collapseAnimation.onfinish = (): void => {
-        collapseAnimation = undefined;
-      };
-    };
-
-    const fly = (): void => {
-      if (finished) return;
       const start = source.getBoundingClientRect();
       const end = target.getBoundingClientRect();
-      if (!start.width || !start.height || !end.width || !end.height) {
-        finish();
-        return;
-      }
-
-      // A body-level copy can cross the hero's overflow and the sticky header.
-      flyingLogo = source.cloneNode() as HTMLImageElement;
-      flyingLogo.removeAttribute("class");
-      flyingLogo.removeAttribute("srcset");
-      flyingLogo.removeAttribute("sizes");
+      const eased = progress * progress * (3 - 2 * progress);
+      const arc = Math.sin(Math.PI * progress);
+      const mix = (from: number, to: number): number => from + (to - from) * eased;
       flyingLogo.src = source.currentSrc || source.src;
-      flyingLogo.alt = "";
-      flyingLogo.setAttribute("aria-hidden", "true");
-      flyingLogo.setAttribute("data-home-logo-flight", "");
       Object.assign(flyingLogo.style, {
-        position: "fixed",
-        top: `${start.top}px`,
-        left: `${start.left}px`,
-        width: `${start.width}px`,
-        height: `${start.height}px`,
-        maxWidth: "none",
-        margin: "0",
-        pointerEvents: "none",
-        transformOrigin: "top left",
-        zIndex: "45",
+        width: `${mix(start.width, end.width)}px`,
+        height: `${mix(start.height, end.height)}px`,
+        transform: `translate3d(${mix(start.left, end.left)}px, ${mix(start.top + Math.max(window.scrollY, 0), end.top) - arc * 24}px, 0) rotate(${-arc * 5}deg)`,
       });
-      document.body.append(flyingLogo);
-      source.style.visibility = "hidden";
-      animation = flyingLogo.animate([
-        { transform: "translate3d(0, 0, 0) scale(1)" },
-        { transform: `translate3d(${end.left - start.left}px, ${end.top - start.top}px, 0) scale(${end.width / start.width}, ${end.height / start.height})` },
-      ], {
-        duration: 950,
-        easing: "cubic-bezier(.22, 1, .36, 1)",
-        fill: "forwards",
-      });
-      animation.onfinish = land;
     };
 
-    const schedule = (): void => {
-      if (!finished && timeout === undefined) timeout = window.setTimeout(fly, 800);
+    const requestUpdate = (): void => {
+      if (!frame) frame = window.requestAnimationFrame(update);
     };
 
-    if (preference.matches || window.scrollY > 0 || typeof source.animate !== "function") {
-      finish();
-    } else if (source.complete) {
-      if (source.naturalWidth) schedule();
-      else finish();
-    } else {
-      source.addEventListener("load", schedule, { once: true });
-      source.addEventListener("error", finish, { once: true });
-    }
-
-    window.addEventListener("scroll", finish, { passive: true });
-    window.addEventListener("resize", finish);
-    preference.addEventListener("change", finish);
+    update(performance.now());
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate);
+    source.addEventListener("load", requestUpdate);
+    preference.addEventListener("change", requestUpdate);
 
     return () => {
-      finished = true;
-      window.clearTimeout(timeout);
-      animation?.cancel();
-      collapseAnimation?.cancel();
-      flyingLogo?.remove();
-      source.removeEventListener("load", schedule);
-      source.removeEventListener("error", finish);
-      window.removeEventListener("scroll", finish);
-      window.removeEventListener("resize", finish);
-      preference.removeEventListener("change", finish);
-      ["visibility", "height", "margin-top", "margin-bottom"].forEach((property) => {
-        source.style.removeProperty(property);
-      });
+      window.cancelAnimationFrame(frame);
+      flyingLogo.remove();
+      window.removeEventListener("scroll", requestUpdate);
+      window.removeEventListener("resize", requestUpdate);
+      source.removeEventListener("load", requestUpdate);
+      preference.removeEventListener("change", requestUpdate);
+      source.style.removeProperty("visibility");
       target.removeAttribute("data-home-logo-docked");
     };
   }, []);
@@ -147,7 +98,7 @@ export default function HomeLogoIntro(): ReactElement {
       alt="Prime Taco Shop — Home of Tri-Tip Taco"
       width={3822}
       height={2378}
-      sizes="(max-width: 639px) 200px, 280px"
+      sizes="(max-width: 639px) 220px, 320px"
       priority
       className="home-hero-logo"
     />

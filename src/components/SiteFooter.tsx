@@ -15,17 +15,15 @@ type Props = {
   variant?: "default" | "minimal";
 };
 
-export default function SiteFooter({ variant = "default" }: Props): ReactElement {
+export default function SiteFooter({ variant = "minimal" }: Props): ReactElement {
   const shoppingLocation = useShoppingLocation();
   const menuHref = getMenuHref(shoppingLocation);
   const footerLinks = [
     { href: menuHref, label: "Menu" },
     { href: "/locations", label: "Locations" },
     { href: "/our-story", label: "Our story" },
-    { href: "/reviews", label: "Reviews" },
     { href: "/careers", label: "Careers" },
     { href: "/faq", label: "FAQ" },
-    { href: "/contact", label: "Contact" },
   ];
 
   if (variant === "minimal") {
