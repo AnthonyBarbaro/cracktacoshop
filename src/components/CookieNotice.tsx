@@ -50,7 +50,7 @@ export default function CookieNotice(): ReactNode {
     <section ref={noticeRef} tabIndex={-1} className="cookie-notice" aria-labelledby="cookie-notice-title">
       <div>
         <h2 id="cookie-notice-title">Cookies &amp; preferences</h2>
-        <p>Allow saved stores and Google Maps. Update your choice anytime.</p>
+        <p>Allow saved stores, Google Maps, and Instagram. Update your choice anytime.</p>
       </div>
       <div className="cookie-notice-actions">
         <button className="cookie-notice-button" type="button" onClick={() => choosePreference("disabled")}>

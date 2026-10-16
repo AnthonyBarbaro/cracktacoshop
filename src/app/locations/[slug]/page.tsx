@@ -131,7 +131,7 @@ export default async function LocationPage({ params }: LocationPageProps) {
 
   return (
     <>
-      <SiteHeader ctaHref={pickupOrderUrl ?? "/order-online"} ctaLabel="Order pickup" />
+      <SiteHeader />
       <Script
         id={`restaurant-schema-${location.slug}`}
         type="application/ld+json"

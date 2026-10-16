@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
+import type { ReactElement } from "react";
 
-import LocationCard from "@/components/LocationCard";
 import LocationsMapPanel from "@/components/LocationsMapPanel";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 import { locations } from "@/data/locations";
 import { site } from "@/data/site-content";
+
+import styles from "./LocationsPage.module.css";
 
 export const metadata: Metadata = {
   title: "Locations",
@@ -27,28 +29,22 @@ export const metadata: Metadata = {
   },
 };
 
-export default function LocationsPage() {
+export default function LocationsPage(): ReactElement {
+  const orderedLocations = ["seaport-village", "coronado", "encinitas", "mission-valley"]
+    .flatMap((slug) => locations.filter((location) => location.slug === slug));
+
   return (
     <>
       <SiteHeader ctaHref="/order-online" ctaLabel="Order Online" />
       <main id="main-content" className="page-main">
-        <section className="section-shell page-intro">
-          <p className="page-kicker">Find us</p>
-          <h1 className="page-title">Our locations</h1>
-          <p className="page-description">Choose a location for hours, directions, and ordering.</p>
+        <section className={`section-shell ${styles.intro}`} aria-labelledby="locations-title">
+          <p className="page-kicker">Plan your visit</p>
+          <h1 id="locations-title" className={styles.title}>Find your Prime.</h1>
+          <p className={styles.description}>Hours may vary on holidays. Call your shop before visiting.</p>
         </section>
 
-        <section className="section-shell locations-gallery" aria-label="Our neighborhood shops">
-          <div className="grid gap-x-10 gap-y-14 md:grid-cols-2">
-            {locations.map((location) => (
-              <LocationCard key={location.slug} location={location} />
-            ))}
-          </div>
-        </section>
-
-        <section className="section-shell location-map-section" aria-labelledby="location-map-title">
-          <div className="location-map-heading"><p className="page-kicker">Plan your visit</p><h2 id="location-map-title" className="font-display text-4xl">Find your Prime.</h2><p>Hours may vary on holidays. Call your shop before visiting.</p></div>
-          <LocationsMapPanel locations={locations} />
+        <section className="section-shell" aria-label="Our locations">
+          <LocationsMapPanel locations={orderedLocations} />
         </section>
       </main>
       <SiteFooter />

@@ -12,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "careers",
     "faq",
     "order-online",
+    "catering",
   ];
 
   return [

@@ -12,7 +12,6 @@ import StoreLocationSearch from "@/components/StoreLocationSearch";
 import StoreWelcome from "@/components/StoreWelcome";
 import { locations } from "@/data/locations";
 import { OPEN_DELIVERY_OPTIONS_EVENT } from "@/lib/delivery-options";
-import { getMenuHref } from "@/lib/menu-link";
 import { getGoogleMapsDirectionsUrl } from "@/lib/google-maps";
 import {
   getShoppingLocationSlugServerSnapshot,
@@ -67,10 +66,10 @@ export default function SiteHeader({
   const headerRef = useRef<HTMLElement>(null);
 
   const links = [
-    { href: "/", label: "Home" },
-    { href: "/locations", label: "Locations" },
     { href: "/menu", label: "Menu" },
-    { href: "/our-story", label: "Our Story" },
+    { href: "/locations", label: "Locations" },
+    { href: "/order-online", label: "Order Online" },
+    { href: "/catering", label: "Catering" },
   ];
 
   const shoppingSlug = routeLocationSlug ?? storedShoppingSlug;
@@ -79,7 +78,6 @@ export default function SiteHeader({
     [shoppingSlug],
   );
   const deliveryLocation = locations.find((location) => location.slug === (deliveryLocationSlug || shoppingSlug));
-  const shoppingMenuHref = getMenuHref(shoppingLocation);
   const primaryCtaHref = ctaHref;
   const drawerCtaHref = ctaHref;
 
@@ -101,9 +99,6 @@ export default function SiteHeader({
 
     return pathname === href || pathname.startsWith(`${href}/`);
   };
-  const getNavigationHref = (href: string): string => (
-    href === "/menu" && shoppingLocation ? shoppingMenuHref : href
-  );
 
   const openMenu = () => {
     setActiveDrawer("menu");
@@ -253,12 +248,12 @@ export default function SiteHeader({
       <header ref={headerRef} className={`site-header is-editorial${isEditorial ? " is-home" : ""}`}>
         <div className="section-shell header-inner flex h-20 items-center justify-between gap-4">
           <Link href="/" className="shrink-0" aria-label="Prime Tacos home">
-            <Image src="/newlogo.png" alt="Prime Tacos" width={3822} height={2378} sizes="106px" priority className="site-logo" data-home-logo-target />
+            <Image src="/newlogo.png" alt="Prime Taco Shop — Home of Tri-Tip Taco" width={3822} height={2378} sizes="(max-width: 639px) 106px, 152px" priority className="site-logo" data-home-logo-target />
           </Link>
 
           <nav className="hidden items-center gap-6 xl:flex" aria-label="Primary navigation">
-            {links.filter((link) => link.href !== "/").map((link) => (
-              <Link key={link.href} href={getNavigationHref(link.href)} className="header-link" aria-current={isLinkActive(link.href) ? "page" : undefined}>
+            {links.map((link) => (
+              <Link key={link.href} href={link.href} className="header-link" aria-current={isLinkActive(link.href) ? "page" : undefined}>
                 {link.label}
               </Link>
             ))}
@@ -273,9 +268,11 @@ export default function SiteHeader({
               </span>
               <span className="header-location-chevron" aria-hidden="true" />
             </button>
-            <Link href={primaryCtaHref} className="brand-btn hidden px-5 py-3 text-xs sm:inline-flex">
-              {ctaLabel}
-            </Link>
+            <span className="hidden sm:inline-flex xl:hidden">
+              <Link href={primaryCtaHref} className="brand-btn px-5 py-3 text-xs">
+                {ctaLabel}
+              </Link>
+            </span>
             <button ref={menuToggleButtonRef} type="button" onClick={openMenu} className="menu-toggle shrink-0" aria-label="Open menu" aria-expanded={activeDrawer === "menu"} aria-controls="mobile-site-menu">
               <SiteIcon name="menu" className="h-6 w-6" />
             </button>
@@ -381,7 +378,7 @@ export default function SiteHeader({
             <>
               <nav aria-label="Site sections" className="drawer-links">
                 {links.map((link) => (
-                    <Link key={link.href} href={getNavigationHref(link.href)} aria-current={isLinkActive(link.href) ? "page" : undefined} onClick={closeMenu}>
+                    <Link key={link.href} href={link.href} aria-current={isLinkActive(link.href) ? "page" : undefined} onClick={closeMenu}>
                     {link.label}<SiteIcon name="arrow" />
                   </Link>
                 ))}
@@ -409,7 +406,7 @@ export default function SiteHeader({
           <Link href={isEditorial ? "/#locations" : "/locations"} aria-label="Choose a location to call"><SiteIcon name="phone" /><span>Call</span></Link>
         )}
         <a href={selectedDirectionsUrl ?? (isEditorial ? "/#locations" : "/locations")} target={selectedDirectionsUrl ? "_blank" : undefined} rel={selectedDirectionsUrl ? "noopener noreferrer" : undefined}><SiteIcon name="pin" /><span>Directions</span></a>
-        <Link href={shoppingMenuHref}><SiteIcon name="menu" /><span>Menu</span></Link>
+        <Link href="/menu"><SiteIcon name="menu" /><span>Menu</span></Link>
         <button type="button" onClick={() => {
           setDeliveryLocationSlug("");
           setActiveDrawer("delivery");

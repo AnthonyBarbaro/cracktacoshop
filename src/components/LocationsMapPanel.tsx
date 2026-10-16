@@ -1,27 +1,27 @@
 "use client";
 
-import Link from "next/link";
-import { useSyncExternalStore } from "react";
+import { useSyncExternalStore, type ReactElement } from "react";
 
+import GoogleMapEmbed from "@/components/GoogleMapEmbed";
 import type { Location } from "@/data/locations";
+import {
+  getGoogleMapsDirectionsUrl,
+  getGoogleMapsEmbedUrl,
+} from "@/lib/google-maps";
 import {
   getShoppingLocationSlugServerSnapshot,
   getShoppingLocationSlugSnapshot,
   setStoredShoppingLocationSlug,
   subscribeToShoppingLocationChanges,
 } from "@/lib/shopping-location";
-import {
-  getGoogleMapsDirectionsUrl,
-  getGoogleMapsEmbedUrl,
-} from "@/lib/google-maps";
-import LocationOpenBadge from "@/components/LocationOpenBadge";
-import GoogleMapEmbed from "@/components/GoogleMapEmbed";
+
+import styles from "./LocationsMapPanel.module.css";
 
 type Props = {
   locations: Location[];
 };
 
-export default function LocationsMapPanel({ locations }: Props) {
+export default function LocationsMapPanel({ locations }: Props): ReactElement | null {
   const selectedSlug = useSyncExternalStore(
     subscribeToShoppingLocationChanges,
     getShoppingLocationSlugSnapshot,
@@ -34,93 +34,70 @@ export default function LocationsMapPanel({ locations }: Props) {
     return null;
   }
 
-  const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY?.trim();
   const embedSrc = getGoogleMapsEmbedUrl({
     address: activeLocation.address,
     placeId: activeLocation.placeId,
-    apiKey: googleMapsApiKey,
-  });
-  const directionsUrl = getGoogleMapsDirectionsUrl({
-    address: activeLocation.address,
-    placeId: activeLocation.placeId,
-    googleMapsUrl: activeLocation.googleMapsUrl,
+    apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY?.trim(),
   });
 
   return (
-    <div>
-      <h2 className="sr-only">Find a location on the map</h2>
-      <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
-          {locations.map((location) => {
+    <div className={styles.panel}>
+      <div className={styles.listPanel}>
+        <h2 className={styles.title}>Locations</h2>
+        <div className={styles.list}>
+          {locations.map((location, index) => {
             const isSelected = location.slug === activeLocation.slug;
 
             return (
-              <button
-                key={location.slug}
-                type="button"
-                aria-pressed={isSelected}
-                onClick={() => {
-                  setStoredShoppingLocationSlug(location.slug);
-                }}
-                className={`rounded-lg border px-3 py-3 text-left transition-colors ${
-                  isSelected
-                    ? "border-brand-green bg-green-50"
-                    : "border-neutral-200 bg-white hover:border-brand-green"
-                }`}
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <p className="font-display text-xl text-neutral-950">{location.name}</p>
-                  <LocationOpenBadge slug={location.slug} />
+              <article key={location.slug} className={styles.location} data-selected={isSelected}>
+                <h3>
+                  <button
+                    type="button"
+                    className={styles.selectLocation}
+                    aria-label={`Show ${location.name} on the map`}
+                    aria-pressed={isSelected}
+                    aria-controls="locations-map"
+                    onClick={() => setStoredShoppingLocationSlug(location.slug)}
+                  >
+                    <span className={styles.number} aria-hidden="true">{index + 1}</span>
+                    {location.name.toUpperCase()}
+                  </button>
+                </h3>
+                <div className={styles.details}>
+                  <p>{location.address}</p>
+                  <p>{location.hours}</p>
+                  {location.phone && <a href={`tel:${location.phone}`}>{location.phone}</a>}
                 </div>
-                <p className="mt-1 text-xs text-neutral-600">{location.address}</p>
-                <p className="mt-1 text-xs text-neutral-600">{location.hours}</p>
-              </button>
+                <div className={styles.actions}>
+                  {location.toastUrl && (
+                    <a
+                      href={location.toastUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.order}
+                      aria-label={`Order online from ${location.name} (opens in a new tab)`}
+                    >
+                      Order online
+                    </a>
+                  )}
+                  <a
+                    href={getGoogleMapsDirectionsUrl(location)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.directions}
+                    aria-label={`Directions to ${location.name} (opens in a new tab)`}
+                  >
+                    Directions
+                  </a>
+                </div>
+              </article>
             );
           })}
         </div>
-
-        <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white">
-          <div className="relative min-h-72">
-            <GoogleMapEmbed
-              title={`${activeLocation.name} map`}
-              src={embedSrc}
-            />
-          </div>
-
-          <div className="border-t border-neutral-200 p-4">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <p className="font-display text-2xl text-neutral-950">{activeLocation.name}</p>
-                <p className="mt-1 text-sm text-neutral-600">{activeLocation.address}</p>
-              </div>
-            </div>
-
-            <div className="mt-4 flex flex-wrap gap-2">
-              <a
-                href={directionsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="brand-btn-directions px-4 py-2 text-sm"
-              >
-                Get Directions
-              </a>
-              <Link
-                href={`/locations/${activeLocation.slug}`}
-                className="brand-btn-muted px-4 py-2 text-sm"
-              >
-                Location Details
-              </Link>
-              <Link href={`/menu/${activeLocation.slug}/embed`} className="brand-btn-muted px-4 py-2 text-sm">
-                View menu
-              </Link>
-              {activeLocation.toastUrl && (
-                <a href={activeLocation.toastUrl} target="_blank" rel="noopener noreferrer" className="brand-btn px-4 py-2 text-sm">
-                  Order pickup
-                </a>
-              )}
-            </div>
-          </div>
-        </div>
+      </div>
+      <div id="locations-map" className={styles.map}>
+        <GoogleMapEmbed title={`${activeLocation.name} map`} src={embedSrc} allowFullScreen />
+        <p className="sr-only" aria-live="polite">Showing {activeLocation.name} on the map.</p>
       </div>
     </div>
   );

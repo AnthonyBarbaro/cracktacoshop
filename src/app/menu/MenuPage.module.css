@@ -1,0 +1,69 @@
+.main {
+  background: var(--prime-paper, #f8f7f1);
+}
+
+.section {
+  max-width: 58rem;
+  padding-block: clamp(3.5rem, 6vw, 5rem);
+}
+
+.title {
+  color: var(--prime-ink);
+  font-family: var(--font-editorial), Georgia, "Times New Roman", serif;
+  font-size: clamp(3rem, 5vw, 5rem);
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -.045em;
+}
+
+.description {
+  margin-top: 1rem;
+  color: #626b60;
+  font-size: 1rem;
+}
+
+.locations {
+  display: grid;
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+  border-top: 1px solid #bdc7b7;
+}
+
+.location {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 5.5rem;
+  border-bottom: 1px solid #d4d9ca;
+  padding: 1.5rem .25rem;
+  color: var(--prime-ink);
+  font-family: var(--font-manrope), Arial, sans-serif;
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  font-weight: 600;
+  letter-spacing: .06em;
+  line-height: 1.2;
+  transition: background-color .2s;
+}
+
+.location:hover {
+  background: #edf0e6;
+}
+
+.arrow {
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+}
+
+@media (max-width: 639px) {
+  .location {
+    min-height: 5rem;
+    font-size: .95rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .location {
+    transition: none;
+  }
+}

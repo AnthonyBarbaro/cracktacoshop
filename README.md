@@ -1,6 +1,6 @@
 # Prime Tacos
 
-Prime Tacos restaurant website, built with Next.js, React, TypeScript, and Tailwind CSS. Uses `public/newlogo.png` and a green and cream theme, with a compact mobile header, animated homepage logo, and fixed quick actions.
+Prime Tacos restaurant website, built with Next.js, React, TypeScript, and Tailwind CSS. Uses `public/newlogo.png`, the original cream and dark green theme, an animated homepage logo, mobile bottom navigation, a location-first menu, and shared pickup/delivery options. The Instagram profile embed and Google Maps load when optional cookies are enabled.
 
 ## Development
 

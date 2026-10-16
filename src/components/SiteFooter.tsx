@@ -7,20 +7,18 @@ import type { ReactElement } from "react";
 import { locations } from "@/data/locations";
 import { site } from "@/data/site-content";
 import SiteIcon from "@/components/SiteIcon";
+import InstagramSection from "@/components/InstagramSection";
 import { openCookieSettings } from "@/lib/cookie-preferences";
 import { getMenuHref } from "@/lib/menu-link";
-import { useShoppingLocation } from "@/lib/use-shopping-location";
 
 type Props = {
   variant?: "default" | "minimal";
 };
 
 export default function SiteFooter({ variant = "minimal" }: Props): ReactElement {
-  const shoppingLocation = useShoppingLocation();
-  const menuHref = getMenuHref(shoppingLocation);
   const footerLinks = [
-    { href: menuHref, label: "Menu" },
     { href: "/locations", label: "Locations" },
+    { href: "/catering", label: "Catering" },
     { href: "/our-story", label: "Our story" },
     { href: "/careers", label: "Careers" },
     { href: "/faq", label: "FAQ" },
@@ -29,10 +27,11 @@ export default function SiteFooter({ variant = "minimal" }: Props): ReactElement
   if (variant === "minimal") {
     return (
       <footer className="site-footer is-editorial">
+        <InstagramSection />
         <div className="section-shell footer-main">
           <div className="footer-brand">
             <Link href="/" aria-label="Prime Tacos home">
-              <Image src="/newlogo.png" alt="Prime Tacos" width={3822} height={2378} sizes="144px" className="footer-logo" />
+              <Image src="/newlogo.png" alt="Prime Taco Shop — Home of Tri-Tip Taco" width={3822} height={2378} sizes="(max-width: 639px) 200px, 220px" className="footer-logo" />
             </Link>
             <p className="footer-description">{site.tagline}<br />San Diego, California.</p>
           </div>
@@ -67,7 +66,7 @@ export default function SiteFooter({ variant = "minimal" }: Props): ReactElement
     <footer className="site-footer">
       <div className="section-shell footer-main">
         <div>
-          <Link href="/" aria-label="Prime Tacos home"><Image src="/newlogo.png" alt="Prime Tacos" width={3822} height={2378} sizes="144px" className="footer-logo" /></Link>
+          <Link href="/" aria-label="Prime Tacos home"><Image src="/newlogo.png" alt="Prime Taco Shop — Home of Tri-Tip Taco" width={3822} height={2378} sizes="144px" className="footer-logo" /></Link>
           <p className="mt-4 text-sm text-white/70">{site.tagline} Proudly San Diego.</p>
         </div>
         <nav aria-label="Footer navigation" className="footer-links">

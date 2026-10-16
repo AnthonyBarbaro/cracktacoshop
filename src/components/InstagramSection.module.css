@@ -1,0 +1,135 @@
+.section {
+  padding-block: clamp(3rem, 6vw, 5rem);
+  background: #f8f7f1;
+  color: var(--prime-ink);
+  text-align: center;
+}
+
+.eyebrow {
+  margin-bottom: .8rem;
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+}
+
+.heading {
+  margin-bottom: clamp(1.75rem, 4vw, 2.5rem);
+  font-family: var(--font-editorial), Georgia, "Times New Roman", serif;
+  font-size: clamp(2.25rem, 4.5vw, 3.75rem);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -.035em;
+  text-wrap: balance;
+}
+
+.card {
+  width: 100%;
+  max-width: 540px;
+  margin-inline: auto;
+  overflow: hidden;
+  background: #fff;
+}
+
+.photos {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  max-width: 68rem;
+  margin-inline: auto;
+}
+
+.photo {
+  position: relative;
+  display: block;
+  aspect-ratio: 1;
+  overflow: hidden;
+}
+
+.photoImage { object-fit: cover; }
+
+.embed :global(.instagram-media) {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 540px !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.profile {
+  display: flex;
+  min-height: 360px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  padding: 2rem;
+  font-size: .9rem;
+  text-decoration: underline;
+  text-underline-offset: .25em;
+}
+
+.profile svg {
+  width: 3rem;
+  height: 3rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  margin-top: 1.75rem;
+}
+
+.settings {
+  min-height: 2.75rem;
+  font-size: .75rem;
+  text-decoration: underline;
+  text-underline-offset: .3em;
+}
+
+.follow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .75rem;
+  min-height: 2.875rem;
+  padding: .7rem 1.25rem;
+  border: 1px solid var(--prime-ink);
+  background: var(--prime-ink);
+  color: #fff;
+  font-size: .7rem;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  transition: background-color .2s, color .2s;
+}
+
+.follow svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  flex: none;
+}
+
+.follow:hover {
+  background: #27593f;
+}
+
+@media (max-width: 639px) {
+  .photos { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem; }
+
+  .profile {
+    min-height: 300px;
+    padding: 1.5rem;
+  }
+
+  .follow { max-width: 100%; font-size: .65rem; letter-spacing: .08em; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .follow { transition: none; }
+}

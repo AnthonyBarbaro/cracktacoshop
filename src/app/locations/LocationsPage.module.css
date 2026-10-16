@@ -1,0 +1,31 @@
+.intro {
+  padding-block: clamp(3rem, 6vw, 5rem) 2.5rem;
+}
+
+.title {
+  margin-top: 1rem;
+  color: var(--prime-ink);
+  font-family: var(--font-editorial), Georgia, "Times New Roman", serif;
+  font-size: clamp(4rem, 9vw, 9rem);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -.045em;
+  text-wrap: balance;
+}
+
+.description {
+  margin-top: 1.5rem;
+  color: #626b60;
+  font-size: .9rem;
+}
+
+@media (max-width: 639px) {
+  .title {
+    font-size: clamp(3.5rem, 15vw, 5.5rem);
+  }
+
+  .description {
+    max-width: 24rem;
+    font-size: .8rem;
+  }
+}

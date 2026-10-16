@@ -7,16 +7,15 @@ import { useEffect, useRef, type ReactElement } from "react";
 import DeliveryButton from "@/components/DeliveryButton";
 import LocationOpenBadge from "@/components/LocationOpenBadge";
 import HomeLogoIntro from "@/components/HomeLogoIntro";
+import OrderOnlineSection from "@/components/OrderOnlineSection";
 import SiteIcon from "@/components/SiteIcon";
 import { locations } from "@/data/locations";
 import { signatureDishes } from "@/data/site-content";
 import { getGoogleMapsDirectionsUrl } from "@/lib/google-maps";
-import { getMenuHref } from "@/lib/menu-link";
 import { useShoppingLocation } from "@/lib/use-shopping-location";
 
 export default function HomeContent(): ReactElement {
   const shoppingLocation = useShoppingLocation();
-  const menuHref = getMenuHref(shoppingLocation);
   const mainRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -69,7 +68,7 @@ export default function HomeContent(): ReactElement {
             <h1 id="home-title">San Diego roots.<br /><em>Prime tacos.</em></h1>
             <p className="home-hero-description">Burgundy pepper tri-tip. Handmade tortillas.<br />Your next favorite taco.</p>
             <div className="home-hero-actions">
-              <Link href={menuHref} className="home-button">Explore the menu<SiteIcon name="arrow" /></Link>
+              <Link href="/menu" className="home-button">Explore the menu<SiteIcon name="arrow" /></Link>
               <DeliveryButton className="home-button is-outline">Order delivery<SiteIcon name="delivery" /></DeliveryButton>
             </div>
           </div>
@@ -87,19 +86,17 @@ export default function HomeContent(): ReactElement {
           </div>
           <div className="home-menu-intro-copy">
             <p>Handmade tortillas, fresh salsa, and our signature burgundy pepper tri-tip. A few of the favorites that bring us together.</p>
-            <Link href={menuHref} className="home-text-link">Explore the menu<SiteIcon name="arrow" /></Link>
           </div>
         </div>
         <div className="home-dish-grid">
           {signatureDishes.map((dish, index) => (
             <figure key={dish.src} className="home-dish" data-reveal>
-              <Link href={menuHref} className="home-dish-photo" aria-label={`Explore the menu for ${dish.name.toLowerCase()}`}>
+              <div className="home-dish-photo">
                 <Image src={dish.src} alt={dish.alt} fill sizes={index === 0 ? "(min-width: 800px) 55vw, 100vw" : "(min-width: 800px) 40vw, 100vw"} />
-              </Link>
+              </div>
               <figcaption className="home-dish-caption">
                 <span className="home-dish-number">0{index + 1}</span>
                 <div><h3>{dish.name}</h3><p>{dish.description}</p></div>
-                <Link href={menuHref} aria-label={`View menu for ${dish.name.toLowerCase()}`}><SiteIcon name="arrow" /></Link>
               </figcaption>
             </figure>
           ))}
@@ -123,7 +120,6 @@ export default function HomeContent(): ReactElement {
               <p className="home-shop-address">{location.address}</p>
               <p className="home-shop-hours">{location.hours}</p>
               <div className="home-shop-links">
-                <Link href={getMenuHref(location)} aria-label={`View ${location.name} menu`}>Menu<SiteIcon name="arrow" /></Link>
                 {location.phone && <a href={`tel:${location.phone}`} aria-label={`Call ${location.name}`}><SiteIcon name="phone" />Call</a>}
                 <a href={getGoogleMapsDirectionsUrl(location)} target="_blank" rel="noopener noreferrer" aria-label={`Directions to ${location.name}`}><SiteIcon name="pin" />Directions</a>
               </div>
@@ -134,24 +130,7 @@ export default function HomeContent(): ReactElement {
         <p className="home-hours-note">Hours may vary on holidays. Call your shop before visiting.</p>
       </section>
 
-      <section id="delivery" className="home-ordering" aria-labelledby="home-delivery-title">
-        <div className="home-section-shell home-ordering-inner" data-reveal>
-          <div>
-            <p className="home-kicker">Make it Prime</p>
-            <h2 id="home-delivery-title">At our place.<br /><em>Or yours.</em></h2>
-          </div>
-          <div className="home-ordering-copy">
-            <p>Pick up from your neighborhood shop, or let your favorite delivery service bring Prime to you.</p>
-            <div className="home-ordering-actions">
-              {shoppingLocation?.toastUrl
-                ? <a href={shoppingLocation.toastUrl} target="_blank" rel="noopener noreferrer" className="home-button">Order pickup<SiteIcon name="bag" /></a>
-                : <Link href="/order-online" className="home-button">Order pickup<SiteIcon name="bag" /></Link>}
-              <DeliveryButton className="home-button is-outline">Order delivery<SiteIcon name="delivery" /></DeliveryButton>
-            </div>
-            <p className="home-ordering-note">Availability depends on your address and the shop’s hours.</p>
-          </div>
-        </div>
-      </section>
+      <OrderOnlineSection id="delivery" reveal />
     </main>
   );
 }

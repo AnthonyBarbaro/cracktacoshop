@@ -4,6 +4,8 @@
   --prime-ink: #173d2c;
   --prime-red: #e21c2a;
   --prime-green: #173d2c;
+  --prime-mint: #d2e7cc;
+  --prime-paper: #f8f7f1;
 }
 
 @theme inline {
@@ -386,11 +388,11 @@ body:has(.site-drawer-layer.is-open) .cookie-notice { visibility: hidden; }
 /* Launch homepage */
 .site-header.is-editorial { border-bottom: 1px solid #dfdfd3; background: #f8f7f1; }
 .site-header.is-editorial .header-inner { max-width: 90rem; height: 6.5rem; padding-inline: 2rem; transition: height .3s ease; }
-.site-header.is-editorial .site-logo { width: 112px; transition: width .3s ease; }
+.site-header.is-editorial .site-logo { width: 152px; transition: width .3s ease; }
 .site-header.is-home [data-home-logo-target] { visibility: hidden; transition: none; }
 .site-header.is-home [data-home-logo-target][data-home-logo-docked] { visibility: visible; }
-.site-header.is-editorial.is-scrolled .header-inner { height: 5rem; }
-.site-header.is-editorial.is-scrolled .site-logo { width: 86px; }
+.site-header.is-editorial.is-scrolled .header-inner { height: 5.5rem; }
+.site-header.is-editorial.is-scrolled .site-logo { width: 132px; }
 .site-header.is-editorial .header-link { color: #1a3b2d; font-size: .65rem; letter-spacing: .09em; }
 .site-header.is-editorial .header-link:hover, .site-header.is-editorial .header-link[aria-current="page"] { color: #1a3b2d; border-color: #1a3b2d; }
 .site-header.is-editorial .header-location { color: #1a3b2d; font-size: .7rem; }
@@ -511,9 +513,9 @@ body:has(.site-drawer-layer.is-open) .cookie-notice { visibility: hidden; }
   body:has(.mobile-bottom-bar.is-editorial) { padding-bottom: calc(4.25rem + 1px + env(safe-area-inset-bottom)); }
   body:has(.mobile-bottom-bar.is-editorial) .cookie-notice { bottom: calc(5.25rem + env(safe-area-inset-bottom)); }
   .site-header.is-editorial .header-inner { height: 5.25rem; padding-inline: 1rem; gap: .6rem; }
-  .site-header.is-editorial .site-logo { width: 88px; }
-  .site-header.is-editorial.is-scrolled .header-inner { height: 4.5rem; }
-  .site-header.is-editorial.is-scrolled .site-logo { width: 76px; }
+  .site-header.is-editorial .site-logo { width: 106px; }
+  .site-header.is-editorial.is-scrolled .header-inner { height: 4.75rem; }
+  .site-header.is-editorial.is-scrolled .site-logo { width: 100px; }
   .header-inner { gap: .6rem; padding-inline: 1rem; }
   .header-location, .site-header.is-editorial .header-location { gap: .4rem; max-width: 10rem; min-height: 3rem; padding: .4rem .55rem .4rem .4rem; font-size: .62rem; }
   .header-location-pin { width: 1.65rem; height: 1.85rem; }
@@ -773,7 +775,7 @@ body:has(.site-drawer-layer.is-open) .cookie-notice { visibility: hidden; }
 .careers-note > p:not(.page-kicker) { margin-top: 1.25rem; color: #626b60; font-size: .85rem; line-height: 1.9; }
 .careers-form-panel { padding: 2rem; }
 .site-footer.is-editorial .footer-main { padding-block: 4rem; gap: 3rem; }
-.site-footer.is-editorial .footer-logo { width: 112px; }
+.site-footer.is-editorial .footer-logo { width: 220px; max-width: 100%; }
 .footer-label { margin-bottom: 1rem; color: #69755e; font-size: .6rem; font-weight: 600; letter-spacing: .15em; text-transform: uppercase; }
 .footer-heading { margin-bottom: 1.25rem; font-family: var(--font-editorial), Georgia, "Times New Roman", serif; font-size: 2.75rem; line-height: 1.1; }
 .footer-socials { display: flex; gap: 1.5rem; margin-top: 1rem; font-size: .75rem; }
@@ -854,4 +856,17 @@ body:has(.site-drawer-layer.is-open) .cookie-notice { visibility: hidden; }
   .careers-note h2 { font-size: 2.65rem; }
   .careers-layout { gap: 2rem; padding-top: 2rem; }
   .site-footer.is-editorial .footer-main { padding-block: 3rem; gap: 2rem; }
+}
+
+/* Small refinements to the original restaurant layout. */
+.site-header.is-editorial .header-link { font-family: Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 500; letter-spacing: .025em; }
+.home-dish-caption { grid-template-columns: 1.5rem 1fr; }
+.home-menu-intro-copy > p { margin-bottom: 0; }
+.catering-locations { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem; margin-top: 3rem; }
+.catering-locations li { border-top: 1px solid #bac5b5; padding-top: 1.5rem; }
+.catering-locations h2 { font-family: var(--font-editorial), Georgia, serif; font-size: 2rem; line-height: 1.2; }
+.catering-locations a { display: inline-flex; align-items: center; min-height: 2.75rem; margin-top: .5rem; text-decoration: underline; text-underline-offset: 4px; }
+@media (max-width: 639px) {
+  .site-footer.is-editorial .footer-logo { width: 200px; }
+  .catering-locations { grid-template-columns: 1fr; gap: 1.5rem; }
 }

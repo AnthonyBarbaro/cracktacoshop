@@ -1,0 +1,36 @@
+.heading {
+  margin-top: 1rem;
+  font-family: var(--font-editorial), Georgia, "Times New Roman", serif;
+  font-size: clamp(3.5rem, 5.3vw, 5.25rem);
+  font-weight: 500;
+  line-height: 1.04;
+  letter-spacing: -.03em;
+}
+
+.heading em {
+  font-weight: 400;
+}
+
+.locationPicker {
+  max-width: 22rem;
+  margin-top: 1.5rem;
+}
+
+.locationPicker label {
+  display: block;
+  margin-bottom: .5rem;
+  font-size: .75rem;
+  font-weight: 600;
+}
+
+.locationPicker select {
+  padding-inline: .75rem;
+  border-radius: 0;
+  font-size: 1rem;
+}
+
+@media (max-width: 639px) {
+  .heading {
+    font-size: 3.5rem;
+  }
+}

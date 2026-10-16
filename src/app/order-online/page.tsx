@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 export default function OrderOnlinePage() {
   return (
     <>
-      <SiteHeader ctaHref="/locations" ctaLabel="View Locations" />
+      <SiteHeader />
       <OrderOnlineContent />
       <SiteFooter />
     </>
