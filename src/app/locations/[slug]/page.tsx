@@ -12,6 +12,7 @@ import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 import { locations } from "@/data/locations";
 import { getLocationFoodPhoto, site } from "@/data/site-content";
+import { socialImage } from "@/data/social-image";
 import {
   getGoogleMapsDirectionsUrl,
   getGoogleMapsEmbedUrl,
@@ -52,7 +53,7 @@ export async function generateMetadata({ params }: LocationPageProps): Promise<M
       card: "summary_large_image",
       title: `${location.name} | Prime Tacos`,
       description: `${location.address}. ${location.hours}.`,
-      images: [`${site.url}/newlogo.png`],
+      images: [socialImage],
     },
     openGraph: {
       title: `${location.name} | Prime Tacos`,
@@ -61,14 +62,7 @@ export async function generateMetadata({ params }: LocationPageProps): Promise<M
       siteName: site.shortName,
       locale: "en_US",
       type: "website",
-      images: [
-        {
-          url: `${site.url}/newlogo.png`,
-          width: 3822,
-          height: 2378,
-          alt: "Prime Tacos",
-        },
-      ],
+      images: [socialImage],
     },
   };
 }

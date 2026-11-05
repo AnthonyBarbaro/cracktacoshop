@@ -393,12 +393,10 @@ body:has(.site-drawer-layer.is-open) .cookie-notice { visibility: hidden; }
 
 /* Launch homepage */
 .site-header.is-editorial { border-bottom: 1px solid #dfdfd3; background: #f8f7f1; }
-.site-header.is-editorial .header-inner { max-width: 90rem; height: 6.5rem; padding-inline: 2rem; transition: height .3s ease; }
-.site-header.is-editorial .site-logo { width: 152px; transition: width .3s ease; }
+.site-header.is-editorial .header-inner { max-width: 90rem; min-height: 6.5rem; height: auto; padding-inline: 2rem; }
+.site-header.is-editorial .site-logo { width: 152px; }
 .site-header.is-home [data-home-logo-target] { visibility: hidden; transition: none; }
 .site-header.is-home [data-home-logo-target][data-home-logo-docked] { visibility: visible; }
-.site-header.is-editorial.is-scrolled .header-inner { height: 5.5rem; }
-.site-header.is-editorial.is-scrolled .site-logo { width: 132px; }
 .site-header.is-editorial .header-link { color: #1a3b2d; font-size: .65rem; letter-spacing: .09em; }
 .site-header.is-editorial .header-link:hover, .site-header.is-editorial .header-link[aria-current="page"] { color: #1a3b2d; border-color: #1a3b2d; }
 .site-header.is-editorial .header-location { color: #1a3b2d; font-size: .7rem; }
@@ -525,10 +523,8 @@ body:has(.site-drawer-layer.is-open) .cookie-notice { visibility: hidden; }
 @media (max-width: 639px) {
   body:has(.mobile-bottom-bar.is-editorial) { padding-bottom: calc(4.25rem + 1px + env(safe-area-inset-bottom)); }
   body:has(.mobile-bottom-bar.is-editorial) .cookie-notice { bottom: calc(5.25rem + env(safe-area-inset-bottom)); }
-  .site-header.is-editorial .header-inner { height: 5.25rem; padding-inline: 1rem; gap: .6rem; }
+  .site-header.is-editorial .header-inner { min-height: 5.25rem; padding-inline: 1rem; gap: .6rem; }
   .site-header.is-editorial .site-logo { width: 106px; }
-  .site-header.is-editorial.is-scrolled .header-inner { height: 4.75rem; }
-  .site-header.is-editorial.is-scrolled .site-logo { width: 100px; }
   .header-inner { gap: .6rem; padding-inline: 1rem; }
   .header-location, .site-header.is-editorial .header-location { gap: .4rem; max-width: 10rem; min-height: 3rem; padding: .4rem .55rem .4rem .4rem; font-size: .62rem; }
   .header-location-pin { width: 1.65rem; height: 1.85rem; }

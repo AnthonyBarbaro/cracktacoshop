@@ -3,6 +3,7 @@
   isolation: isolate;
   display: flex;
   flex-direction: column;
+  min-height: calc(100vh - var(--site-header-height));
   min-height: calc(100svh - var(--site-header-height));
   color: #fff;
   background: #173d2c;
@@ -19,30 +20,35 @@
 }
 
 .brand {
-  flex: 1;
+  position: relative;
+  flex: 1 0 auto;
   display: grid;
   place-items: center;
   width: 100%;
-  min-height: 18rem;
-  padding: 3rem 1.5rem;
+  padding: 2rem 1.5rem;
 }
 
+.illustration { display: none; }
+
 .brand :global(.home-hero-logo) {
-  width: clamp(220px, 24vw, 320px);
+  display: block;
+  width: clamp(280px, 28vw, 360px);
+  max-width: 100%;
   height: auto;
   margin: 0;
 }
 
 .copy {
   display: flex;
-  flex: 1;
+  flex: 0 0 auto;
   align-items: flex-start;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
   width: 100%;
   max-width: 90rem;
+  margin-top: auto;
   margin-inline: auto;
-  padding: 1.5rem clamp(1.5rem, 6vw, 6rem) 4.5rem;
+  padding: 1rem clamp(1.5rem, 6vw, 6rem) 2.5rem;
   animation: copyEntrance .8s .1s ease-out both;
 }
 
@@ -101,27 +107,30 @@
 }
 
 @media (min-width: 1024px) {
-  .hero { min-height: min(48rem, calc(100svh - var(--site-header-height))); }
+  .hero { min-height: calc(100vh - var(--site-header-height)); min-height: min(48rem, calc(100vh - var(--site-header-height))); min-height: min(48rem, calc(100svh - var(--site-header-height))); }
   .hero::after { background: none; }
-  .brand { flex: none; display: block; place-items: start; width: 46%; min-height: 0; padding: 0; margin-bottom: .5rem; text-align: left; }
-  .brand :global(.home-hero-logo) { width: clamp(280px, 26vw, 360px); max-width: 100%; justify-self: start; }
-  .copy { flex: none; justify-content: center; gap: 1rem; min-height: inherit; max-width: 88rem; padding: 2.5rem clamp(2rem, 4vw, 4rem); }
+  .brand { place-items: end start; max-width: 88rem; margin-inline: auto; padding: 2rem clamp(2rem, 4vw, 4rem) .5rem; }
+  .brand :global(.home-hero-logo) { width: clamp(320px, 25vw, 360px); }
+  .illustration { position: absolute; bottom: .5rem; left: clamp(2rem, 4vw, 4rem); display: block; width: clamp(320px, 25vw, 360px); aspect-ratio: 3 / 2; overflow: hidden; border-radius: .75rem; opacity: 0; visibility: hidden; transition: opacity .45s ease; }
+  .illustrationImage { object-fit: contain; }
+  .brand :global(.home-hero-logo)[data-home-logo-docked] ~ .illustration { opacity: 1; visibility: visible; }
+  .copy { max-width: 88rem; padding: 1rem clamp(2rem, 4vw, 4rem) 2.5rem; }
   .title { max-width: 46%; font-size: clamp(3.5rem, 5vw, 4.5rem); line-height: 1.04; }
   .heroOrder { min-height: 52px; padding: 14px 22px; }
 }
 
 @media (min-width: 1024px) and (max-height: 750px) {
-  .brand :global(.home-hero-logo) { width: 280px; }
-  .copy { gap: .75rem; padding-block: 1.5rem; }
+  .brand { padding-block: 1rem; }
+  .illustration { bottom: 1rem; }
+  .copy { gap: .75rem; padding-block: .5rem 1.5rem; }
   .title { font-size: clamp(3rem, 5vw, 4rem); }
 }
 
 @media (max-width: 799px) {
-  .hero { min-height: calc(100svh - var(--site-header-height) - 4.25rem); }
   .hero::after { background: linear-gradient(180deg, #12140f0d, #12140f33 35%, #12140f99 50%, #12140fb3 100%); }
-  .brand { min-height: 12rem; padding: 2rem 1.25rem; }
-  .brand :global(.home-hero-logo) { width: clamp(220px, 64vw, 280px); max-width: 100%; }
-  .copy { padding: 1rem clamp(20px, 6vw, 24px) 10rem; }
+  .brand { padding: 1.25rem; }
+  .brand :global(.home-hero-logo) { width: clamp(220px, 64vw, 280px); }
+  .copy { padding: .75rem clamp(20px, 6vw, 24px) 1.5rem; }
   .title { font-size: clamp(2.5rem, 8vw, 4rem); }
   .cateringInner { grid-template-columns: minmax(0, 1fr); gap: 2rem; padding: 2.5rem 1.25rem; }
   .cateringCopy { width: 100%; justify-self: center; }
@@ -129,7 +138,7 @@
 }
 
 @media (max-width: 639px) {
-  .brand { min-height: 11rem; }
+  .hero { min-height: calc(100vh - var(--site-header-height) - 4.25rem); min-height: calc(100vh - var(--site-header-height) - 4.25rem - env(safe-area-inset-bottom, 0px)); min-height: calc(100svh - var(--site-header-height) - 4.25rem - env(safe-area-inset-bottom, 0px)); }
   .foodSection { padding: 0 1.25rem 3rem; }
   .orderLink { gap: .35rem; min-height: 44px; padding: 8px 6px; font-size: .8125rem; }
   .orderLink svg { width: .875rem; height: .875rem; }
@@ -140,16 +149,15 @@
 }
 
 @media (max-width: 799px) and (max-height: 750px) {
-  .brand { min-height: 6.5rem; padding-block: .5rem; }
-  .copy { gap: .5rem; padding-top: .5rem; }
+  .brand { padding-block: .5rem; }
+  .copy { gap: .5rem; padding-block: .5rem 1rem; }
   .title { font-size: 1.75rem; }
 }
 
-@media (max-width: 799px) and (max-height: 650px) {
-  .brand { min-height: 5rem; }
-}
-
 @media (prefers-reduced-motion: reduce) {
+  .illustration { transition: none; }
   .copy { animation: none; }
   .heroOrder, .orderLink { transition: none; }
 }
+
+:global(html[data-a11y-motion="true"]) .illustration { transition: none; }

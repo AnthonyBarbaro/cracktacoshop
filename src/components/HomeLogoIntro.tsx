@@ -13,9 +13,18 @@ export default function HomeLogoIntro(): ReactElement {
     const target = document.querySelector<HTMLImageElement>("[data-home-logo-target]");
     if (!source || !target) return;
 
-    let frame = 0;
-    let progress = Math.min(Math.max(window.scrollY, 0) / 420, 1);
-    let previousTime = performance.now();
+    let frame: number | undefined;
+    let timer: number | undefined;
+    let phase: "waiting" | "flying" | "docked" = "waiting";
+    let startedAt = 0;
+    let disposed = false;
+    let triggersAttached = true;
+    let geometryAttached = true;
+    let previousScrollY = Math.max(window.scrollY, 0);
+    let unsubscribe = (): void => {};
+    const initialVisibility = source.style.visibility;
+    const visualViewport = window.visualViewport;
+    const fonts = document.fonts;
 
     // Keep the hero's space intact so docking never shifts the page.
     const flyingLogo = source.cloneNode() as HTMLImageElement;
@@ -40,58 +49,118 @@ export default function HomeLogoIntro(): ReactElement {
     });
     document.body.append(flyingLogo);
 
+    const stopTriggers = (): void => {
+      if (timer !== undefined) window.clearTimeout(timer);
+      timer = undefined;
+      if (!triggersAttached) return;
+      triggersAttached = false;
+      window.removeEventListener("scroll", onScroll);
+    };
+
+    const stopGeometry = (): void => {
+      if (!geometryAttached) return;
+      geometryAttached = false;
+      window.removeEventListener("resize", requestUpdate);
+      visualViewport?.removeEventListener("resize", requestUpdate);
+      visualViewport?.removeEventListener("scroll", requestUpdate);
+      source.removeEventListener("load", requestUpdate);
+      target.removeEventListener("load", requestUpdate);
+      fonts?.removeEventListener("loadingdone", requestUpdate);
+      observer?.disconnect();
+      unsubscribe();
+    };
+
+    const finish = (): void => {
+      phase = "docked";
+      if (frame !== undefined) window.cancelAnimationFrame(frame);
+      frame = undefined;
+      stopTriggers();
+      stopGeometry();
+      source.style.visibility = "hidden";
+      flyingLogo.style.display = "none";
+      source.setAttribute("data-home-logo-docked", "");
+      target.setAttribute("data-home-logo-docked", "");
+    };
+
     const update = (now: number): void => {
-      frame = 0;
-      const desiredProgress = Math.min(Math.max(window.scrollY, 0) / 420, 1);
-      const elapsed = Math.min(now - previousTime, 64);
-      previousTime = now;
-      const reducedMotion = getReducedMotionSnapshot();
-      progress = reducedMotion
-        ? desiredProgress
-        : progress + (desiredProgress - progress) * (1 - Math.exp(-elapsed / 160));
-      if (Math.abs(desiredProgress - progress) < .001) {
-        progress = desiredProgress;
-      } else {
-        frame = window.requestAnimationFrame(update);
+      frame = undefined;
+      if (disposed || phase !== "flying") return;
+      const progress = Math.min(Math.max((now - startedAt) / 800, 0), 1);
+      if (progress === 1 || getReducedMotionSnapshot()) {
+        finish();
+        return;
       }
-      const docked = progress === 1 || (reducedMotion && progress > 0);
-      target.toggleAttribute("data-home-logo-docked", docked);
-      source.style.visibility = progress === 0 || (reducedMotion && !docked) ? "visible" : "hidden";
-      flyingLogo.style.display = progress > 0 && !docked ? "block" : "none";
-      if (progress === 0 || docked) return;
 
       const start = source.getBoundingClientRect();
       const end = target.getBoundingClientRect();
+      if (!start.width || !start.height || !end.width || !end.height) {
+        finish();
+        return;
+      }
       const eased = progress * progress * (3 - 2 * progress);
       const arc = Math.sin(Math.PI * progress);
       const mix = (from: number, to: number): number => from + (to - from) * eased;
-      flyingLogo.src = source.currentSrc || source.src;
+      const imageSource = source.currentSrc || source.src;
+      if (flyingLogo.src !== imageSource) flyingLogo.src = imageSource;
       Object.assign(flyingLogo.style, {
+        display: "block",
         width: `${mix(start.width, end.width)}px`,
         height: `${mix(start.height, end.height)}px`,
-        transform: `translate3d(${mix(start.left, end.left)}px, ${mix(start.top + Math.max(window.scrollY, 0), end.top) - arc * 24}px, 0) rotate(${-arc * 5}deg)`,
+        transform: `translate3d(${mix(start.left, end.left)}px, ${mix(start.top, end.top) - arc * 24}px, 0) rotate(${-arc * 5}deg)`,
       });
+      source.style.visibility = "hidden";
+      frame = window.requestAnimationFrame(update);
     };
 
-    const requestUpdate = (): void => {
-      if (!frame) frame = window.requestAnimationFrame(update);
-    };
+    function requestUpdate(): void {
+      if (!disposed && phase === "flying" && frame === undefined) frame = window.requestAnimationFrame(update);
+    }
 
-    update(performance.now());
-    window.addEventListener("scroll", requestUpdate, { passive: true });
+    function trigger(): void {
+      if (disposed || phase !== "waiting") return;
+      phase = "flying";
+      stopTriggers();
+      if (getReducedMotionSnapshot()) finish();
+      else {
+        startedAt = performance.now();
+        update(startedAt);
+      }
+    }
+
+    function onScroll(): void {
+      const currentScrollY = Math.max(window.scrollY, 0);
+      const movedDown = currentScrollY > previousScrollY;
+      previousScrollY = currentScrollY;
+      if (movedDown) trigger();
+    }
+
+    target.removeAttribute("data-home-logo-docked");
+    source.removeAttribute("data-home-logo-docked");
+    source.style.visibility = "visible";
+    window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", requestUpdate);
+    visualViewport?.addEventListener("resize", requestUpdate);
+    visualViewport?.addEventListener("scroll", requestUpdate);
     source.addEventListener("load", requestUpdate);
-    const unsubscribe = subscribeToReducedMotion(requestUpdate);
+    target.addEventListener("load", requestUpdate);
+    fonts?.addEventListener("loadingdone", requestUpdate);
+    void fonts?.ready.then(() => { if (!disposed) requestUpdate(); });
+    const observer = typeof ResizeObserver === "undefined" ? undefined : new ResizeObserver(requestUpdate);
+    observer?.observe(source);
+    observer?.observe(target);
+    unsubscribe = subscribeToReducedMotion(() => { if (phase === "flying" && getReducedMotionSnapshot()) finish(); });
+    timer = window.setTimeout(trigger, 6000);
 
     return () => {
-      window.cancelAnimationFrame(frame);
+      disposed = true;
+      if (frame !== undefined) window.cancelAnimationFrame(frame);
+      stopTriggers();
+      stopGeometry();
       flyingLogo.remove();
-      window.removeEventListener("scroll", requestUpdate);
-      window.removeEventListener("resize", requestUpdate);
-      source.removeEventListener("load", requestUpdate);
-      unsubscribe();
-      source.style.removeProperty("visibility");
+      if (initialVisibility) source.style.visibility = initialVisibility;
+      else source.style.removeProperty("visibility");
       target.removeAttribute("data-home-logo-docked");
+      source.removeAttribute("data-home-logo-docked");
     };
   }, []);
 

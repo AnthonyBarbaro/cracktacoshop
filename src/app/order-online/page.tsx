@@ -4,6 +4,7 @@ import OrderOnlineContent from "@/components/OrderOnlineContent";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 import { site } from "@/data/site-content";
+import { socialImage } from "@/data/social-image";
 
 export const metadata: Metadata = {
   title: "Order Online",
@@ -15,13 +16,13 @@ export const metadata: Metadata = {
     title: "Order Online",
     description: "Order online from Prime Tacos locations using pickup and delivery options.",
     url: `${site.url}/order-online`,
-    images: ["/newlogo.png"],
+    images: [socialImage],
   },
   twitter: {
     card: "summary_large_image",
     title: "Order Online",
     description: "Order online from Prime Tacos locations using pickup and delivery options.",
-    images: ["/newlogo.png"],
+    images: [socialImage],
   },
 };
 

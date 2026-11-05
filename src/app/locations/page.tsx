@@ -6,6 +6,7 @@ import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 import { locations } from "@/data/locations";
 import { site } from "@/data/site-content";
+import { socialImage } from "@/data/social-image";
 
 import styles from "./LocationsPage.module.css";
 
@@ -19,13 +20,13 @@ export const metadata: Metadata = {
     title: "Locations",
     description: "Find your nearest Prime Tacos location in San Diego County.",
     url: `${site.url}/locations`,
-    images: ["/newlogo.png"],
+    images: [socialImage],
   },
   twitter: {
     card: "summary_large_image",
     title: "Locations",
     description: "Find your nearest Prime Tacos location in San Diego County.",
-    images: ["/newlogo.png"],
+    images: [socialImage],
   },
 };
 

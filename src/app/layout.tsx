@@ -6,6 +6,7 @@ import CookieNotice from "@/components/CookieNotice";
 import AccessibilityWidget from "@/components/AccessibilityWidget";
 import { locations } from "@/data/locations";
 import { site } from "@/data/site-content";
+import { socialImage } from "@/data/social-image";
 
 import "./globals.css";
 import "./accessibility.css";
@@ -79,20 +80,13 @@ export const metadata: Metadata = {
     siteName: site.shortName,
     title: "Prime Tacos San Diego",
     description: "Tri-tip tacos, burritos, and easy online ordering by location.",
-    images: [
-      {
-        url: "/newlogo.png",
-        width: 3822,
-        height: 2378,
-        alt: "Prime Tacos",
-      },
-    ],
+    images: [socialImage],
   },
   twitter: {
     card: "summary_large_image",
     title: "Prime Tacos San Diego",
     description: "Tri-tip tacos, burritos, and easy online ordering by location.",
-    images: ["/newlogo.png"],
+    images: [socialImage],
   },
 };
 

@@ -6,6 +6,7 @@ import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 import SiteIcon from "@/components/SiteIcon";
 import { faqItems, site } from "@/data/site-content";
+import { socialImage } from "@/data/social-image";
 
 export const metadata: Metadata = {
   title: "FAQ",
@@ -17,13 +18,13 @@ export const metadata: Metadata = {
     title: "FAQ",
     description: "Frequently asked questions about locations, hours, menu, and online ordering.",
     url: `${site.url}/faq`,
-    images: ["/newlogo.png"],
+    images: [socialImage],
   },
   twitter: {
     card: "summary_large_image",
     title: "FAQ",
     description: "Frequently asked questions about locations, hours, menu, and online ordering.",
-    images: ["/newlogo.png"],
+    images: [socialImage],
   },
 };
 

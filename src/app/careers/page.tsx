@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import CareersApplicationForm from "@/components/CareersApplicationForm";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
+import { socialImage } from "@/data/social-image";
 
 export const metadata: Metadata = {
   title: "Careers",
@@ -14,13 +15,13 @@ export const metadata: Metadata = {
     title: "Careers",
     description: "Apply for open positions at Prime Tacos locations.",
     url: "/careers",
-    images: ["/newlogo.png"],
+    images: [socialImage],
   },
   twitter: {
     card: "summary_large_image",
     title: "Careers",
     description: "Apply for open positions at Prime Tacos locations.",
-    images: ["/newlogo.png"],
+    images: [socialImage],
   },
 };
 

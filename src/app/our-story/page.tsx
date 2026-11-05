@@ -7,6 +7,7 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteIcon from "@/components/SiteIcon";
 import OpenSelectedMenuLink from "@/components/OpenSelectedMenuLink";
 import { foodShowcase, highlights, site } from "@/data/site-content";
+import { socialImage } from "@/data/social-image";
 
 export const metadata: Metadata = {
   title: "Our Story",
@@ -18,13 +19,13 @@ export const metadata: Metadata = {
     title: "Our Story",
     description: "Learn the story behind Prime Tacos and our tri-tip taco tradition.",
     url: `${site.url}/our-story`,
-    images: ["/newlogo.png"],
+    images: [socialImage],
   },
   twitter: {
     card: "summary_large_image",
     title: "Our Story",
     description: "Learn the story behind Prime Tacos and our tri-tip taco tradition.",
-    images: ["/newlogo.png"],
+    images: [socialImage],
   },
 };
 

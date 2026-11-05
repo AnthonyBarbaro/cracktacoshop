@@ -177,8 +177,29 @@ test("hero renders four real food photos with the takeout spread third, one orde
     assert.ok(html.includes(`src="${photo.src}"`), "hero serves the native-size WebP without recompressing it");
     assert.ok(html.includes(`alt="${photo.alt}"`));
   }
-  assert.equal([...html.matchAll(/loading="lazy"/g)].length, 3);
+  assert.equal([...html.matchAll(/loading="lazy"/g)].length, 4);
+  assert.match(html, /loaded-nachos\.png/);
+  assert.doesNotMatch(html, /patio-burrito/);
   assert.doesNotMatch(html, /hero-tacos-elegant/);
+});
+
+test("each illustration follows its photo during automatic rotation, selection, and swiping", () => {
+  const harness = makeSlideshowHarness();
+  const expected = ["loaded-nachos", "taco-lime", "takeout", "loaded-fries"];
+  const check = (index) => {
+    const illustration = elements(harness.root()).find((element) => element.props["data-hero-illustration"]);
+    assert.equal(illustration.props.src, `/images/illustrations/${expected[index]}.png`);
+    assert.equal(illustration.props["data-hero-illustration"], heroFoodPhotos[index].id);
+    assert.equal(harness.index(), index);
+  };
+  harness.readyAll();
+  check(0);
+  for (const index of [1, 2, 3, 0]) { harness.tick(); check(index); }
+  for (const index of [3, 2, 1, 0]) { harness.selectors()[index].props.onClick(); harness.flush(); check(index); }
+  harness.pointer("Down", 300, 100);
+  harness.pointer("Up", 200, 100);
+  check(1);
+  harness.unmount();
 });
 
 test("automatic rotation waits for the next image and uses one seven-second timer at a time", () => {

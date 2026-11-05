@@ -68,7 +68,6 @@ export default function SiteHeader({
   const mobileMenuCloseButtonRef = useRef<HTMLButtonElement | null>(null);
   const menuToggleButtonRef = useRef<HTMLButtonElement | null>(null);
   const locationButtonRef = useRef<HTMLButtonElement | null>(null);
-  const headerRef = useRef<HTMLElement>(null);
 
   const shoppingSlug = routeLocationSlug ?? storedShoppingSlug;
   const shoppingLocation = useMemo(
@@ -143,17 +142,6 @@ export default function SiteHeader({
 
     setStoredShoppingLocationSlug(routeLocationSlug);
   }, [routeLocationSlug]);
-
-  useEffect(() => {
-    const header = headerRef.current;
-    if (!header || !isEditorial) return;
-    const update = (): void => {
-      header.classList.toggle("is-scrolled", window.scrollY > 60);
-    };
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-    return () => window.removeEventListener("scroll", update);
-  }, [isEditorial]);
 
   useEffect(() => {
     const onOpenDelivery = (event: Event): void => {
@@ -246,7 +234,7 @@ export default function SiteHeader({
   return (
     <>
       <a href="#main-content" className="skip-link">Skip to main content</a>
-      <header ref={headerRef} className={`site-header is-editorial${isEditorial ? " is-home" : ""}`}>
+      <header className={`site-header is-editorial${isEditorial ? " is-home" : ""}`}>
         <div className={`section-shell header-inner ${styles.inner}`}>
           <Link href="/" prefetch={false} className={styles.brand} aria-label="Prime Tacos home">
             <Image src="/newlogo.png" alt="Prime Taco Shop — Home of Tri-Tip Taco" width={3822} height={2378} sizes="(max-width: 639px) 106px, 152px" priority className="site-logo" data-home-logo-target />

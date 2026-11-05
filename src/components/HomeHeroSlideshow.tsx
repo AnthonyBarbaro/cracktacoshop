@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState, useSyncExternalStore, type KeyboardEvent, type PointerEvent, type ReactElement } from "react";
 
 import FoodPhoto from "@/components/FoodPhoto";
@@ -13,6 +14,12 @@ import styles from "./HomeHeroSlideshow.module.css";
 
 type Props = { orderHref: string };
 const swipeThreshold = 45;
+const heroIllustrations: Record<string, string> = {
+  "loaded-nachos-guacamole": "loaded-nachos",
+  "taco-three-salsas": "taco-lime",
+  "takeout-spread": "takeout",
+  "loaded-fries-fork": "loaded-fries",
+};
 
 export default function HomeHeroSlideshow({ orderHref }: Props): ReactElement {
   const heroRef = useRef<HTMLElement>(null);
@@ -171,10 +178,13 @@ export default function HomeHeroSlideshow({ orderHref }: Props): ReactElement {
           </div>
         ))}
       </div>
-      <div className={heroStyles.copy}>
-        <div className={heroStyles.brand}>
-          <HomeLogoIntro />
+      <div className={heroStyles.brand}>
+        <HomeLogoIntro />
+        <div className={heroStyles.illustration} aria-hidden="true">
+          <Image src={`/images/illustrations/${heroIllustrations[heroFoodPhotos[activeIndex].id]}.png`} alt="" fill sizes="360px" className={heroStyles.illustrationImage} data-hero-illustration={heroFoodPhotos[activeIndex].id} />
         </div>
+      </div>
+      <div className={heroStyles.copy}>
         <h1 id="home-title" className={heroStyles.title}>Home of the<br />Tri-Tip Taco</h1>
         <a href={orderHref} className={heroStyles.heroOrder}>Order online<SiteIcon name="arrow" /></a>
         <div className={styles.controls} role="group" aria-label="Food slideshow controls">

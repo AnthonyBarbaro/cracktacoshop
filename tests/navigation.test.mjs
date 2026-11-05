@@ -114,7 +114,7 @@ test("homepage opens with food, the logo intro, and one ordering action while ke
   assert.ok(hero);
   assert.match(hero, /class="home-hero-logo"/);
   assert.equal(heroFoodPhotos.length, 4);
-  assert.equal([...hero.matchAll(/<img\b/g)].length, heroFoodPhotos.length + 1);
+  assert.equal([...hero.matchAll(/<img\b/g)].length, heroFoodPhotos.length + 2);
   assert.doesNotMatch(hero, /<select\b/);
   assert.match(hero, /href="\/order-online"/);
   assert.equal([...hero.matchAll(/<a\b/g)].length, 1);

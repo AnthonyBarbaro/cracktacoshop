@@ -6,6 +6,7 @@ import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 import { locations } from "@/data/locations";
 import { site } from "@/data/site-content";
+import { socialImage } from "@/data/social-image";
 import { getLocationOpeningHoursSpecification } from "@/lib/location-hours";
 
 export const metadata: Metadata = {
@@ -23,14 +24,14 @@ export const metadata: Metadata = {
     siteName: site.shortName,
     locale: "en_US",
     type: "website",
-    images: [
-      {
-        url: `${site.url}/newlogo.png`,
-        width: 3822,
-        height: 2378,
-        alt: "Prime Tacos logo",
-      },
-    ],
+    images: [socialImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Prime Tacos San Diego",
+    description:
+      "Tri-tip tacos and burritos across San Diego. Order online and pick your nearest location.",
+    images: [socialImage],
   },
 };
 
