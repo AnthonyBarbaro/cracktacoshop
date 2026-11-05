@@ -1,26 +1,35 @@
 .section {
-  padding-block: clamp(3rem, 6vw, 5rem);
-  background: #f8f7f1;
+  padding-block: clamp(3.5rem, 6vw, 5rem) clamp(4rem, 8vw, 7.5rem);
+  background: var(--prime-paper);
   color: var(--prime-ink);
   text-align: center;
 }
 
 .eyebrow {
-  margin-bottom: .8rem;
-  font-size: .68rem;
+  margin-bottom: 1.25rem;
+  color: #626b60;
+  font-size: .625rem;
   font-weight: 600;
-  letter-spacing: .2em;
+  letter-spacing: .32em;
   text-transform: uppercase;
 }
 
 .heading {
-  margin-bottom: clamp(1.75rem, 4vw, 2.5rem);
   font-family: var(--font-editorial), Georgia, "Times New Roman", serif;
-  font-size: clamp(2.25rem, 4.5vw, 3.75rem);
+  font-size: clamp(2.25rem, 4.5vw, 3.5rem);
   font-weight: 400;
-  line-height: 1.05;
-  letter-spacing: -.035em;
+  line-height: 1.15;
+  letter-spacing: .045em;
+  text-transform: uppercase;
   text-wrap: balance;
+}
+
+.flourish {
+  display: block;
+  width: 4rem;
+  height: .625rem;
+  margin: 2.25rem auto clamp(2.5rem, 5vw, 4rem);
+  color: #9eaf98;
 }
 
 .card {
@@ -28,15 +37,69 @@
   max-width: 540px;
   margin-inline: auto;
   overflow: hidden;
+  border: 1px solid #173d2c0a;
+  border-radius: 1rem;
   background: #fff;
+  color: #232823;
+  box-shadow: 0 24px 64px #173d2c1a;
+  text-align: left;
+}
+
+.profileHeader {
+  display: flex;
+  align-items: center;
+  gap: 1.125rem;
+  min-height: 156px;
+  padding: 1.5rem 1.125rem;
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 100px;
+  height: 100px;
+  padding: 3px;
+  border-radius: 50%;
+  background: conic-gradient(#c135b4, #e1306c, #f77737, #fcaf45, #e1306c, #c135b4);
+}
+
+.avatarImage {
+  width: 100%;
+  height: 100%;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  padding: .5rem;
+  background: var(--prime-paper);
+  object-fit: contain;
+}
+
+.profileDetails {
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+  min-width: 0;
+  font-size: .875rem;
+  line-height: 1.5;
+}
+
+.handle { font-weight: 700; overflow-wrap: anywhere; }
+.profileName { font-weight: 500; }
+.profileBio { color: #626b60; font-size: .75rem; }
+
+.profileIcon {
+  align-self: flex-start;
+  flex: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-left: auto;
+  color: #b52b79;
 }
 
 .photos {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1rem;
-  max-width: 68rem;
-  margin-inline: auto;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
 }
 
 .photo {
@@ -48,6 +111,25 @@
 
 .photoImage { object-fit: cover; }
 
+.profileHeader:focus-visible,
+.photo:focus-visible {
+  outline-offset: -4px;
+}
+
+.photo:focus-visible { outline-color: #fff; }
+
+.previewCaption {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.875rem;
+  padding: .75rem 1rem;
+  color: #626b60;
+  font-size: .7rem;
+  letter-spacing: .025em;
+  text-align: center;
+}
+
 .embed :global(.instagram-media) {
   width: 100% !important;
   min-width: 0 !important;
@@ -58,36 +140,19 @@
   box-shadow: none !important;
 }
 
-.profile {
+.actions {
   display: flex;
-  min-height: 360px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1.25rem;
-  padding: 2rem;
-  font-size: .9rem;
-  text-decoration: underline;
-  text-underline-offset: .25em;
-}
-
-.profile svg {
-  width: 3rem;
-  height: 3rem;
-}
-
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 1.25rem;
-  margin-top: 1.75rem;
+  gap: .5rem;
+  margin-top: 3rem;
 }
 
 .settings {
   min-height: 2.75rem;
-  font-size: .75rem;
+  color: #626b60;
+  font-size: .65rem;
   text-decoration: underline;
   text-underline-offset: .3em;
 }
@@ -98,14 +163,16 @@
   justify-content: center;
   gap: .75rem;
   min-height: 2.875rem;
-  padding: .7rem 1.25rem;
+  padding: .7rem 2rem;
   border: 1px solid var(--prime-ink);
+  border-radius: 999px;
   background: var(--prime-ink);
   color: #fff;
   font-size: .7rem;
   font-weight: 600;
   letter-spacing: .12em;
   text-transform: uppercase;
+  box-shadow: 0 10px 24px #173d2c1f;
   transition: background-color .2s, color .2s;
 }
 
@@ -120,14 +187,19 @@
 }
 
 @media (max-width: 639px) {
-  .photos { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem; }
-
-  .profile {
-    min-height: 300px;
-    padding: 1.5rem;
+  .profileHeader {
+    gap: .75rem;
+    min-height: 120px;
+    padding: 1.25rem 1rem;
   }
 
-  .follow { max-width: 100%; font-size: .65rem; letter-spacing: .08em; }
+  .avatar { width: 68px; height: 68px; }
+  .avatarImage { padding: .25rem; }
+  .profileDetails { font-size: .75rem; }
+  .profileBio { font-size: .65rem; }
+  .profileIcon { width: 1.25rem; height: 1.25rem; }
+  .actions { margin-top: 2rem; }
+  .follow { max-width: 100%; padding-inline: 1.5rem; font-size: .65rem; letter-spacing: .08em; }
 }
 
 @media (prefers-reduced-motion: reduce) {

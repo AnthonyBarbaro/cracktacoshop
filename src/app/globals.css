@@ -776,7 +776,7 @@ body:has(.site-drawer-layer.is-open) .cookie-notice { visibility: hidden; }
 .careers-form-panel { padding: 2rem; }
 .site-footer.is-editorial .footer-main { padding-block: 4rem; gap: 3rem; }
 .site-footer.is-editorial .footer-logo { width: 220px; max-width: 100%; }
-.footer-label { margin-bottom: 1rem; color: #69755e; font-size: .6rem; font-weight: 600; letter-spacing: .15em; text-transform: uppercase; }
+.footer-label { margin-bottom: 1rem; color: #52604f; font-size: .6rem; font-weight: 600; letter-spacing: .15em; text-transform: uppercase; }
 .footer-heading { margin-bottom: 1.25rem; font-family: var(--font-editorial), Georgia, "Times New Roman", serif; font-size: 2.75rem; line-height: 1.1; }
 .footer-socials { display: flex; gap: 1.5rem; margin-top: 1rem; font-size: .75rem; }
 .footer-socials a, .footer-cookie-settings { display: inline-flex; align-items: center; min-height: 2.75rem; }

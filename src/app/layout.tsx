@@ -3,10 +3,12 @@ import { Cormorant_Garamond, Plus_Jakarta_Sans } from "next/font/google";
 import Script from "next/script";
 
 import CookieNotice from "@/components/CookieNotice";
+import AccessibilityWidget from "@/components/AccessibilityWidget";
 import { locations } from "@/data/locations";
 import { site } from "@/data/site-content";
 
 import "./globals.css";
+import "./accessibility.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-manrope",
@@ -161,6 +163,7 @@ export default function RootLayout({
         />
         {children}
         <CookieNotice />
+        <AccessibilityWidget />
       </body>
     </html>
   );

@@ -3,7 +3,7 @@ export const site = {
   shortName: "Prime Tacos",
   url: "https://cracktacoshop.com",
   phone: "619-269-2828",
-  instagram: "https://www.instagram.com/cracktacoshopsd",
+  instagram: "https://www.instagram.com/primetacoshop/",
   facebook: "https://www.facebook.com/cracktacoshop/",
   tagline: "Home of the tri-tip taco.",
   heroHeadline: "Big flavor. Prime tacos.",

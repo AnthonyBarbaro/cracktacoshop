@@ -6,22 +6,7 @@ import { useEffect, useRef, useState, useSyncExternalStore, type ReactElement } 
 import SiteIcon from "@/components/SiteIcon";
 import { heroFoodPhotos, type HeroPhoto } from "@/data/hero-photos";
 import type { Location } from "@/data/locations";
-
-const reducedMotionQuery = "(prefers-reduced-motion: reduce)";
-
-function subscribeToReducedMotion(callback: () => void): () => void {
-  const preference = window.matchMedia(reducedMotionQuery);
-  preference.addEventListener("change", callback);
-  return () => preference.removeEventListener("change", callback);
-}
-
-function getReducedMotionSnapshot(): boolean {
-  return window.matchMedia(reducedMotionQuery).matches;
-}
-
-function getReducedMotionServerSnapshot(): boolean {
-  return true;
-}
+import { getReducedMotionSnapshot, getReducedMotionServerSnapshot, subscribeToReducedMotion } from "@/lib/accessibility-preferences";
 
 type Props = {
   location?: Location;
@@ -38,7 +23,7 @@ export default function HeroPhotoCarousel({ location }: Props): ReactElement {
     getReducedMotionSnapshot,
     getReducedMotionServerSnapshot,
   );
-  const isPlaying = playback ?? !reducedMotion;
+  const isPlaying = !reducedMotion && (playback ?? true);
   const photoCount = photos.length;
   const currentIndex = activeIndex % photoCount;
 

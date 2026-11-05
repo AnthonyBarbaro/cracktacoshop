@@ -71,8 +71,13 @@ test("Instagram loads no external embed before consent and always offers the sto
     const tree = harness.render();
     assert.equal(findElements(tree, "script").length, 0);
     assert.equal(findElements(tree, "blockquote").length, 0);
-    const photos = findElements(tree, "img");
-    assert.equal(photos.length, 4);
+    const images = findElements(tree, "img");
+    const avatar = images.find((image) => image.props.src === "/newlogo.png");
+    assert.ok(avatar);
+    assert.equal(avatar.props.alt, "");
+    assert.ok(fs.existsSync(new URL(`../public${avatar.props.src}`, import.meta.url)));
+    const photos = images.filter((image) => image.props.src.startsWith("/images/"));
+    assert.equal(photos.length, 6);
     for (const photo of photos) {
       assert.ok(photo.props.src.startsWith("/images/"));
       assert.ok(fs.existsSync(new URL(`../public${photo.props.src}`, import.meta.url)));
@@ -80,9 +85,10 @@ test("Instagram loads no external embed before consent and always offers the sto
     }
     assert.ok(findElements(tree, "a").every((link) => link.props.href === site.instagram));
     const [profile] = findElements(tree, "a");
-    assert.equal(profile.props.href, site.instagram);
+    assert.equal(profile.props.href, "https://www.instagram.com/primetacoshop/");
     assert.equal(profile.props.target, "_blank");
     assert.equal(profile.props.rel, "noopener noreferrer");
+    assert.equal(findElements(tree, "strong")[0].props.children, "primetacoshop");
     const [settings] = findElements(tree, "button");
     settings.props.onClick();
   }
@@ -93,7 +99,7 @@ test("the server snapshot keeps Instagram embeds unloaded", () => {
   const tree = makeInstagramHarness({ server: true }).render();
   assert.equal(findElements(tree, "script").length, 0);
   assert.equal(findElements(tree, "blockquote").length, 0);
-  assert.equal(findElements(tree, "img").length, 4);
+  assert.equal(findElements(tree, "img").length, 7);
   assert.equal(findElements(tree, "a")[0].props.href, site.instagram);
 });
 
@@ -107,7 +113,7 @@ test("enabled consent loads the profile embed and processes it when the script b
   assert.equal(script.props.strategy, "afterInteractive");
   assert.equal(blockquote.props["data-instgrm-permalink"], site.instagram);
   assert.equal(blockquote.props["data-instgrm-version"], "14");
-  assert.equal(findElements(tree, "img").length, 0);
+  assert.equal(findElements(tree, "img").length, 7);
   assert.ok(findElements(tree, "a").every((link) => link.props.href === site.instagram));
 
   let processes = 0;
@@ -130,7 +136,7 @@ test("revoking consent removes the embed and prevents a late script callback fro
   const disabledTree = harness.render();
   assert.equal(findElements(disabledTree, "script").length, 0);
   assert.equal(findElements(disabledTree, "blockquote").length, 0);
-  assert.equal(findElements(disabledTree, "img").length, 4);
+  assert.equal(findElements(disabledTree, "img").length, 7);
   script.props.onLoad();
   script.props.onReady();
   assert.equal(processes, 1);

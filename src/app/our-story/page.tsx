@@ -5,6 +5,7 @@ import Link from "next/link";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 import SiteIcon from "@/components/SiteIcon";
+import OpenSelectedMenuLink from "@/components/OpenSelectedMenuLink";
 import { foodShowcase, highlights, site } from "@/data/site-content";
 
 export const metadata: Metadata = {
@@ -104,7 +105,7 @@ export default function OurStoryPage() {
               <p className="page-kicker">From our kitchen</p>
               <h2 id="story-kitchen-title">A taste of Prime.</h2>
             </div>
-            <Link href="/menu" className="text-link">Explore the menu<SiteIcon name="arrow" className="h-4 w-4" /></Link>
+            <OpenSelectedMenuLink className="text-link">Explore the menu<SiteIcon name="arrow" className="h-4 w-4" /></OpenSelectedMenuLink>
           </div>
           <div className="story-gallery">
             {kitchenPhotos.map((item) => (

@@ -4,16 +4,16 @@ import { test } from "node:test";
 import { createSourceLoader, loadSourceModule } from "./helpers.mjs";
 const { locations } = loadSourceModule("src/data/locations.ts");
 
-test("menu links stay on the site while pickup destinations remain available", () => {
+test("menu links always open each shop’s Toast menu, defaulting to Mission Valley", () => {
   const { getMenuHref } = loadSourceModule("src/lib/menu-link.ts");
-  assert.equal(getMenuHref(), "/menu");
+  assert.equal(getMenuHref(), locations[0].toastUrl);
 
   for (const location of locations) {
-    assert.equal(getMenuHref(location), `/menu/${location.slug}/embed`);
+    assert.equal(getMenuHref(location), location.toastUrl);
     assert.equal(new URL(location.toastUrl).hostname, "order.toasttab.com");
   }
 
-  assert.equal(getMenuHref({ slug: "example", toastUrl: "https://example.com/order" }), "/menu/example/embed");
+  assert.equal(getMenuHref({ slug: "example", menuUrl: "/menu/example/embed" }), locations[0].toastUrl);
 });
 
 test("each shop keeps its own menu prices and identifies printed reference prices", () => {

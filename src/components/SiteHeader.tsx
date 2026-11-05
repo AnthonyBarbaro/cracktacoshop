@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactElement } from "react";
 
 import DeliveryLinks from "@/components/DeliveryLinks";
+import AccessibilityNavButton from "@/components/AccessibilityNavButton";
 import LocationOpenBadge from "@/components/LocationOpenBadge";
 import SiteIcon from "@/components/SiteIcon";
 import StoreLocationSearch from "@/components/StoreLocationSearch";
@@ -13,6 +14,7 @@ import StoreWelcome from "@/components/StoreWelcome";
 import { locations } from "@/data/locations";
 import { OPEN_DELIVERY_OPTIONS_EVENT } from "@/lib/delivery-options";
 import { getGoogleMapsDirectionsUrl } from "@/lib/google-maps";
+import { getMenuHref } from "@/lib/menu-link";
 import {
   getShoppingLocationSlugServerSnapshot,
   getShoppingLocationSlugSnapshot,
@@ -65,18 +67,17 @@ export default function SiteHeader({
   const locationButtonRef = useRef<HTMLButtonElement | null>(null);
   const headerRef = useRef<HTMLElement>(null);
 
-  const links = [
-    { href: "/menu", label: "Menu" },
-    { href: "/locations", label: "Locations" },
-    { href: "/order-online", label: "Order Online" },
-    { href: "/catering", label: "Catering" },
-  ];
-
   const shoppingSlug = routeLocationSlug ?? storedShoppingSlug;
   const shoppingLocation = useMemo(
     () => locations.find((location) => location.slug === shoppingSlug),
     [shoppingSlug],
   );
+  const links = [
+    { href: getMenuHref(shoppingLocation), label: "Menu" },
+    { href: "/locations", label: "Locations" },
+    { href: "/order-online", label: "Order Online" },
+    { href: "/catering", label: "Catering" },
+  ];
   const deliveryLocation = locations.find((location) => location.slug === (deliveryLocationSlug || shoppingSlug));
   const primaryCtaHref = ctaHref;
   const drawerCtaHref = ctaHref;
@@ -276,6 +277,7 @@ export default function SiteHeader({
             <button ref={menuToggleButtonRef} type="button" onClick={openMenu} className="menu-toggle shrink-0" aria-label="Open menu" aria-expanded={activeDrawer === "menu"} aria-controls="mobile-site-menu">
               <SiteIcon name="menu" className="h-6 w-6" />
             </button>
+            <span className="hidden sm:inline-flex"><AccessibilityNavButton /></span>
           </div>
         </div>
       </header>
@@ -406,7 +408,7 @@ export default function SiteHeader({
           <Link href={isEditorial ? "/#locations" : "/locations"} aria-label="Choose a location to call"><SiteIcon name="phone" /><span>Call</span></Link>
         )}
         <a href={selectedDirectionsUrl ?? (isEditorial ? "/#locations" : "/locations")} target={selectedDirectionsUrl ? "_blank" : undefined} rel={selectedDirectionsUrl ? "noopener noreferrer" : undefined}><SiteIcon name="pin" /><span>Directions</span></a>
-        <Link href="/menu"><SiteIcon name="menu" /><span>Menu</span></Link>
+        <a href={getMenuHref(shoppingLocation)}><SiteIcon name="menu" /><span>Menu</span></a>
         <button type="button" onClick={() => {
           setDeliveryLocationSlug("");
           setActiveDrawer("delivery");

@@ -9,7 +9,12 @@ function createPageLoader(pathname, browser = {}) {
   return createSourceLoader({
     ...browser,
     require: (specifier) => {
-      if (specifier === "next/navigation") return { usePathname: () => pathname, useRouter: () => ({ push() {} }) };
+      if (specifier === "next/navigation") return {
+        usePathname: () => pathname,
+        useRouter: () => ({ push() {} }),
+        redirect: (destination) => { throw Object.assign(new Error("Redirect"), { destination }); },
+        notFound: () => { throw Object.assign(new Error("Not found"), { notFound: true }); },
+      };
       if (specifier.endsWith(".module.css")) {
         return { __esModule: true, default: new Proxy({}, { get: (_, key) => String(key) }) };
       }
@@ -48,26 +53,21 @@ function makeBrowserStorage() {
   return { window, storage, CustomEvent };
 }
 
-test("menu entry offers only the four location menus in the requested order", () => {
+test("legacy menu entry redirects directly to the default Toast menu", () => {
   const load = createPageLoader("/menu");
   const MenuPage = load("src/app/menu/page.tsx").default;
   const { locations } = load("src/data/locations.ts");
-  const main = getMainMarkup(renderToStaticMarkup(createElement(MenuPage)));
-  const links = [...main.matchAll(/<a\b[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g)]
-    .map((match) => [match[1], match[2].replace(/<[^>]+>/g, "").trim()]);
+  assert.throws(() => MenuPage(), (error) => error.destination === locations[0].toastUrl);
+});
 
-  assert.deepEqual(links, [
-    ["/menu/seaport-village/embed", "SEAPORT VILLAGE"],
-    ["/menu/coronado/embed", "CORONADO"],
-    ["/menu/encinitas/embed", "ENCINITAS"],
-    ["/menu/mission-valley/embed", "MISSION VALLEY"],
-  ]);
-  assert.match(main, /Choose a location\./);
-  assert.doesNotMatch(main, /<img\b|<iframe\b|\$\d|Favorites|View menu|Shop details/);
+test("legacy location menus redirect to the matching Toast menu and reject unknown shops", async () => {
+  const load = createPageLoader("/menu");
+  const MenuPage = load("src/app/menu/[slug]/embed/page.tsx").default;
+  const { locations } = load("src/data/locations.ts");
   for (const location of locations) {
-    assert.equal(main.includes(location.address), false);
-    assert.equal(main.includes(location.hours), false);
+    await assert.rejects(MenuPage({ params: Promise.resolve({ slug: location.slug }) }), (error) => error.destination === location.toastUrl);
   }
+  await assert.rejects(MenuPage({ params: Promise.resolve({ slug: "unknown" }) }), (error) => error.notFound === true);
 });
 
 test("locations starts with the requested visit heading and shows each shop once", () => {

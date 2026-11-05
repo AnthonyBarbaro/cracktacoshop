@@ -33,36 +33,38 @@ function getPrimaryLinks(html) {
     .map((match) => [match[1], match[2]]);
 }
 
-test("primary navigation always starts menu selection, including with a selected shop", () => {
-  for (const pathname of ["/menu", "/menu/coronado/embed"]) {
-    const load = createPageLoader(pathname, { slug: "coronado", name: "Coronado" });
+test("primary navigation opens Toast for the selected shop or Mission Valley by default", () => {
+  const { locations } = createPageLoader("/")("src/data/locations.ts");
+  for (const location of [undefined, ...locations]) {
+    const load = createPageLoader("/", location);
     const Header = load("src/components/SiteHeader.tsx").default;
     const html = renderToStaticMarkup(createElement(Header));
     assert.deepEqual(getPrimaryLinks(html), [
-      ["/menu", "Menu"],
+      [location?.toastUrl ?? locations[0].toastUrl, "Menu"],
       ["/locations", "Locations"],
       ["/order-online", "Order Online"],
       ["/catering", "Catering"],
     ]);
-    assert.match(html, /<a(?=[^>]*href="\/menu")(?=[^>]*aria-current="page")[^>]*>/);
+    assert.doesNotMatch(html, /href="\/menu/);
   }
 });
 
 test("homepage keeps primary and hero menu actions while dishes have no duplicate menu links", () => {
   const load = createPageLoader("/");
   const HomePage = load("src/app/page.tsx").default;
+  const { locations } = load("src/data/locations.ts");
   const html = renderToStaticMarkup(createElement(HomePage));
-  const primaryMenuLinks = getPrimaryLinks(html).filter(([href]) => href === "/menu");
+  const primaryMenuLinks = getPrimaryLinks(html).filter(([href]) => href === locations[0].toastUrl);
   const hero = html.match(/<div[^>]*class="home-hero-actions"[^>]*>([\s\S]*?)<\/div>/)?.[1];
   assert.ok(hero);
-  const heroMenuLinks = [...hero.matchAll(/<a\b[^>]*href="\/menu(?:\/[^\"]*)?"/g)];
+  const heroMenuLinks = [...hero.matchAll(/<a\b[^>]*href="https:\/\/order\.toasttab\.com\/[^"]+"/g)];
   assert.equal(primaryMenuLinks.length + heroMenuLinks.length, 2);
   const dishCaptions = [...html.matchAll(/<figcaption\b[^>]*class="home-dish-caption"[^>]*>([\s\S]*?)<\/figcaption>/g)];
   assert.ok(dishCaptions.length > 0);
   for (const [, caption] of dishCaptions) assert.doesNotMatch(caption, /href="\/menu/);
   const main = html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/)?.[1];
   assert.ok(main);
-  assert.equal([...main.matchAll(/<a\b[^>]*href="\/menu(?:\/[^\"]*)?"/g)].length, 1);
+  assert.equal([...main.matchAll(/<a\b[^>]*href="https:\/\/order\.toasttab\.com\/[^"]+"/g)].length, 1);
   assert.doesNotMatch(html, /View menu for/);
   assert.match(html, /aria-label="Mobile quick actions"/);
   assert.match(html, /id="delivery"/);
@@ -82,12 +84,13 @@ function getQuickActions(html) {
 test("restored mobile bar has Call, Directions, Menu, and Delivery with initial dialog controls", () => {
   const load = createPageLoader("/");
   const Header = load("src/components/SiteHeader.tsx").default;
+  const { locations } = load("src/data/locations.ts");
   const html = renderToStaticMarkup(createElement(Header));
   const actions = getQuickActions(html);
   assert.deepEqual(actions.map(({ type, label, href }) => [type, label, href]), [
     ["a", "Call", "/#locations"],
     ["a", "Directions", "/#locations"],
-    ["a", "Menu", "/menu"],
+    ["a", "Menu", locations[0].toastUrl],
     ["button", "Delivery", undefined],
   ]);
   assert.match(actions[3].attributes, /aria-haspopup="dialog"/);
@@ -99,7 +102,7 @@ test("restored mobile bar has Call, Directions, Menu, and Delivery with initial 
   assert.doesNotMatch(html, /class="site-drawer-layer[^\"]*is-open/);
 });
 
-test("mobile phone and directions follow the selected shop while Menu still opens location selection", () => {
+test("mobile phone, directions, and Toast menu follow the selected shop", () => {
   const data = createPageLoader("/menu")("src/data/locations.ts");
   for (const location of data.locations) {
     const load = createPageLoader("/menu", location);
@@ -110,18 +113,18 @@ test("mobile phone and directions follow the selected shop while Menu still open
     const directions = new URL(actions[1].href);
     assert.equal(directions.searchParams.get("destination"), location.address);
     assert.equal(directions.searchParams.get("destination_place_id"), location.placeId);
-    assert.equal(actions[2].href, "/menu");
+    assert.equal(actions[2].href, location.toastUrl);
   }
 });
 
 test("order page keeps all four navigation destinations and catering offers configured phones", () => {
   const load = createPageLoader("/order-online");
   const OrderPage = load("src/app/order-online/page.tsx").default;
+  const { locations } = load("src/data/locations.ts");
   const orderHtml = renderToStaticMarkup(createElement(OrderPage));
-  assert.deepEqual(getPrimaryLinks(orderHtml).map(([href]) => href), ["/menu", "/locations", "/order-online", "/catering"]);
+  assert.deepEqual(getPrimaryLinks(orderHtml).map(([href]) => href), [locations[0].toastUrl, "/locations", "/order-online", "/catering"]);
 
   const CateringPage = load("src/app/catering/page.tsx").default;
-  const { locations } = load("src/data/locations.ts");
   const cateringHtml = renderToStaticMarkup(createElement(CateringPage));
   for (const location of locations) assert.ok(cateringHtml.includes(`href="tel:${location.phone}"`));
 });

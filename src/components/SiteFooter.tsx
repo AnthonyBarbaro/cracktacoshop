@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import type { ReactElement } from "react";
 
@@ -8,6 +7,7 @@ import { locations } from "@/data/locations";
 import { site } from "@/data/site-content";
 import SiteIcon from "@/components/SiteIcon";
 import InstagramSection from "@/components/InstagramSection";
+import AccessibilityNavButton from "@/components/AccessibilityNavButton";
 import { openCookieSettings } from "@/lib/cookie-preferences";
 import { getMenuHref } from "@/lib/menu-link";
 
@@ -30,9 +30,6 @@ export default function SiteFooter({ variant = "minimal" }: Props): ReactElement
         <InstagramSection />
         <div className="section-shell footer-main">
           <div className="footer-brand">
-            <Link href="/" aria-label="Prime Tacos home">
-              <Image src="/newlogo.png" alt="Prime Taco Shop — Home of Tri-Tip Taco" width={3822} height={2378} sizes="(max-width: 639px) 200px, 220px" className="footer-logo" />
-            </Link>
             <p className="footer-description">{site.tagline}<br />San Diego, California.</p>
           </div>
           <nav aria-label="Footer navigation" className="footer-navigation">
@@ -57,6 +54,7 @@ export default function SiteFooter({ variant = "minimal" }: Props): ReactElement
         <div className="section-shell footer-bottom">
           <p>© {new Date().getFullYear()} Prime Tacos.</p>
           <button type="button" onClick={openCookieSettings} className="footer-cookie-settings">Cookie settings</button>
+          <AccessibilityNavButton showLabel />
         </div>
       </footer>
     );
@@ -66,7 +64,6 @@ export default function SiteFooter({ variant = "minimal" }: Props): ReactElement
     <footer className="site-footer">
       <div className="section-shell footer-main">
         <div>
-          <Link href="/" aria-label="Prime Tacos home"><Image src="/newlogo.png" alt="Prime Taco Shop — Home of Tri-Tip Taco" width={3822} height={2378} sizes="144px" className="footer-logo" /></Link>
           <p className="mt-4 text-sm text-white/70">{site.tagline} Proudly San Diego.</p>
         </div>
         <nav aria-label="Footer navigation" className="footer-links">
@@ -106,6 +103,7 @@ export default function SiteFooter({ variant = "minimal" }: Props): ReactElement
       <div className="section-shell footer-bottom">
         <p>© {new Date().getFullYear()} Prime Tacos. All rights reserved.</p>
         <button type="button" onClick={openCookieSettings} className="min-h-11 underline underline-offset-4">Cookie settings</button>
+        <AccessibilityNavButton showLabel />
         <p>San Diego, California</p>
       </div>
     </footer>

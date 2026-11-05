@@ -81,7 +81,7 @@ export default async function LocationPage({ params }: LocationPageProps) {
     return notFound();
   }
 
-  const menuEmbedUrl = location.menuUrl ?? `/menu/${location.slug}/embed`;
+  const menuUrl = getMenuHref(location);
   const directionsUrl = getGoogleMapsSearchUrl({
     address: location.address,
     placeId: location.placeId,
@@ -119,7 +119,7 @@ export default async function LocationPage({ params }: LocationPageProps) {
       addressCountry: "US",
     },
     openingHoursSpecification: getLocationOpeningHoursSpecification(location.slug),
-    menu: new URL(menuEmbedUrl, site.url).href,
+    menu: menuUrl,
     potentialAction: pickupOrderUrl
       ? {
           "@type": "OrderAction",
@@ -247,12 +247,6 @@ export default async function LocationPage({ params }: LocationPageProps) {
             <div className="flex flex-wrap gap-2">
               <Link href={getMenuHref(location)} className="brand-btn w-full px-4 py-3 text-sm sm:w-auto">
                 Open Full Menu
-              </Link>
-              <Link
-                href="/menu"
-                className="brand-btn-muted w-full px-4 py-3 text-sm sm:w-auto"
-              >
-                View All Location Menus
               </Link>
             </div>
           </section>

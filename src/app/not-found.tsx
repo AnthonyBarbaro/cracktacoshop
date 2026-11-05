@@ -3,6 +3,7 @@ import type { ReactElement } from "react";
 
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
+import OpenSelectedMenuLink from "@/components/OpenSelectedMenuLink";
 
 export default function NotFound(): ReactElement {
   return (
@@ -14,7 +15,7 @@ export default function NotFound(): ReactElement {
           <h1 className="page-title">Let’s get you to Prime.</h1>
           <p className="page-description">This page may have moved. Browse the menu or find your neighborhood shop.</p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link href="/menu" className="brand-btn px-6 py-3 text-sm">View menu</Link>
+            <OpenSelectedMenuLink className="brand-btn px-6 py-3 text-sm" label="View menu" />
             <Link href="/locations" className="brand-btn-muted px-6 py-3 text-sm">Find a location</Link>
           </div>
         </section>

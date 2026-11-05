@@ -19,12 +19,7 @@ type InstagramWindow = Window & {
 };
 
 const instagramHandle = new URL(site.instagram).pathname.replace(/\/+$/, "").slice(1);
-const profilePhotos = foodShowcase.filter((photo) => [
-  "/images/food-1.jpg",
-  "/images/food-3.jpg",
-  "/images/food-5.jpg",
-  "/images/food-6.jpg",
-].includes(photo.src));
+const profilePhotos = foodShowcase.slice(0, 6);
 
 function processInstagramEmbed(): void {
   if (getCookiePreferenceSnapshot() !== "enabled") return;
@@ -41,6 +36,51 @@ function InstagramIcon(): ReactNode {
   );
 }
 
+function InstagramPreview(): ReactNode {
+  return (
+    <>
+      <a
+        href={site.instagram}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Visit @${instagramHandle} on Instagram (opens in a new tab)`}
+        className={styles.profileHeader}
+      >
+        <span className={styles.avatar}>
+          <Image src="/newlogo.png" alt="" width={88} height={88} className={styles.avatarImage} />
+        </span>
+        <span className={styles.profileDetails}>
+          <strong className={styles.handle}>{instagramHandle}</strong>
+          <span className={styles.profileName}>{site.name}</span>
+          <span className={styles.profileBio}>{site.tagline}</span>
+        </span>
+        <span className={styles.profileIcon}><InstagramIcon /></span>
+      </a>
+      <div className={styles.photos}>
+        {profilePhotos.map((photo) => (
+          <a
+            key={photo.src}
+            href={site.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${photo.alt}. Visit @${instagramHandle} on Instagram (opens in a new tab).`}
+            className={styles.photo}
+          >
+            <Image
+              src={photo.src}
+              alt={photo.alt}
+              fill
+              sizes="(max-width: 579px) calc((100vw - 2.5rem) / 3), 180px"
+              className={styles.photoImage}
+            />
+          </a>
+        ))}
+      </div>
+      <p className={styles.previewCaption}>A taste of the Prime kitchen.</p>
+    </>
+  );
+}
+
 function InstagramEmbed(): ReactNode {
   useEffect(processInstagramEmbed, []);
 
@@ -51,10 +91,7 @@ function InstagramEmbed(): ReactNode {
         data-instgrm-permalink={site.instagram}
         data-instgrm-version="14"
       >
-        <a href={site.instagram} target="_blank" rel="noopener noreferrer" className={styles.profile}>
-          <InstagramIcon />
-          <span>View @{instagramHandle} on Instagram</span>
-        </a>
+        <InstagramPreview />
       </blockquote>
       <Script
         id="prime-instagram-embed"
@@ -79,32 +116,12 @@ export default function InstagramSection(): ReactNode {
       <div className="section-shell">
         <p className={styles.eyebrow}>Follow along</p>
         <h2 id="instagram-heading" className={styles.heading}>Prime on Instagram</h2>
-        {cookiePreference === "enabled" ? (
-          <div className={styles.card}>
-            <InstagramEmbed />
-          </div>
-        ) : (
-          <div className={styles.photos}>
-            {profilePhotos.map((photo) => (
-              <a
-                key={photo.src}
-                href={site.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`${photo.alt}. Visit @${instagramHandle} on Instagram.`}
-                className={styles.photo}
-              >
-                <Image
-                  src={photo.src}
-                  alt={photo.alt}
-                  fill
-                  sizes="(max-width: 639px) 45vw, 25vw"
-                  className={styles.photoImage}
-                />
-              </a>
-            ))}
-          </div>
-        )}
+        <svg className={styles.flourish} viewBox="0 0 64 10" fill="none" aria-hidden="true">
+          <path d="M1 5C11-3 21 13 32 5S53 13 63 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+        <div className={styles.card}>
+          {cookiePreference === "enabled" ? <InstagramEmbed /> : <InstagramPreview />}
+        </div>
         <div className={styles.actions}>
           <a href={site.instagram} target="_blank" rel="noopener noreferrer" className={styles.follow}>
             <InstagramIcon />

@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { useLayoutEffect, useRef, type ReactElement } from "react";
 
+import { getReducedMotionSnapshot, subscribeToReducedMotion } from "@/lib/accessibility-preferences";
+
 export default function HomeLogoIntro(): ReactElement {
   const logoRef = useRef<HTMLImageElement>(null);
 
@@ -11,7 +13,6 @@ export default function HomeLogoIntro(): ReactElement {
     const target = document.querySelector<HTMLImageElement>("[data-home-logo-target]");
     if (!source || !target) return;
 
-    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
     let frame = 0;
     let progress = Math.min(Math.max(window.scrollY, 0) / 420, 1);
     let previousTime = performance.now();
@@ -42,7 +43,8 @@ export default function HomeLogoIntro(): ReactElement {
       const desiredProgress = Math.min(Math.max(window.scrollY, 0) / 420, 1);
       const elapsed = Math.min(now - previousTime, 64);
       previousTime = now;
-      progress = preference.matches
+      const reducedMotion = getReducedMotionSnapshot();
+      progress = reducedMotion
         ? desiredProgress
         : progress + (desiredProgress - progress) * (1 - Math.exp(-elapsed / 160));
       if (Math.abs(desiredProgress - progress) < .001) {
@@ -50,9 +52,9 @@ export default function HomeLogoIntro(): ReactElement {
       } else {
         frame = window.requestAnimationFrame(update);
       }
-      const docked = progress === 1 || (preference.matches && progress > 0);
+      const docked = progress === 1 || (reducedMotion && progress > 0);
       target.toggleAttribute("data-home-logo-docked", docked);
-      source.style.visibility = progress === 0 || (preference.matches && !docked) ? "visible" : "hidden";
+      source.style.visibility = progress === 0 || (reducedMotion && !docked) ? "visible" : "hidden";
       flyingLogo.style.display = progress > 0 && !docked ? "block" : "none";
       if (progress === 0 || docked) return;
 
@@ -77,7 +79,7 @@ export default function HomeLogoIntro(): ReactElement {
     window.addEventListener("scroll", requestUpdate, { passive: true });
     window.addEventListener("resize", requestUpdate);
     source.addEventListener("load", requestUpdate);
-    preference.addEventListener("change", requestUpdate);
+    const unsubscribe = subscribeToReducedMotion(requestUpdate);
 
     return () => {
       window.cancelAnimationFrame(frame);
@@ -85,7 +87,7 @@ export default function HomeLogoIntro(): ReactElement {
       window.removeEventListener("scroll", requestUpdate);
       window.removeEventListener("resize", requestUpdate);
       source.removeEventListener("load", requestUpdate);
-      preference.removeEventListener("change", requestUpdate);
+      unsubscribe();
       source.style.removeProperty("visibility");
       target.removeAttribute("data-home-logo-docked");
     };

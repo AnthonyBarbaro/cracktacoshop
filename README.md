@@ -1,6 +1,6 @@
 # Prime Tacos
 
-Prime Tacos restaurant website, built with Next.js, React, TypeScript, and Tailwind CSS. Uses `public/newlogo.png`, the original cream and dark green theme, an animated homepage logo, mobile bottom navigation, a location-first menu, and shared pickup/delivery options. The Instagram profile embed and Google Maps load when optional cookies are enabled.
+Prime Tacos restaurant website, built with Next.js, React, TypeScript, and Tailwind CSS. Uses `public/newlogo.png`, the original cream and dark green theme, an animated homepage logo, mobile bottom navigation, direct Toast menu links, and shared pickup/delivery options. Menu links follow the selected shop and default to Mission Valley. The Instagram profile embed and Google Maps load when optional cookies are enabled. Accessibility options are available from the header, footer, and floating button, with saved display preferences and reduced-motion support.
 
 ## Development
 
@@ -18,7 +18,7 @@ npx tsc --noEmit --incremental false
 npm run build
 ```
 
-The existing business domain, social accounts, map links, and ordering providers are retained in `src/data/site-content.ts` and `src/data/locations.ts`. Update those destinations when replacement URLs are available. Location menus live in `src/data/menu.ts`.
+The business domain, social accounts, map links, and ordering providers are configured in `src/data/site-content.ts` and `src/data/locations.ts`. Update those destinations when replacement URLs are available. Legacy `/menu` and location menu URLs redirect to Toast; historical menu data remains in `src/data/menu.ts`.
 
 ## Careers Form Email Setup
 

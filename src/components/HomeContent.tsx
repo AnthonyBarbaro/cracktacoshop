@@ -12,7 +12,9 @@ import SiteIcon from "@/components/SiteIcon";
 import { locations } from "@/data/locations";
 import { signatureDishes } from "@/data/site-content";
 import { getGoogleMapsDirectionsUrl } from "@/lib/google-maps";
+import { getMenuHref } from "@/lib/menu-link";
 import { useShoppingLocation } from "@/lib/use-shopping-location";
+import { getReducedMotionSnapshot, subscribeToReducedMotion } from "@/lib/accessibility-preferences";
 
 export default function HomeContent(): ReactElement {
   const shoppingLocation = useShoppingLocation();
@@ -21,7 +23,6 @@ export default function HomeContent(): ReactElement {
   useEffect(() => {
     const main = mainRef.current;
     if (!main) return;
-    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
     const sections = main.querySelectorAll<HTMLElement>("[data-reveal]");
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
@@ -37,7 +38,7 @@ export default function HomeContent(): ReactElement {
     let frame = 0;
     const update = (): void => {
       frame = 0;
-      const progress = preference.matches ? 0 : Math.min(window.scrollY / 700, 1);
+      const progress = getReducedMotionSnapshot() ? 0 : Math.min(window.scrollY / 700, 1);
       main.style.setProperty("--hero-shift", `${progress * 70}px`);
     };
     const onScroll = (): void => {
@@ -45,12 +46,12 @@ export default function HomeContent(): ReactElement {
     };
     update();
     window.addEventListener("scroll", onScroll, { passive: true });
-    preference.addEventListener("change", onScroll);
+    const unsubscribe = subscribeToReducedMotion(onScroll);
     return () => {
       observer.disconnect();
       window.cancelAnimationFrame(frame);
       window.removeEventListener("scroll", onScroll);
-      preference.removeEventListener("change", onScroll);
+      unsubscribe();
       main.classList.remove("motion-ready");
     };
   }, []);
@@ -68,7 +69,7 @@ export default function HomeContent(): ReactElement {
             <h1 id="home-title">San Diego roots.<br /><em>Prime tacos.</em></h1>
             <p className="home-hero-description">Burgundy pepper tri-tip. Handmade tortillas.<br />Your next favorite taco.</p>
             <div className="home-hero-actions">
-              <Link href="/menu" className="home-button">Explore the menu<SiteIcon name="arrow" /></Link>
+              <a href={getMenuHref(shoppingLocation)} className="home-button">Explore the menu<SiteIcon name="arrow" /></a>
               <DeliveryButton className="home-button is-outline">Order delivery<SiteIcon name="delivery" /></DeliveryButton>
             </div>
           </div>

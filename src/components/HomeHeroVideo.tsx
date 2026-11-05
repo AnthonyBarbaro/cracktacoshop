@@ -2,22 +2,9 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore, type ReactElement } from "react";
 
+import { getReducedMotionSnapshot, getReducedMotionServerSnapshot, subscribeToReducedMotion } from "@/lib/accessibility-preferences";
+
 const videoBase = "https://cdn.prod.website-files.com/696ade60affd7395b52deb31%2F6a8db7a3fd8ca01e078faac4_Copy%20of%20ST-Home-2";
-const reducedMotionQuery = "(prefers-reduced-motion: reduce)";
-
-function subscribeToReducedMotion(callback: () => void): () => void {
-  const preference = window.matchMedia(reducedMotionQuery);
-  preference.addEventListener("change", callback);
-  return () => preference.removeEventListener("change", callback);
-}
-
-function getReducedMotionSnapshot(): boolean {
-  return window.matchMedia(reducedMotionQuery).matches;
-}
-
-function getReducedMotionServerSnapshot(): boolean {
-  return true;
-}
 
 export default function HomeHeroVideo(): ReactElement {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -28,7 +15,7 @@ export default function HomeHeroVideo(): ReactElement {
     getReducedMotionSnapshot,
     getReducedMotionServerSnapshot,
   );
-  const shouldPlay = playback ?? !reducedMotion;
+  const shouldPlay = !reducedMotion && (playback ?? true);
 
   useEffect(() => {
     const video = videoRef.current;
