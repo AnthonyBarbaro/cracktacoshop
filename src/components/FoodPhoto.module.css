@@ -1,0 +1,2 @@
+.frame { position: relative; width: 100%; overflow: hidden; background: #e6e9dd; }
+.image { object-fit: cover; }

@@ -8,19 +8,19 @@
 .eyebrow {
   margin-bottom: 1.25rem;
   color: #626b60;
-  font-size: .625rem;
+  font-size: .8125rem;
   font-weight: 600;
-  letter-spacing: .32em;
+  letter-spacing: .1em;
   text-transform: uppercase;
 }
 
 .heading {
-  font-family: var(--font-editorial), Georgia, "Times New Roman", serif;
-  font-size: clamp(2.25rem, 4.5vw, 3.5rem);
-  font-weight: 400;
+  font-family: var(--font-editorial), Arial, sans-serif;
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  font-style: normal;
+  font-weight: 600;
   line-height: 1.15;
-  letter-spacing: .045em;
-  text-transform: uppercase;
+  letter-spacing: -.025em;
   text-wrap: balance;
 }
 
@@ -85,7 +85,7 @@
 
 .handle { font-weight: 700; overflow-wrap: anywhere; }
 .profileName { font-weight: 500; }
-.profileBio { color: #626b60; font-size: .75rem; }
+.profileBio { color: #626b60; font-size: .875rem; }
 
 .profileIcon {
   align-self: flex-start;
@@ -125,7 +125,7 @@
   min-height: 3.875rem;
   padding: .75rem 1rem;
   color: #626b60;
-  font-size: .7rem;
+  font-size: .8125rem;
   letter-spacing: .025em;
   text-align: center;
 }
@@ -152,7 +152,7 @@
 .settings {
   min-height: 2.75rem;
   color: #626b60;
-  font-size: .65rem;
+  font-size: .875rem;
   text-decoration: underline;
   text-underline-offset: .3em;
 }
@@ -168,10 +168,9 @@
   border-radius: 999px;
   background: var(--prime-ink);
   color: #fff;
-  font-size: .7rem;
+  font-size: .875rem;
   font-weight: 600;
-  letter-spacing: .12em;
-  text-transform: uppercase;
+  letter-spacing: .025em;
   box-shadow: 0 10px 24px #173d2c1f;
   transition: background-color .2s, color .2s;
 }
@@ -195,11 +194,9 @@
 
   .avatar { width: 68px; height: 68px; }
   .avatarImage { padding: .25rem; }
-  .profileDetails { font-size: .75rem; }
-  .profileBio { font-size: .65rem; }
   .profileIcon { width: 1.25rem; height: 1.25rem; }
   .actions { margin-top: 2rem; }
-  .follow { max-width: 100%; padding-inline: 1.5rem; font-size: .65rem; letter-spacing: .08em; }
+  .follow { max-width: 100%; padding-inline: 1.5rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,0 +1,75 @@
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.brand { flex: none; }
+.navigation { display: none; align-items: center; gap: 1.75rem; }
+.navigationLink { display: inline-flex; align-items: center; min-height: 48px; border-bottom: 2px solid transparent; color: var(--prime-green); font-size: .875rem; font-weight: 600; line-height: 1.4; }
+.navigationLink:hover, .navigationLink[aria-current="page"] { border-color: currentColor; }
+.actions { display: flex; align-items: center; gap: 12px; min-width: 0; }
+
+.locationButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  min-height: 48px;
+  max-width: 14rem;
+  border: 1px solid transparent;
+  border-radius: .35rem;
+  padding: 8px;
+  background: transparent;
+  color: var(--prime-green);
+  text-align: left;
+}
+
+.locationButton:hover, .locationButton[aria-expanded="true"] { background: #e9eddf; }
+.locationIcon { flex: none; width: 18px; height: 18px; }
+.locationLabel { min-width: 0; font-size: .875rem; font-weight: 600; line-height: 1.3; }
+.locationChevron { flex: none; width: 6px; height: 6px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: translateY(-2px) rotate(45deg); }
+.locationButton[aria-expanded="true"] .locationChevron { transform: translateY(2px) rotate(225deg); }
+
+.orderButton {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  border: 1px solid var(--prime-green);
+  border-radius: .35rem;
+  padding: 12px 20px;
+  background: var(--prime-green);
+  color: #fff;
+  font-size: .875rem;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.orderButton:hover { background: #27593f; border-color: #27593f; }
+.menuButton { display: inline-flex; flex: none; align-items: center; justify-content: center; width: 48px; min-height: 48px; border: 1px solid #bac5b5; border-radius: .35rem; color: var(--prime-green); }
+.menuButton:hover { background: #e9eddf; }
+.accessibility { display: none; }
+.accessibility > button { width: 48px; min-height: 48px; border-radius: .35rem; }
+
+@media (min-width: 640px) {
+  .orderButton, .accessibility { display: inline-flex; }
+}
+
+@media (min-width: 1280px) {
+  .navigation { display: flex; }
+  .menuButton { display: none; }
+}
+
+@media (max-width: 639px) {
+  :global(.site-header.is-editorial) .inner:global(.header-inner) { height: auto; min-height: 5.25rem; padding-block: 6px; }
+  :global(.site-header.is-editorial.is-scrolled) .inner:global(.header-inner) { min-height: 4.75rem; }
+  .actions { flex: 1; justify-content: flex-end; gap: 6px; }
+  .locationButton { flex: 0 1 auto; gap: 5px; min-height: 44px; max-width: calc(100% - 50px); padding: 5px 3px; }
+  .locationIcon { width: 16px; height: 16px; }
+  .locationLabel { font-size: .8125rem; line-height: 1.2; text-wrap: balance; }
+  .locationChevron { width: 5px; height: 5px; }
+  .menuButton { width: 44px; min-height: 44px; }
+}

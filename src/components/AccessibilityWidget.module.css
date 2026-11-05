@@ -110,6 +110,10 @@
   :global(body:has(.cookie-notice)) .floatingButton { top: 6rem; bottom: auto; }
 }
 
+@media (max-width: 639px) {
+  :global(body:has(.mobile-bottom-bar)) .floatingButton { display: none; }
+}
+
 @media (max-width: 480px) {
   .options { grid-template-columns: 1fr; }
 }

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Plus_Jakarta_Sans } from "next/font/google";
+import { DM_Sans } from "next/font/google";
 import Script from "next/script";
 
 import CookieNotice from "@/components/CookieNotice";
@@ -10,15 +10,8 @@ import { site } from "@/data/site-content";
 import "./globals.css";
 import "./accessibility.css";
 
-const plusJakartaSans = Plus_Jakarta_Sans({
-  variable: "--font-manrope",
-  subsets: ["latin"],
-});
-
-const editorialSerif = Cormorant_Garamond({
-  variable: "--font-editorial",
-  weight: ["400", "500"],
-  style: ["normal", "italic"],
+const primaryFont = DM_Sans({
+  variable: "--font-primary",
   subsets: ["latin"],
   display: "swap",
 });
@@ -154,8 +147,8 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en">
-      <body className={`${plusJakartaSans.variable} ${editorialSerif.variable} antialiased`}>
+    <html lang="en" className={primaryFont.variable}>
+      <body className="antialiased">
         <Script
           id="global-seo-schema"
           type="application/ld+json"

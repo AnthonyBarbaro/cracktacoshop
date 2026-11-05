@@ -153,7 +153,6 @@ export default async function LocationPage({ params }: LocationPageProps) {
                 <h1 className="page-title">{location.name}</h1>
                 <p className="text-neutral-600">{location.address}</p>
                 <p className="text-neutral-600">{location.hours}</p>
-                <p className="location-holiday-note">Hours may vary on holidays. Call the shop before visiting.</p>
 
                 <div className="flex flex-wrap gap-2 pt-2">
                   <a

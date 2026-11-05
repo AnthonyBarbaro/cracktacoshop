@@ -1,0 +1,41 @@
+.dialog {
+  position: fixed;
+  inset: 0;
+  width: min(calc(100vw - 2rem), 38rem);
+  height: min(calc(100dvh - 2rem), 58rem);
+  max-width: calc(100vw - 2rem);
+  max-height: calc(100dvh - 2rem);
+  margin: auto;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #bac5b5;
+  border-radius: .75rem;
+  background: #f8f7f1;
+  color: #173d2c;
+}
+
+.dialog::backdrop { background: #10251ed9; }
+.dialog:not([open]) { display: none; }
+.panel { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; width: 100%; height: 100%; min-width: 0; min-height: 0; overflow: hidden; }
+.header { display: flex; align-items: center; justify-content: space-between; gap: .75rem; border-bottom: 1px solid #d9dfd2; padding: max(.75rem, env(safe-area-inset-top)) 1rem .75rem; }
+.heading { min-width: 0; }
+.title { margin: 0; color: inherit; font-size: 1rem; font-weight: 600; line-height: 1.35; overflow-wrap: anywhere; }
+.count { margin-top: .25rem; color: #52604f; font-size: .8125rem; line-height: 1.4; }
+.control { display: inline-flex; flex: none; align-items: center; justify-content: center; width: 48px; height: 48px; min-width: 48px; min-height: 48px; padding: 0; border: 1px solid #bac5b5; border-radius: 50%; color: #173d2c; background: transparent; }
+.control:hover:not(:disabled) { background: #e6ebdf; }
+.control:disabled { opacity: .45; }
+.control svg { width: 20px; height: 20px; }
+.previousIcon { transform: rotate(180deg); }
+.body { min-width: 0; min-height: 0; overflow: auto; overscroll-behavior: contain; padding: .75rem; background: #fff; }
+.content { width: 100%; max-width: 34rem; min-width: 0; margin-inline: auto; }
+.videoBody { display: grid; place-items: center; overflow: hidden; padding: 0; background: #000; }
+.videoContent { height: 100%; max-width: none; }
+.footer { display: grid; grid-template-columns: 48px minmax(0, 1fr) 48px; align-items: center; gap: .5rem; border-top: 1px solid #d9dfd2; padding: .75rem 1rem max(.75rem, env(safe-area-inset-bottom)); background: #f8f7f1; }
+.externalLink { display: flex; align-items: center; justify-content: center; min-width: 0; min-height: 48px; padding: .25rem; color: #173d2c; font-size: .875rem; font-weight: 600; line-height: 1.4; text-align: center; text-decoration: underline; text-underline-offset: .2em; overflow-wrap: anywhere; }
+.control:focus-visible, .externalLink:focus-visible { outline: 3px solid #173d2c; outline-offset: 3px; }
+
+@media (max-width: 639px) {
+  .dialog { width: calc(100vw - 1rem); height: calc(100dvh - 1rem); max-width: calc(100vw - 1rem); max-height: calc(100dvh - 1rem); }
+  .header, .footer { padding-inline: .75rem; }
+  .body { padding: .5rem; }
+}

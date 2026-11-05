@@ -31,70 +31,40 @@ export const signatureDishes = [
     name: "Quesadillas",
     src: "/images/beef-quesadilla.jpg",
     alt: "Quesadilla wedges served with guacamole and crema",
+    width: 1194,
+    height: 672,
     description: "Golden tortillas, melted cheese, and your favorite filling.",
   },
   {
     name: "Al pastor tacos",
     src: "/images/al-pastor-street-tacos.jpg",
     alt: "Al pastor taco with pineapple, guacamole, onion, and lime",
+    width: 1007,
+    height: 672,
     description: "Al pastor, pineapple, and guacamole on a handmade tortilla.",
   },
   {
     name: "Breakfast burritos",
     src: "/images/legacy/breakfast-burrito.jpg",
     alt: "Breakfast burrito halves filled with eggs and meat",
+    width: 1024,
+    height: 960,
     description: "A little Prime to start your day.",
   },
 ];
 
 const locationFoodPhotos: Record<string, { src: string; alt: string }> = {
-  "mission-valley": { src: "/images/food-1.jpg", alt: "Taco served with three house salsas" },
-  "seaport-village": { src: "/images/al-pastor-street-tacos.jpg", alt: "Al pastor taco with pineapple, guacamole, onion, and lime" },
-  encinitas: { src: "/images/beef-quesadilla.jpg", alt: "Quesadilla wedges served with guacamole and crema" },
-  coronado: { src: "/images/legacy/breakfast-burrito.jpg", alt: "Breakfast burrito halves filled with eggs and meat" },
+  "mission-valley": { src: "/images/food/taco-three-salsas-sage.webp", alt: "Taco served with three house salsas" },
+  "seaport-village": { src: "/images/food/loaded-tostada-lime.webp", alt: "A loaded crisp tortilla topped with fresh lime" },
+  encinitas: { src: "/images/food/quesadilla-cheese-pull.webp", alt: "A quesadilla pulled apart over grilled quesadilla wedges" },
+  coronado: { src: "/images/food/takeout-spread.webp", alt: "Takeout trays with rice, salsa, and guacamole" },
 };
 
 export function getLocationFoodPhoto(slug: string): { src: string; alt: string } {
   return locationFoodPhotos[slug] ?? locationFoodPhotos["mission-valley"];
 }
 
-export const foodShowcase = [
-  {
-    src: "/images/food-1.jpg",
-    alt: "Taco served with three house salsas",
-    label: "Tri-Tip Tacos",
-  },
-  {
-    src: "/images/food-2.jpg",
-    alt: "Nachos with beef, guacamole, jalapeños, and melted cheese",
-    label: "Loaded Nachos",
-  },
-  {
-    src: "/images/food-3.jpg",
-    alt: "Three tacos with guacamole, onion, and cilantro",
-    label: "Handmade Tacos",
-  },
-  {
-    src: "/images/food-5.jpg",
-    alt: "Three bowls with fresh toppings",
-    label: "Fresh Bowls",
-  },
-  {
-    src: "/images/food-6.jpg",
-    alt: "Three tacos served beside a drink",
-    label: "Tacos & Sides",
-  },
-  {
-    src: "/images/al-pastor-street-tacos.jpg",
-    alt: "Al pastor street taco with pineapple, guacamole, and onion",
-    label: "Al Pastor Street Tacos",
-  },
-  {
-    src: "/images/beef-quesadilla.jpg",
-    alt: "Beef quesadilla served with guacamole and crema",
-    label: "Beef Quesadilla",
-  },
-];
+export { foodPhotos as foodShowcase } from "./food-photos";
 
 export const legacyFoodShowcase = [
   {

@@ -2,7 +2,7 @@
 
 import Script from "next/script";
 import Image from "next/image";
-import { useEffect, useSyncExternalStore, type ReactNode } from "react";
+import { useSyncExternalStore, type ReactNode } from "react";
 
 import { foodShowcase, site } from "@/data/site-content";
 import {
@@ -82,8 +82,6 @@ function InstagramPreview(): ReactNode {
 }
 
 function InstagramEmbed(): ReactNode {
-  useEffect(processInstagramEmbed, []);
-
   return (
     <div className={styles.embed}>
       <blockquote
@@ -97,7 +95,6 @@ function InstagramEmbed(): ReactNode {
         id="prime-instagram-embed"
         src="https://www.instagram.com/embed.js"
         strategy="afterInteractive"
-        onLoad={processInstagramEmbed}
         onReady={processInstagramEmbed}
       />
     </div>

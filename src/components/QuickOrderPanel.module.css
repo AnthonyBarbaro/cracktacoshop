@@ -1,0 +1,31 @@
+.panel {
+  display: grid;
+  gap: .875rem;
+  width: 100%;
+  max-width: 28rem;
+  padding: 1rem;
+  border: 1px solid #d4d9ca;
+  border-radius: .75rem;
+  background: #fffef9;
+  color: var(--prime-ink);
+  box-shadow: 0 12px 32px #173d2c12;
+  text-align: left;
+}
+
+.location { min-width: 0; }
+.location label { display: block; margin-bottom: .4rem; font-size: .875rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.location select { width: 100%; min-width: 0; min-height: 48px; border: 1px solid #a9b6a3; border-radius: .35rem; padding: .6rem .75rem; background: #fff; color: var(--prime-ink); font-size: 1rem; }
+
+.actions { display: flex; flex-wrap: wrap; gap: .625rem; }
+.pickup, .delivery { display: inline-flex; flex: 1 1 9rem; align-items: center; justify-content: center; gap: .65rem; min-width: 0; min-height: 48px; border: 1px solid var(--prime-green); border-radius: .35rem; padding: .75rem .625rem; font-size: .9375rem; font-weight: 600; line-height: 1.4; text-align: center; }
+.pickup { background: var(--prime-green); color: #fff; }
+.pickup:hover { background: #27593f; border-color: #27593f; }
+.delivery { background: transparent; color: var(--prime-ink); }
+.delivery:hover { background: #edf0e6; }
+.pickup svg, .delivery svg { flex: none; width: 1.1rem; height: 1.1rem; }
+
+.panel :is(a, button, select):focus-visible { outline: 3px solid var(--prime-green); outline-offset: 3px; }
+
+@media (max-width: 639px) {
+  .panel { max-width: none; }
+}

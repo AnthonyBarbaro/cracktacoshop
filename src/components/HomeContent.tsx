@@ -1,20 +1,23 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, type ReactElement } from "react";
 
 import DeliveryButton from "@/components/DeliveryButton";
 import LocationOpenBadge from "@/components/LocationOpenBadge";
-import HomeLogoIntro from "@/components/HomeLogoIntro";
-import OrderOnlineSection from "@/components/OrderOnlineSection";
+import FoodPhoto from "@/components/FoodPhoto";
+import FoodPhotoRail from "@/components/FoodPhotoRail";
+import HomeHeroSlideshow from "@/components/HomeHeroSlideshow";
 import SiteIcon from "@/components/SiteIcon";
 import { locations } from "@/data/locations";
-import { signatureDishes } from "@/data/site-content";
+import { foodPhotos } from "@/data/food-photos";
 import { getGoogleMapsDirectionsUrl } from "@/lib/google-maps";
-import { getMenuHref } from "@/lib/menu-link";
+import { setStoredShoppingLocationSlug } from "@/lib/shopping-location";
 import { useShoppingLocation } from "@/lib/use-shopping-location";
-import { getReducedMotionSnapshot, subscribeToReducedMotion } from "@/lib/accessibility-preferences";
+
+import styles from "./HomeContent.module.css";
+
+const cateringPhoto = foodPhotos.find((photo) => photo.id === "takeout-spread") ?? foodPhotos[0];
 
 export default function HomeContent(): ReactElement {
   const shoppingLocation = useShoppingLocation();
@@ -35,74 +38,15 @@ export default function HomeContent(): ReactElement {
     sections.forEach((section) => observer.observe(section));
     main.classList.add("motion-ready");
 
-    let frame = 0;
-    const update = (): void => {
-      frame = 0;
-      const progress = getReducedMotionSnapshot() ? 0 : Math.min(window.scrollY / 700, 1);
-      main.style.setProperty("--hero-shift", `${progress * 70}px`);
-    };
-    const onScroll = (): void => {
-      if (!frame) frame = window.requestAnimationFrame(update);
-    };
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    const unsubscribe = subscribeToReducedMotion(onScroll);
     return () => {
       observer.disconnect();
-      window.cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", onScroll);
-      unsubscribe();
       main.classList.remove("motion-ready");
     };
   }, []);
 
   return (
     <main ref={mainRef} id="main-content" className="home-editorial">
-      <section className="home-hero" aria-labelledby="home-title">
-        <div className="home-hero-media">
-          <Image src="/images/al-pastor-street-tacos.jpg" alt="Al pastor taco with pineapple, guacamole, onion, and lime" fill sizes="(min-width: 800px) 65vw, 100vw" priority className="home-hero-photo" />
-        </div>
-        <div className="home-hero-inner">
-          <div className="home-hero-copy">
-            <p className="home-kicker">San Diego, California</p>
-            <HomeLogoIntro />
-            <h1 id="home-title">San Diego roots.<br /><em>Prime tacos.</em></h1>
-            <p className="home-hero-description">Burgundy pepper tri-tip. Handmade tortillas.<br />Your next favorite taco.</p>
-            <div className="home-hero-actions">
-              <a href={getMenuHref(shoppingLocation)} className="home-button">Explore the menu<SiteIcon name="arrow" /></a>
-              <DeliveryButton className="home-button is-outline">Order delivery<SiteIcon name="delivery" /></DeliveryButton>
-            </div>
-          </div>
-          <a href="#locations" className="home-scroll-link"><span>Find your neighborhood</span><SiteIcon name="arrow" /></a>
-        </div>
-      </section>
-
-      <div className="home-welcome-line"><span>Handmade tortillas</span><span>Burgundy pepper tri-tip</span><span>Four San Diego shops</span></div>
-
-      <section className="home-menu home-section-shell" aria-labelledby="home-menu-title">
-        <div className="home-menu-intro" data-reveal>
-          <div>
-            <p className="home-kicker">From our kitchen</p>
-            <h2 id="home-menu-title">Simple ingredients.<br /><em>Something special.</em></h2>
-          </div>
-          <div className="home-menu-intro-copy">
-            <p>Handmade tortillas, fresh salsa, and our signature burgundy pepper tri-tip. A few of the favorites that bring us together.</p>
-          </div>
-        </div>
-        <div className="home-dish-grid">
-          {signatureDishes.map((dish, index) => (
-            <figure key={dish.src} className="home-dish" data-reveal>
-              <div className="home-dish-photo">
-                <Image src={dish.src} alt={dish.alt} fill sizes={index === 0 ? "(min-width: 800px) 55vw, 100vw" : "(min-width: 800px) 40vw, 100vw"} />
-              </div>
-              <figcaption className="home-dish-caption">
-                <span className="home-dish-number">0{index + 1}</span>
-                <div><h3>{dish.name}</h3><p>{dish.description}</p></div>
-              </figcaption>
-            </figure>
-          ))}
-        </div>
-      </section>
+      <HomeHeroSlideshow orderHref={shoppingLocation?.toastUrl ?? "/order-online"} />
 
       <section id="locations" className="home-shops home-section-shell" aria-labelledby="home-locations-title">
         <div className="home-section-intro" data-reveal>
@@ -111,27 +55,44 @@ export default function HomeContent(): ReactElement {
           <p>Find your neighborhood shop for local menus, hours, and directions.</p>
         </div>
         <div className="home-shop-grid">
-          {locations.map((location) => (
-            <article key={location.slug} className="home-shop" data-reveal>
-              <div className="home-shop-heading">
-                <LocationOpenBadge slug={location.slug} />
-                {shoppingLocation?.slug === location.slug && <span className="home-selected-store">Your store</span>}
-              </div>
-              <h3><Link href={`/locations/${location.slug}`}>{location.name}</Link></h3>
-              <p className="home-shop-address">{location.address}</p>
-              <p className="home-shop-hours">{location.hours}</p>
-              <div className="home-shop-links">
-                {location.phone && <a href={`tel:${location.phone}`} aria-label={`Call ${location.name}`}><SiteIcon name="phone" />Call</a>}
-                <a href={getGoogleMapsDirectionsUrl(location)} target="_blank" rel="noopener noreferrer" aria-label={`Directions to ${location.name}`}><SiteIcon name="pin" />Directions</a>
-              </div>
-              <DeliveryButton locationSlug={location.slug} className="home-shop-delivery">Order delivery<SiteIcon name="arrow" /></DeliveryButton>
-            </article>
-          ))}
+          {locations.map((location) => {
+            const isSelected = shoppingLocation?.slug === location.slug;
+            return (
+              <article key={location.slug} className="home-shop" data-selected={isSelected} data-reveal>
+                <div className="home-shop-heading">
+                  <LocationOpenBadge slug={location.slug} />
+                  {isSelected ? <span className="home-selected-store">Your store</span> : <span className="home-select-store">Select store</span>}
+                </div>
+                <h3><button type="button" className="home-shop-select" aria-pressed={isSelected} aria-label={isSelected ? `Selected store: ${location.name}` : `Select ${location.name} as your store`} onClick={() => setStoredShoppingLocationSlug(location.slug)}>{location.name}</button></h3>
+                <p className="home-shop-address">{location.address}</p>
+                <p className="home-shop-hours">{location.hours}</p>
+                <div className="home-shop-links">
+                  {location.phone && <a href={`tel:${location.phone}`} aria-label={`Call ${location.name}`}><SiteIcon name="phone" />Call</a>}
+                  <a href={getGoogleMapsDirectionsUrl(location)} target="_blank" rel="noopener noreferrer" aria-label={`Directions to ${location.name}`}><SiteIcon name="pin" />Directions</a>
+                </div>
+                {location.toastUrl && <a href={location.toastUrl} className={styles.orderLink}>Order pickup<SiteIcon name="bag" /></a>}
+                <DeliveryButton locationSlug={location.slug} className="home-shop-delivery">Order delivery<SiteIcon name="delivery" /></DeliveryButton>
+              </article>
+            );
+          })}
         </div>
-        <p className="home-hours-note">Hours may vary on holidays. Call your shop before visiting.</p>
       </section>
 
-      <OrderOnlineSection id="delivery" reveal />
+      <div className={styles.foodSection} data-reveal>
+        <FoodPhotoRail />
+      </div>
+
+      <section id="catering" className={styles.cateringSection} aria-labelledby="home-catering-title">
+        <div className={styles.cateringInner} data-reveal>
+          <FoodPhoto photo={cateringPhoto} sizes="(max-width: 799px) 100vw, 480px" className={styles.cateringPhoto} />
+          <div className={styles.cateringCopy}>
+            <p className="home-kicker">Catering</p>
+            <h2 id="home-catering-title" className={styles.cateringTitle}>Tacos for the<br />whole crew.</h2>
+            <p className={styles.cateringDescription}>Planning a party or a team lunch? Call us to plan your order.</p>
+            <Link href="/catering" className={styles.cateringLink}>Explore catering<SiteIcon name="arrow" /></Link>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }

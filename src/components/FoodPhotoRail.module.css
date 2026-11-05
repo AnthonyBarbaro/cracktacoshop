@@ -1,0 +1,33 @@
+.section {
+  --photo-height: clamp(15rem, 30vw, 22rem);
+  --rail-inset: clamp(1.25rem, 4vw, 2rem);
+  width: 100%;
+  max-width: 90rem;
+  margin-inline: auto;
+  padding: 1rem var(--rail-inset) 3rem;
+}
+
+.rail {
+  display: flex;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-behavior: auto;
+  scrollbar-width: none;
+  padding-block: .25rem .8rem;
+}
+
+.rail::-webkit-scrollbar { display: none; }
+.rail:focus-visible { outline-offset: -3px; }
+.track { display: flex; flex: none; width: max-content; }
+.moving { will-change: transform; }
+.photoGroup { display: flex; flex: none; gap: .75rem; padding-right: .75rem; }
+.photoItem { flex: none; width: calc(var(--photo-height) * var(--photo-ratio)); margin: 0; }
+.photo { height: var(--photo-height); }
+.controls { display: flex; justify-content: flex-end; gap: .5rem; padding-top: .5rem; }
+.control { display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border: 1px solid #bac5b5; border-radius: 50%; color: var(--prime-green); background: transparent; transition: background .2s; }
+.control:hover:not(:disabled) { background: #e6ebdf; }
+.control svg { width: 1.1rem; height: 1.1rem; }
+.rotation { gap: .5rem; width: auto; min-width: 96px; border-radius: 1.5rem; padding-inline: 1rem; font-size: .875rem; font-weight: 600; }
+.rotation svg { fill: currentColor; }
+.rotation:disabled { opacity: .65; }
+.previousIcon { transform: rotate(180deg); }

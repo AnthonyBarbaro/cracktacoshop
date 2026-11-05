@@ -22,6 +22,8 @@ export default function HomeLogoIntro(): ReactElement {
     flyingLogo.removeAttribute("class");
     flyingLogo.removeAttribute("srcset");
     flyingLogo.removeAttribute("sizes");
+    // Load the visible logo's selected size only when the flight starts.
+    flyingLogo.removeAttribute("src");
     flyingLogo.alt = "";
     flyingLogo.setAttribute("aria-hidden", "true");
     flyingLogo.setAttribute("data-home-logo-flight", "");
@@ -100,7 +102,7 @@ export default function HomeLogoIntro(): ReactElement {
       alt="Prime Taco Shop — Home of Tri-Tip Taco"
       width={3822}
       height={2378}
-      sizes="(max-width: 639px) 220px, 320px"
+      sizes="(max-width: 799px) 280px, (max-width: 1023px) 320px, 360px"
       priority
       className="home-hero-logo"
     />

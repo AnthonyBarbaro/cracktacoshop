@@ -36,14 +36,13 @@ export default function LocationsPage(): ReactElement {
   return (
     <>
       <SiteHeader ctaHref="/order-online" ctaLabel="Order Online" />
-      <main id="main-content" className="page-main">
-        <section className={`section-shell ${styles.intro}`} aria-labelledby="locations-title">
+      <main id="main-content" className={`page-main ${styles.page}`}>
+        <section className={styles.intro} aria-labelledby="locations-title">
           <p className="page-kicker">Plan your visit</p>
           <h1 id="locations-title" className={styles.title}>Find your Prime.</h1>
-          <p className={styles.description}>Hours may vary on holidays. Call your shop before visiting.</p>
         </section>
 
-        <section className="section-shell" aria-label="Our locations">
+        <section className={styles.mapSection} aria-label="Our locations">
           <LocationsMapPanel locations={orderedLocations} />
         </section>
       </main>

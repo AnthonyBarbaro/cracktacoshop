@@ -6,12 +6,13 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactElement } from "react";
 
 import DeliveryLinks from "@/components/DeliveryLinks";
-import AccessibilityNavButton from "@/components/AccessibilityNavButton";
+import AccessibilityNavButton, { AccessibilityIcon } from "@/components/AccessibilityNavButton";
 import LocationOpenBadge from "@/components/LocationOpenBadge";
 import SiteIcon from "@/components/SiteIcon";
 import StoreLocationSearch from "@/components/StoreLocationSearch";
 import StoreWelcome from "@/components/StoreWelcome";
 import { locations } from "@/data/locations";
+import { openAccessibilitySettings } from "@/lib/accessibility-preferences";
 import { OPEN_DELIVERY_OPTIONS_EVENT } from "@/lib/delivery-options";
 import { getGoogleMapsDirectionsUrl } from "@/lib/google-maps";
 import { getMenuHref } from "@/lib/menu-link";
@@ -21,6 +22,8 @@ import {
   subscribeToShoppingLocationChanges,
   setStoredShoppingLocationSlug,
 } from "@/lib/shopping-location";
+
+import styles from "./SiteHeader.module.css";
 
 type Props = {
   ctaHref?: string;
@@ -75,7 +78,6 @@ export default function SiteHeader({
   const links = [
     { href: getMenuHref(shoppingLocation), label: "Menu" },
     { href: "/locations", label: "Locations" },
-    { href: "/order-online", label: "Order Online" },
     { href: "/catering", label: "Catering" },
   ];
   const deliveryLocation = locations.find((location) => location.slug === (deliveryLocationSlug || shoppingSlug));
@@ -235,11 +237,9 @@ export default function SiteHeader({
 
     return () => {
       window.removeEventListener("keydown", onKeyDown);
-      if (previousFocusedElement && previousFocusedElement !== document.body && previousFocusedElement.isConnected) {
-        previousFocusedElement.focus();
-      } else {
-        (fallbackLocationButton ?? fallbackToggleButton)?.focus();
-      }
+      [previousFocusedElement, fallbackLocationButton, fallbackToggleButton]
+        .find((element) => element && element !== document.body && element.isConnected && element.getClientRects().length > 0 && getComputedStyle(element).visibility !== "hidden")
+        ?.focus();
     };
   }, [activeDrawer, isMenuOpen]);
 
@@ -247,37 +247,32 @@ export default function SiteHeader({
     <>
       <a href="#main-content" className="skip-link">Skip to main content</a>
       <header ref={headerRef} className={`site-header is-editorial${isEditorial ? " is-home" : ""}`}>
-        <div className="section-shell header-inner flex h-20 items-center justify-between gap-4">
-          <Link href="/" className="shrink-0" aria-label="Prime Tacos home">
+        <div className={`section-shell header-inner ${styles.inner}`}>
+          <Link href="/" prefetch={false} className={styles.brand} aria-label="Prime Tacos home">
             <Image src="/newlogo.png" alt="Prime Taco Shop — Home of Tri-Tip Taco" width={3822} height={2378} sizes="(max-width: 639px) 106px, 152px" priority className="site-logo" data-home-logo-target />
           </Link>
 
-          <nav className="hidden items-center gap-6 xl:flex" aria-label="Primary navigation">
+          <nav className={styles.navigation} aria-label="Primary navigation">
             {links.map((link) => (
-              <Link key={link.href} href={link.href} className="header-link" aria-current={isLinkActive(link.href) ? "page" : undefined}>
+              <Link key={link.href} href={link.href} prefetch={false} className={styles.navigationLink} aria-current={isLinkActive(link.href) ? "page" : undefined}>
                 {link.label}
               </Link>
             ))}
           </nav>
 
-          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-            <button ref={locationButtonRef} type="button" onClick={openLocationPicker} className="header-location inline-flex min-w-0 text-left" aria-label={shoppingLocation ? `Change store, ${shoppingLocation.name}` : "Choose a store"} aria-expanded={isLocationPickerOpen} aria-controls="mobile-site-menu" aria-haspopup="dialog">
-              <span className="header-location-pin"><SiteIcon name="pin" className="h-5 w-5 shrink-0" /></span>
-              <span className="header-location-copy min-w-0">
-                {!shoppingLocation && <span className="header-location-eyebrow">Find your Prime</span>}
-                <span className="header-location-label">{shoppingLabel}</span>
-              </span>
-              <span className="header-location-chevron" aria-hidden="true" />
+          <div className={styles.actions}>
+            <button ref={locationButtonRef} type="button" onClick={openLocationPicker} className={styles.locationButton} aria-label={shoppingLocation ? `Change store, ${shoppingLocation.name}` : "Choose a store"} aria-expanded={isLocationPickerOpen} aria-controls="mobile-site-menu" aria-haspopup="dialog">
+              <SiteIcon name="pin" className={styles.locationIcon} />
+              <span className={styles.locationLabel}>{shoppingLabel}</span>
+              <span className={styles.locationChevron} aria-hidden="true" />
             </button>
-            <span className="hidden sm:inline-flex xl:hidden">
-              <Link href={primaryCtaHref} className="brand-btn px-5 py-3 text-xs">
-                {ctaLabel}
-              </Link>
-            </span>
-            <button ref={menuToggleButtonRef} type="button" onClick={openMenu} className="menu-toggle shrink-0" aria-label="Open menu" aria-expanded={activeDrawer === "menu"} aria-controls="mobile-site-menu">
+            <Link href={primaryCtaHref} prefetch={false} className={styles.orderButton}>
+              {ctaLabel}
+            </Link>
+            <button ref={menuToggleButtonRef} type="button" onClick={openMenu} className={styles.menuButton} aria-label="Open menu" aria-expanded={activeDrawer === "menu"} aria-controls="mobile-site-menu">
               <SiteIcon name="menu" className="h-6 w-6" />
             </button>
-            <span className="hidden sm:inline-flex"><AccessibilityNavButton /></span>
+            <span className={styles.accessibility}><AccessibilityNavButton /></span>
           </div>
         </div>
       </header>
@@ -380,7 +375,7 @@ export default function SiteHeader({
             <>
               <nav aria-label="Site sections" className="drawer-links">
                 {links.map((link) => (
-                    <Link key={link.href} href={link.href} aria-current={isLinkActive(link.href) ? "page" : undefined} onClick={closeMenu}>
+                    <Link key={link.href} href={link.href} prefetch={false} aria-current={isLinkActive(link.href) ? "page" : undefined} onClick={closeMenu}>
                     {link.label}<SiteIcon name="arrow" />
                   </Link>
                 ))}
@@ -394,7 +389,7 @@ export default function SiteHeader({
                   <SiteIcon name="arrow" />
                 </button>
                 {shoppingLocation && <p className="drawer-store-address">{shoppingLocation.address}</p>}
-                <Link href={drawerCtaHref} onClick={closeMenu} className="brand-btn drawer-order">{ctaLabel}<SiteIcon name="arrow" /></Link>
+                <Link href={drawerCtaHref} prefetch={false} onClick={closeMenu} className="brand-btn drawer-order">{ctaLabel}<SiteIcon name="arrow" /></Link>
               </section>
             </>
           )}
@@ -402,12 +397,9 @@ export default function SiteHeader({
       </div>
 
       <nav aria-label="Mobile quick actions" className="mobile-bottom-bar is-editorial" inert={isMenuOpen}>
-        {shoppingLocation?.phone ? (
-          <a href={`tel:${shoppingLocation.phone}`} aria-label={`Call ${shoppingLocation.name}`}><SiteIcon name="phone" /><span>Call</span></a>
-        ) : (
-          <Link href={isEditorial ? "/#locations" : "/locations"} aria-label="Choose a location to call"><SiteIcon name="phone" /><span>Call</span></Link>
-        )}
-        <a href={selectedDirectionsUrl ?? (isEditorial ? "/#locations" : "/locations")} target={selectedDirectionsUrl ? "_blank" : undefined} rel={selectedDirectionsUrl ? "noopener noreferrer" : undefined}><SiteIcon name="pin" /><span>Directions</span></a>
+        <button type="button" onClick={openAccessibilitySettings} aria-label="Accessibility options" aria-haspopup="dialog" aria-controls="accessibility-widget-panel"><AccessibilityIcon /><span>Access</span></button>
+        <a href={shoppingLocation?.toastUrl ?? "/order-online"} aria-label={shoppingLocation ? `Order pickup from ${shoppingLocation.name}` : "Choose a location for pickup"}><SiteIcon name="bag" /><span>Pickup</span></a>
+        <a href={selectedDirectionsUrl ?? (isEditorial ? "/#locations" : "/locations")} aria-label={shoppingLocation ? `Map and directions to ${shoppingLocation.name}` : "Map and directions to our locations"} target={selectedDirectionsUrl ? "_blank" : undefined} rel={selectedDirectionsUrl ? "noopener noreferrer" : undefined}><SiteIcon name="pin" /><span>Map</span></a>
         <a href={getMenuHref(shoppingLocation)}><SiteIcon name="menu" /><span>Menu</span></a>
         <button type="button" onClick={() => {
           setDeliveryLocationSlug("");

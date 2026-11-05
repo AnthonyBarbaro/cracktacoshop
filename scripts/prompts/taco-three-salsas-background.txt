@@ -1,0 +1,4 @@
+Use case: precise-object-edit.
+Edit target: the supplied taco-and-three-salsas photograph.
+Change ONLY the cream tabletop/background to a soft, light sage green, approximately #dce6d4, matching an elegant cream-and-evergreen restaurant website. Keep its subtle matte surface texture, natural lighting and soft contact shadows. The background should clearly read as pale green, not beige, gray, vivid lime, or teal.
+Preserve exactly the taco, tortilla, every ingredient, the brown kraft paper food boat, folded white paper liner, and all three clear plastic cups of red, green, and dark salsa. Keep the food and packaging colors, shapes, positions, proportions, and detail unchanged. Do not tint the entire photograph green; recolor the tabletop only, including the tabletop visible through transparent plastic rims. Keep the same overhead camera angle, original framing and near-square aspect ratio. No added or removed objects, no text, no logos, no watermark.

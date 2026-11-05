@@ -30,7 +30,7 @@ export const metadata: Metadata = {
 
 export default function OurStoryPage() {
   const kitchenPhotos = foodShowcase.filter((item) =>
-    ["/images/food-1.jpg", "/images/food-3.jpg", "/images/beef-quesadilla.jpg"].includes(item.src),
+    ["taco-three-salsas", "loaded-nachos-guacamole", "quesadilla-cheese-pull"].includes(item.id),
   );
 
   return (

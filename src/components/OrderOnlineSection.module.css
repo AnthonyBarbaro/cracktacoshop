@@ -1,14 +1,16 @@
 .heading {
   margin-top: 1rem;
-  font-family: var(--font-editorial), Georgia, "Times New Roman", serif;
-  font-size: clamp(3.5rem, 5.3vw, 5.25rem);
-  font-weight: 500;
-  line-height: 1.04;
+  font-family: var(--font-editorial), Arial, sans-serif;
+  font-size: clamp(2rem, 3.5vw, 3.25rem);
+  font-style: normal;
+  font-weight: 600;
+  line-height: 1.15;
   letter-spacing: -.03em;
 }
 
 .heading em {
-  font-weight: 400;
+  font-style: normal;
+  font-weight: inherit;
 }
 
 .locationPicker {
@@ -19,7 +21,7 @@
 .locationPicker label {
   display: block;
   margin-bottom: .5rem;
-  font-size: .75rem;
+  font-size: .875rem;
   font-weight: 600;
 }
 
@@ -31,6 +33,6 @@
 
 @media (max-width: 639px) {
   .heading {
-    font-size: 3.5rem;
+    font-size: 2rem;
   }
 }

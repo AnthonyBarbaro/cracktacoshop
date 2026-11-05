@@ -103,8 +103,10 @@ test("the server snapshot keeps Instagram embeds unloaded", () => {
   assert.equal(findElements(tree, "a")[0].props.href, site.instagram);
 });
 
-test("enabled consent loads the profile embed and processes it when the script becomes ready", () => {
+test("the profile waits for script readiness and processes once without a duplicate load callback", () => {
   const harness = makeInstagramHarness();
+  let processes = 0;
+  harness.window.instgrm = { Embeds: { process: () => { processes++; } } };
   harness.preferences.setCookiePreference("enabled");
   const tree = harness.render();
   const [script] = findElements(tree, "script");
@@ -116,12 +118,10 @@ test("enabled consent loads the profile embed and processes it when the script b
   assert.equal(findElements(tree, "img").length, 7);
   assert.ok(findElements(tree, "a").every((link) => link.props.href === site.instagram));
 
-  let processes = 0;
-  harness.window.instgrm = { Embeds: { process: () => { processes++; } } };
-  script.props.onLoad();
-  assert.equal(processes, 1);
+  assert.equal(processes, 0);
+  assert.equal(script.props.onLoad, undefined);
   script.props.onReady();
-  assert.equal(processes, 2);
+  assert.equal(processes, 1);
 });
 
 test("revoking consent removes the embed and prevents a late script callback from processing it", () => {
@@ -130,6 +130,8 @@ test("revoking consent removes the embed and prevents a late script callback fro
   harness.window.instgrm = { Embeds: { process: () => { processes++; } } };
   harness.preferences.setCookiePreference("enabled");
   const [script] = findElements(harness.render(), "script");
+  assert.equal(processes, 0);
+  script.props.onReady();
   assert.equal(processes, 1);
 
   harness.preferences.setCookiePreference("disabled");
@@ -137,12 +139,14 @@ test("revoking consent removes the embed and prevents a late script callback fro
   assert.equal(findElements(disabledTree, "script").length, 0);
   assert.equal(findElements(disabledTree, "blockquote").length, 0);
   assert.equal(findElements(disabledTree, "img").length, 7);
-  script.props.onLoad();
   script.props.onReady();
   assert.equal(processes, 1);
 
   harness.preferences.setCookiePreference("enabled");
   const enabledTree = harness.render();
   assert.equal(findElements(enabledTree, "blockquote").length, 1);
+  assert.equal(processes, 1);
+  const [readyScript] = findElements(enabledTree, "script");
+  readyScript.props.onReady();
   assert.equal(processes, 2);
 });

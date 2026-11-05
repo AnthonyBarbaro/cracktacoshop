@@ -52,7 +52,7 @@ export const locations: Location[] = [
     slug: "seaport-village",
     name: "Seaport Village",
     phone: "619-326-8497",
-    placeId: "ChIJK3jWFFRT2YARneWUVMeEgkU",
+    placeId: "ChIJWYOhoqtT2YARcTSgOwe_gVs",
     googleMapsUrl:
       "https://www.google.com/maps/place/Crack+Taco+Shop/@32.7085273,-117.1689383,21z/data=!3m1!5s0x80d953541538a3ef:0xcb60680ac3720050!4m15!1m8!3m7!1s0x80d9535414d6782b:0x458284c75494e59d!2sA,+817+W+Harbor+Dr,+San+Diego,+CA+92101!3b1!8m2!3d32.7087013!4d-117.168991!16s%2Fg%2F11bw3zpnrf!3m5!1s0x80d953aba2a18359:0x5b81bf073ba03471!8m2!3d32.7086205!4d-117.1689692!16s%2Fg%2F11k598gzn_?entry=ttu&g_ep=EgoyMDI2MDIyMi4wIKXMDSoASAFQAw%3D%3D",
     latitude: 32.7086205,

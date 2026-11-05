@@ -1,0 +1,28 @@
+.carousel { cursor: grab; touch-action: pan-y pinch-zoom; }
+.carousel :is(a, button:not(:disabled)) { cursor: pointer; }
+.dragging, .dragging :is(a, button) { cursor: grabbing; }
+.dragging { user-select: none; -webkit-user-select: none; }
+.carousel:focus-visible { outline: 3px solid #fff; outline-offset: -5px; }
+.slides { position: absolute; inset: 0; z-index: -2; overflow: hidden; pointer-events: none; }
+.slide { position: absolute; inset: 0; overflow: hidden; opacity: 0; transition: opacity .9s ease; }
+.slide.active { opacity: 1; }
+.slide .photo { width: 100%; height: 100%; }
+.controls { display: flex; align-items: center; flex-wrap: nowrap; gap: 4px; width: max-content; max-width: 100%; }
+.selector { display: inline-flex; flex: none; align-items: center; justify-content: center; width: 44px; height: 44px; min-width: 44px; min-height: 44px; padding: 0; color: #fff; }
+.selector { border: 0; background: transparent; }
+.selector::after { width: 24px; height: 3px; border-radius: 2px; background: #fff; opacity: .65; content: ""; }
+.selector[aria-pressed="true"]::after, .selector:hover::after { opacity: 1; }
+.selector:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+
+@media (min-width: 1024px) {
+  .slides { inset: 50% max(2rem, calc((100% - 88rem) / 2)) auto auto; width: min(44%, 36rem); height: min(calc(100% - 4rem), 40rem); transform: translateY(-50%); }
+  .slides::after { position: absolute; inset: 0; background: linear-gradient(90deg, #173d2c, #173d2c00 15%), linear-gradient(180deg, #173d2c33, #173d2c00 16%); content: ""; }
+  .slide .photo { background: #173d2c; }
+  .slide .photo :global(img) { object-fit: contain; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide { transition: none; }
+}
+
+:global(html[data-a11y-motion="true"]) .slide { transition: none; }
