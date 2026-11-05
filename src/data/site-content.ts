@@ -1,7 +1,7 @@
 export const site = {
   name: "Prime Tacos",
   shortName: "Prime Tacos",
-  url: "https://cracktacoshop.com",
+  url: "https://primetacoshop.com",
   phone: "619-269-2828",
   instagram: "https://www.instagram.com/primetacoshop/",
   facebook: "https://www.facebook.com/cracktacoshop/",

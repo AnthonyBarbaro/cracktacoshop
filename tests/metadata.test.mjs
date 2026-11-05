@@ -36,7 +36,8 @@ function checkSocialImages(metadata) {
   assert.equal(twitterImage.alt, openGraphImage.alt);
 }
 
-test("global sharing metadata uses the landscape image without changing the business domain", () => {
+test("global sharing metadata uses the landscape image on the Prime Taco Shop domain", () => {
+  assert.equal(site.url, "https://primetacoshop.com");
   assert.equal(globalMetadata.metadataBase.href, new URL(site.url).href);
   assert.equal(globalMetadata.alternates.canonical, site.url);
   assert.equal(globalMetadata.openGraph.url, site.url);
