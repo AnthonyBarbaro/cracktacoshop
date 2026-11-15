@@ -5,11 +5,24 @@ import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 import { locations } from "@/data/locations";
 import { site } from "@/data/site-content";
+import { socialImage } from "@/data/social-image";
 
 export const metadata: Metadata = {
   title: "Catering",
-  description: "Contact your Prime Tacos location about catering.",
+  description: "Contact your Prime Taco Shop location about catering.",
   alternates: { canonical: `${site.url}/catering` },
+  openGraph: {
+    title: "Catering",
+    description: "Contact your Prime Taco Shop location about catering.",
+    url: `${site.url}/catering`,
+    images: [socialImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Catering",
+    description: "Contact your Prime Taco Shop location about catering.",
+    images: [socialImage],
+  },
 };
 
 export default function CateringPage(): ReactElement {

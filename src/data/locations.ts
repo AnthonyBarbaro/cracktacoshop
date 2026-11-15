@@ -11,6 +11,13 @@ export type Location = {
   postalCode: string;
   address: string;
   hours: string;
+  openingHours?: { opens: string; closes: string };
+  streetAddress?: string;
+  phoneNeedsConfirmation?: boolean;
+  seoTitle: string;
+  description: string;
+  introduction: string;
+  menuHighlights: string[];
   image: string;
   menuUrl?: string;
   toastUrl?: string;
@@ -20,7 +27,7 @@ export type Location = {
   postmates?: string;
 };
 
-export const locations: Location[] = [
+const locationDetails: Omit<Location, "hours" | "address">[] = [
   {
     slug: "mission-valley",
     name: "Mission Valley",
@@ -33,8 +40,13 @@ export const locations: Location[] = [
     city: "San Diego",
     state: "CA",
     postalCode: "92108",
-    address: "4242 Camino Del Rio N, San Diego, CA 92108",
-    hours: "Daily: 7AM - Midnight",
+    streetAddress: "4242 Camino Del Rio N",
+    openingHours: { opens: "07:00", closes: "00:00" },
+    phoneNeedsConfirmation: true,
+    seoTitle: "Mission Valley Tacos & Burritos | Prime Taco Shop",
+    description: "Find tri-tip tacos, burritos and breakfast at Prime Taco Shop in Mission Valley, San Diego. View the menu, order pickup, call or get directions.",
+    introduction: "Visit Prime Taco Shop in Mission Valley for burgundy pepper tri-tip tacos and burritos. The menu also includes breakfast burritos and bowls. Check the ordering menu for current items and breakfast availability.",
+    menuHighlights: ["Tri-tip tacos", "Tri-tip burritos", "Tri-tip breakfast burritos", "Breakfast bowls"],
     image: "/images/mission.jpg",
     menuUrl: "/menu/mission-valley/embed",
     toastUrl:
@@ -60,8 +72,11 @@ export const locations: Location[] = [
     city: "San Diego",
     state: "CA",
     postalCode: "92101",
-    address: "817 W. Harbor Dr, San Diego, CA 92101",
-    hours: "Open Every Day 7AM-2AM",
+    streetAddress: "817 W. Harbor Dr., Suite D",
+    seoTitle: "Tacos in Seaport Village, San Diego | Prime Taco Shop",
+    description: "Visit Prime Taco Shop in Seaport Village on San Diego's waterfront. Explore tacos and burritos, order pickup, get directions or call to confirm hours.",
+    introduction: "Find Prime Taco Shop at Seaport Village on the San Diego waterfront. Planning a visit to the San Diego Convention Center? Browse this shop's menu and directions, and call to confirm hours before making your dining plans.",
+    menuHighlights: ["Tri-tip tacos", "Tri-tip burritos", "Tri-tip quesadillas", "Rolled tacos"],
     image: "/images/seaport-village.jpg",
     menuUrl: "/menu/seaport-village/embed",
     toastUrl:
@@ -83,8 +98,12 @@ export const locations: Location[] = [
     city: "Encinitas",
     state: "CA",
     postalCode: "92024",
-    address: "106 Leucadia Blvd, Encinitas, CA 92024",
-    hours: "Open Every Day 8AM-11PM",
+    // Street number is unresolved (106 vs 110); retain provider URLs and place ID.
+    openingHours: { opens: "08:00", closes: "23:00" },
+    seoTitle: "Tacos & Burritos in Encinitas | Prime Taco Shop",
+    description: "Explore tri-tip tacos, burritos and breakfast at Prime Taco Shop in Leucadia, Encinitas. View the menu, order pickup or call to plan your visit.",
+    introduction: "Explore Prime Taco Shop in Leucadia, Encinitas, for tri-tip tacos and burritos. Breakfast burritos and chilaquiles are also on this location's menu. Call the shop to confirm the street address before visiting, and check Toast for current availability.",
+    menuHighlights: ["Tri-tip tacos", "Tri-tip burritos", "Tri-tip breakfast burritos", "Chilaquiles"],
     image: "/images/encinitas.jpg",
     menuUrl: "/menu/encinitas/embed",
     toastUrl:
@@ -108,8 +127,12 @@ export const locations: Location[] = [
     city: "Coronado",
     state: "CA",
     postalCode: "92118",
-    address: "1009 Orange Ave. Coronado, CA 92118",
-    hours: "Open from 8AM-2AM everyday",
+    streetAddress: "1009 Orange Ave.",
+    openingHours: { opens: "08:00", closes: "02:00" },
+    seoTitle: "Late-Night Tacos in Coronado | Prime Taco Shop",
+    description: "Find late-night tacos and burritos at Prime Taco Shop on Orange Avenue in Coronado, open daily until 2 a.m. View the menu, call or get directions.",
+    introduction: "Visit Prime Taco Shop on Orange Avenue in Coronado for tacos and burritos. The shop stays open until 2 a.m. every night. Check the ordering menu for pickup availability; storefront hours and ordering hours can differ.",
+    menuHighlights: ["Tri-tip tacos", "Tri-tip burritos", "Al pastor tacos", "Bean and cheese burritos"],
     image: "/images/coronado.jpg",
     menuUrl: "/menu/coronado/embed",
     toastUrl:
@@ -124,3 +147,20 @@ export const locations: Location[] = [
       "https://postmates.com/store/crack-taco-1009-orange-avenue/VdXVkHQcWt2mQeIAYirS-Q",
   },
 ];
+
+function formatHour(time: string): string {
+  const [hour, minute] = time.split(":").map(Number);
+  if (hour === 0 && minute === 0) return "Midnight";
+  const minutes = minute === 0 ? "" : `:${String(minute).padStart(2, "0")}`;
+  return `${hour % 12 || 12}${minutes}${hour < 12 ? "AM" : "PM"}`;
+}
+
+export const locations: Location[] = locationDetails.map((location) => ({
+  ...location,
+  address: location.streetAddress
+    ? `${location.streetAddress}, ${location.city}, ${location.state} ${location.postalCode}`
+    : `${location.city}, ${location.state} ${location.postalCode} — call to confirm street address`,
+  hours: location.openingHours
+    ? `Daily: ${formatHour(location.openingHours.opens)} - ${formatHour(location.openingHours.closes)}`
+    : "Hours: call to confirm",
+}));

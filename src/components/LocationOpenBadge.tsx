@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactElement } from "react";
+import { locations } from "@/data/locations";
 import { getIsLocationOpenNow } from "@/lib/location-hours";
 
 type Props = {
   slug: string;
 };
 
-export default function LocationOpenBadge({ slug }: Props) {
+export default function LocationOpenBadge({ slug }: Props): ReactElement {
   const [isOpen, setIsOpen] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -27,7 +28,7 @@ export default function LocationOpenBadge({ slug }: Props) {
     return (
       <span className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-neutral-200 bg-neutral-50 px-2 py-1 text-xs font-semibold uppercase tracking-[0.04em] text-neutral-600">
         <span className="h-1.5 w-1.5 rounded-full bg-neutral-400" aria-hidden="true" />
-        Hours
+        {locations.find((location) => location.slug === slug)?.openingHours ? "Hours" : "Call for hours"}
       </span>
     );
   }

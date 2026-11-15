@@ -1,6 +1,6 @@
+import type { ReactElement } from "react";
 import type { Metadata, Viewport } from "next";
 import { DM_Sans } from "next/font/google";
-import Script from "next/script";
 
 import CookieNotice from "@/components/CookieNotice";
 import AccessibilityWidget from "@/components/AccessibilityWidget";
@@ -20,17 +20,17 @@ const primaryFont = DM_Sans({
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: "Prime Tacos San Diego",
-    template: "%s | Prime Tacos",
+    default: "Prime Taco Shop San Diego",
+    template: "%s | Prime Taco Shop",
   },
   description: "Tri-tip tacos, burritos, and online ordering across San Diego locations.",
   alternates: {
     canonical: site.url,
   },
   category: "restaurant",
-  applicationName: "Prime Tacos",
+  applicationName: "Prime Taco Shop",
   keywords: [
-    "prime tacos",
+    "prime taco shop",
     "san diego tacos",
     "tri-tip tacos",
     "burritos",
@@ -42,9 +42,9 @@ export const metadata: Metadata = {
     "san diego burritos",
     "late night tacos san diego",
   ],
-  authors: [{ name: "Prime Tacos" }],
-  creator: "Prime Tacos",
-  publisher: "Prime Tacos",
+  authors: [{ name: "Prime Taco Shop" }],
+  creator: "Prime Taco Shop",
+  publisher: "Prime Taco Shop",
   robots: {
     index: true,
     follow: true,
@@ -62,11 +62,6 @@ export const metadata: Metadata = {
     address: true,
     email: true,
   },
-  other: {
-    "geo.region": "US-CA",
-    "geo.placename": "San Diego",
-    ICBM: "32.7157, -117.1611",
-  },
   icons: {
     icon: [{ url: "/newlogo.png", type: "image/png" }],
     shortcut: "/newlogo.png",
@@ -78,13 +73,13 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: site.url,
     siteName: site.shortName,
-    title: "Prime Tacos San Diego",
+    title: "Prime Taco Shop San Diego",
     description: "Tri-tip tacos, burritos, and easy online ordering by location.",
     images: [socialImage],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Prime Tacos San Diego",
+    title: "Prime Taco Shop San Diego",
     description: "Tri-tip tacos, burritos, and easy online ordering by location.",
     images: [socialImage],
   },
@@ -101,7 +96,7 @@ export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}>): ReactElement {
   const globalSchema = {
     "@context": "https://schema.org",
     "@graph": [
@@ -112,8 +107,7 @@ export default function RootLayout({
         url: site.url,
         logo: `${site.url}/newlogo.png`,
         image: `${site.url}/images/al-pastor-street-tacos.jpg`,
-        telephone: site.phone,
-        sameAs: [site.instagram, site.facebook],
+        sameAs: [site.instagram],
         areaServed: "San Diego County",
       },
       {
@@ -129,7 +123,7 @@ export default function RootLayout({
       {
         "@type": "ItemList",
         "@id": `${site.url}/#locations-list`,
-        name: "Prime Tacos Locations",
+        name: "Prime Taco Shop Locations",
         itemListElement: locations.map((location, index) => ({
           "@type": "ListItem",
           position: index + 1,
@@ -143,10 +137,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={primaryFont.variable}>
       <body className="antialiased">
-        <Script
+        <script
           id="global-seo-schema"
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(globalSchema) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(globalSchema).replace(/</g, "\u003c") }}
         />
         {children}
         <CookieNotice />

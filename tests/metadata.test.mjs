@@ -50,7 +50,7 @@ test("homepage Open Graph and Twitter overrides use the same landscape image", (
   checkSocialImages(homeMetadata);
 });
 
-for (const route of ["careers", "order-online", "faq", "locations", "our-story"]) {
+for (const route of ["careers", "order-online", "faq", "locations", "our-story", "catering"]) {
   test(`${route} sharing metadata uses the landscape image and retains its own page details`, () => {
     const { metadata } = load(`src/app/${route}/page.tsx`);
     assert.equal(new URL(metadata.alternates.canonical, site.url).href, `${site.url}/${route}`);
@@ -71,10 +71,11 @@ test("each location's generated sharing metadata uses the landscape image and pr
     const locationUrl = `${site.url}/locations/${location.slug}`;
     assert.equal(metadata.alternates.canonical, locationUrl);
     assert.equal(metadata.openGraph.url, locationUrl);
-    assert.equal(metadata.title, location.name);
-    assert.equal(metadata.openGraph.title, `${location.name} | Prime Tacos`);
+    assert.equal(metadata.title.absolute, location.seoTitle);
+    assert.equal(metadata.description, location.description);
+    assert.equal(metadata.openGraph.title, location.seoTitle);
     assert.equal(metadata.twitter.title, metadata.openGraph.title);
-    assert.equal(metadata.openGraph.description, `${location.address}. ${location.hours}.`);
+    assert.equal(metadata.openGraph.description, location.description);
     assert.equal(metadata.twitter.description, metadata.openGraph.description);
     checkSocialImages(metadata);
   }

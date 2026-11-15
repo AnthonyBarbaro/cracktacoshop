@@ -88,10 +88,10 @@ test("open badges respect opening and closing times, midnight, and Pacific dayli
     ["mission-valley", "2026-10-12T07:30:00Z", false],
     ["mission-valley", "2026-10-12T13:59:00Z", false],
     ["mission-valley", "2026-10-12T14:00:00Z", true],
-    ["seaport-village", "2026-10-12T07:30:00Z", true],
-    ["seaport-village", "2026-10-12T08:59:00Z", true],
-    ["seaport-village", "2026-10-12T09:00:00Z", false],
-    ["seaport-village", "2026-10-12T14:00:00Z", true],
+    ["seaport-village", "2026-10-12T07:30:00Z", null],
+    ["coronado", "2026-10-12T08:59:00Z", true],
+    ["seaport-village", "2026-10-12T09:00:00Z", null],
+    ["seaport-village", "2026-10-12T14:00:00Z", null],
     ["encinitas", "2026-10-12T14:59:00Z", false],
     ["encinitas", "2026-10-12T15:00:00Z", true],
     ["encinitas", "2026-10-13T05:59:00Z", true],
@@ -99,13 +99,13 @@ test("open badges respect opening and closing times, midnight, and Pacific dayli
     ["coronado", "2026-10-12T07:30:00Z", true],
     ["coronado", "2026-10-12T09:00:00Z", false],
     ["coronado", "2026-10-12T15:00:00Z", true],
-    ["seaport-village", "2026-11-01T08:30:00Z", true],
-    ["seaport-village", "2026-11-01T09:30:00Z", true],
-    ["seaport-village", "2026-11-01T10:00:00Z", false],
+    ["coronado", "2026-11-01T08:30:00Z", true],
+    ["coronado", "2026-11-01T09:30:00Z", true],
+    ["coronado", "2026-11-01T10:00:00Z", false],
     ["mission-valley", "2026-12-12T08:30:00Z", false],
     ["mission-valley", "2026-12-12T15:00:00Z", true],
-    ["seaport-village", "2026-03-08T09:30:00Z", true],
-    ["seaport-village", "2026-03-08T10:00:00Z", false],
+    ["coronado", "2026-03-08T09:30:00Z", true],
+    ["coronado", "2026-03-08T10:00:00Z", false],
   ];
 
   for (const [slug, date, expected] of cases) {
@@ -118,13 +118,16 @@ test("restaurant hours schema has all days and usable time values", () => {
   const { getLocationOpeningHoursSpecification } = loadSourceModule("src/lib/location-hours.ts");
   const expectedHours = {
     "mission-valley": ["07:00", "00:00"],
-    "seaport-village": ["07:00", "02:00"],
     encinitas: ["08:00", "23:00"],
     coronado: ["08:00", "02:00"],
   };
 
   for (const location of locations) {
     const schema = getLocationOpeningHoursSpecification(location.slug);
+    if (location.slug === "seaport-village") {
+      assert.equal(schema, undefined);
+      continue;
+    }
     assert.equal(schema["@type"], "OpeningHoursSpecification");
     assert.deepEqual([...schema.dayOfWeek], ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]);
     assert.deepEqual([schema.opens, schema.closes], expectedHours[location.slug]);

@@ -41,6 +41,12 @@ export default function SiteFooter({ variant = "minimal" }: Props): ReactElement
                 <Link key={link.href} href={link.href} prefetch={false}>{link.label}</Link>
               ))}
             </div>
+            <p className="footer-label mt-5">Our shops</p>
+            <div className="footer-links">
+              {locations.map((location) => (
+                <Link key={location.slug} href={`/locations/${location.slug}`} prefetch={false}>{location.name}</Link>
+              ))}
+            </div>
           </nav>
           <div className="footer-order">
             <h2 className="footer-heading">Come hungry.</h2>
@@ -48,13 +54,13 @@ export default function SiteFooter({ variant = "minimal" }: Props): ReactElement
               Order online<SiteIcon name="arrow" className="h-4 w-4" />
             </Link>
             <nav aria-label="Social media" className="footer-socials">
-              <a href={site.instagram} target="_blank" rel="noopener noreferrer" aria-label="Prime Tacos on Instagram (opens in a new tab)">Instagram</a>
-              <a href={site.facebook} target="_blank" rel="noopener noreferrer" aria-label="Prime Tacos on Facebook (opens in a new tab)">Facebook</a>
+              <a href={site.instagram} target="_blank" rel="noopener noreferrer" aria-label="Prime Taco Shop on Instagram (opens in a new tab)">Instagram</a>
+              <a href={site.facebook} target="_blank" rel="noopener noreferrer" aria-label="Prime Taco Shop on Facebook (opens in a new tab)">Facebook</a>
             </nav>
           </div>
         </div>
         <div className="section-shell footer-bottom">
-          <p>© {new Date().getFullYear()} Prime Tacos.</p>
+          <p>© {new Date().getFullYear()} Prime Taco Shop.</p>
           <button type="button" onClick={openCookieSettings} className="footer-cookie-settings">Cookie settings</button>
           <AccessibilityNavButton showLabel />
         </div>
@@ -103,7 +109,7 @@ export default function SiteFooter({ variant = "minimal" }: Props): ReactElement
         </ul>
       </section>
       <div className="section-shell footer-bottom">
-        <p>© {new Date().getFullYear()} Prime Tacos. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} Prime Taco Shop. All rights reserved.</p>
         <button type="button" onClick={openCookieSettings} className="min-h-11 underline underline-offset-4">Cookie settings</button>
         <AccessibilityNavButton showLabel />
         <p>San Diego, California</p>

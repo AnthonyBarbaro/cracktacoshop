@@ -164,7 +164,7 @@ test("hero renders four real food photos with the takeout spread third, one orde
   ]);
   const Slideshow = createSourceLoader({ require: cssBoundary })("src/components/HomeHeroSlideshow.tsx").default;
   const html = renderToStaticMarkup(React.createElement(Slideshow, { orderHref: "https://order.toasttab.com/example" }));
-  assert.match(html, /role="region" aria-roledescription="carousel" aria-label="Prime Tacos food photos"/);
+  assert.match(html, /role="region" aria-roledescription="carousel" aria-label="Prime Taco Shop food photos"/);
   assert.equal([...html.matchAll(/aria-roledescription="slide"/g)].length, 4);
   assert.equal([...html.matchAll(/<button\b/g)].length, 4);
   assert.equal([...html.matchAll(/<a\b/g)].length, 1);

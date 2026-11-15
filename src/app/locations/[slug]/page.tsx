@@ -1,8 +1,8 @@
+import type { ReactElement } from "react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import Script from "next/script";
 
 import DeliveryButton from "@/components/DeliveryButton";
 import SiteIcon from "@/components/SiteIcon";
@@ -19,7 +19,7 @@ import {
   getGoogleMapsSearchUrl,
 } from "@/lib/google-maps";
 import { getMenuHref } from "@/lib/menu-link";
-import { getLocationOpeningHoursSpecification } from "@/lib/location-hours";
+import { getLocationRestaurantSchema } from "@/lib/location-schema";
 
 type LocationPageProps = {
   params: Promise<{ slug: string }>;
@@ -27,7 +27,7 @@ type LocationPageProps = {
 
 export const dynamicParams = false;
 
-export function generateStaticParams() {
+export function generateStaticParams(): { slug: string }[] {
   return locations.map((location) => ({ slug: location.slug }));
 }
 
@@ -36,28 +36,26 @@ export async function generateMetadata({ params }: LocationPageProps): Promise<M
   const location = locations.find((entry) => entry.slug === slug);
 
   if (!location) {
-    return {
-      title: "Location Not Found",
-    };
+    notFound();
   }
 
   const url = `${site.url}/locations/${location.slug}`;
 
   return {
-    title: location.name,
-    description: `${location.name} location details, hours, phone number, online ordering, and menu.`,
+    title: { absolute: location.seoTitle },
+    description: location.description,
     alternates: {
       canonical: url,
     },
     twitter: {
       card: "summary_large_image",
-      title: `${location.name} | Prime Tacos`,
-      description: `${location.address}. ${location.hours}.`,
+      title: location.seoTitle,
+      description: location.description,
       images: [socialImage],
     },
     openGraph: {
-      title: `${location.name} | Prime Tacos`,
-      description: `${location.address}. ${location.hours}.`,
+      title: location.seoTitle,
+      description: location.description,
       url,
       siteName: site.shortName,
       locale: "en_US",
@@ -67,7 +65,7 @@ export async function generateMetadata({ params }: LocationPageProps): Promise<M
   };
 }
 
-export default async function LocationPage({ params }: LocationPageProps) {
+export default async function LocationPage({ params }: LocationPageProps): Promise<ReactElement> {
   const { slug } = await params;
   const location = locations.find((l) => l.slug === slug);
 
@@ -94,43 +92,16 @@ export default async function LocationPage({ params }: LocationPageProps) {
   });
   const pickupOrderUrl = location.toastUrl;
   const photo = getLocationFoodPhoto(location.slug);
-  const schemaUrl = `${site.url}/locations/${location.slug}`;
-  const schema = {
-    "@context": "https://schema.org",
-    "@type": "Restaurant",
-    "@id": `${schemaUrl}#restaurant`,
-    name: `${site.shortName} ${location.name}`,
-    image: `${site.url}/newlogo.png`,
-    servesCuisine: ["Mexican", "Tri-Tip Tacos", "Burritos"],
-    url: schemaUrl,
-    telephone: location.phone,
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: location.address.split(location.city)[0].replace(/[,\s]+$/, ""),
-      addressLocality: location.city,
-      addressRegion: location.state,
-      postalCode: location.postalCode,
-      addressCountry: "US",
-    },
-    openingHoursSpecification: getLocationOpeningHoursSpecification(location.slug),
-    menu: menuUrl,
-    potentialAction: pickupOrderUrl
-      ? {
-          "@type": "OrderAction",
-          target: pickupOrderUrl,
-        }
-      : undefined,
-    sameAs: [site.instagram, site.facebook].filter(Boolean),
-  };
+  const schema = getLocationRestaurantSchema(location);
 
   return (
     <>
       <SiteHeader />
-      <Script
+      {schema && <script
         id={`restaurant-schema-${location.slug}`}
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-      />
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, "\u003c") }}
+      />}
 
       <main id="main-content" className="page-main location-detail-page">
         <div className="section-shell space-y-8">
@@ -142,13 +113,15 @@ export default async function LocationPage({ params }: LocationPageProps) {
             <div className="location-detail-intro">
               <div className="page-intro">
                 <p className="page-kicker">
-                  Prime Tacos
+                  Prime Taco Shop
                 </p>
                 <h1 className="page-title">{location.name}</h1>
+                <p className="page-description">{location.introduction}</p>
                 <p className="text-neutral-600">{location.address}</p>
                 <p className="text-neutral-600">{location.hours}</p>
 
                 <div className="flex flex-wrap gap-2 pt-2">
+                  <a href="#menu" className="brand-btn-muted w-full px-4 py-3 text-sm sm:w-auto">View menu</a>
                   <a
                     href={mapsDirectionsUrl}
                     target="_blank"
@@ -233,12 +206,16 @@ export default async function LocationPage({ params }: LocationPageProps) {
                 Our menu
               </h2>
               <p className="mt-2 text-sm text-neutral-600 sm:text-base">
-                Explore the {location.name} menu and choose your favorites.
+                On the {location.name} menu:
               </p>
             </div>
 
+            <ul className="list-disc space-y-2 pl-5 text-neutral-600">
+              {location.menuHighlights.map((item) => <li key={item}>{item}</li>)}
+            </ul>
+            <p className="text-sm text-neutral-600">Check Toast for current prices, menu availability and pickup times.</p>
             <div className="flex flex-wrap gap-2">
-              <Link href={getMenuHref(location)} className="brand-btn w-full px-4 py-3 text-sm sm:w-auto">
+              <Link href={menuUrl} className="brand-btn w-full px-4 py-3 text-sm sm:w-auto">
                 Open Full Menu
               </Link>
             </div>

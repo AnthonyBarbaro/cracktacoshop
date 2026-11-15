@@ -143,7 +143,7 @@ export default function FoodPhotoRail(): ReactElement {
   return (
     <section
       className={styles.section}
-      aria-label="Prime Tacos food gallery"
+      aria-label="Prime Taco Shop food gallery"
       onPointerEnter={(event) => { if (event.pointerType === "mouse") setIsHovered(true); }}
       onPointerLeave={(event) => { if (event.pointerType === "mouse") setIsHovered(false); }}
       onFocusCapture={(event) => { if (event.target !== rotationRef.current) pausePhotos(); }}
@@ -153,7 +153,7 @@ export default function FoodPhotoRail(): ReactElement {
           {(["before", "original", "after"] as const).map((group) => {
             const duplicate = group !== "original";
             return (
-              <div key={group} ref={duplicate ? undefined : originalGroupRef} className={styles.photoGroup} data-photo-group={group} role={duplicate ? undefined : "list"} aria-label={duplicate ? undefined : "Prime Tacos food photos"} aria-hidden={duplicate ? true : undefined} inert={duplicate ? true : undefined}>
+              <div key={group} ref={duplicate ? undefined : originalGroupRef} className={styles.photoGroup} data-photo-group={group} role={duplicate ? undefined : "list"} aria-label={duplicate ? undefined : "Prime Taco Shop food photos"} aria-hidden={duplicate ? true : undefined} inert={duplicate ? true : undefined}>
                 {foodPhotos.map((photo) => {
                   const frame = photo.frame ?? photo;
                   return (

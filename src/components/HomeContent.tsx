@@ -67,6 +67,7 @@ export default function HomeContent(): ReactElement {
                 <p className="home-shop-address">{location.address}</p>
                 <p className="home-shop-hours">{location.hours}</p>
                 <div className="home-shop-links">
+                  <Link href={`/locations/${location.slug}`} aria-label={`${location.name} menu and location details`}>Menu &amp; shop details<SiteIcon name="arrow" /></Link>
                   {location.phone && <a href={`tel:${location.phone}`} aria-label={`Call ${location.name}`}><SiteIcon name="phone" />Call</a>}
                   <a href={getGoogleMapsDirectionsUrl(location)} target="_blank" rel="noopener noreferrer" aria-label={`Directions to ${location.name}`}><SiteIcon name="pin" />Directions</a>
                 </div>

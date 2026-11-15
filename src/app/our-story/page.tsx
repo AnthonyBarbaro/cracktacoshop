@@ -11,20 +11,20 @@ import { socialImage } from "@/data/social-image";
 
 export const metadata: Metadata = {
   title: "Our Story",
-  description: "Learn the story behind Prime Tacos and our tri-tip taco tradition.",
+  description: "Learn the story behind Prime Taco Shop and our tri-tip taco tradition.",
   alternates: {
     canonical: `${site.url}/our-story`,
   },
   openGraph: {
     title: "Our Story",
-    description: "Learn the story behind Prime Tacos and our tri-tip taco tradition.",
+    description: "Learn the story behind Prime Taco Shop and our tri-tip taco tradition.",
     url: `${site.url}/our-story`,
     images: [socialImage],
   },
   twitter: {
     card: "summary_large_image",
     title: "Our Story",
-    description: "Learn the story behind Prime Tacos and our tri-tip taco tradition.",
+    description: "Learn the story behind Prime Taco Shop and our tri-tip taco tradition.",
     images: [socialImage],
   },
 };
@@ -67,7 +67,7 @@ export default function OurStoryPage() {
           </figure>
         </section>
 
-        <section className="section-shell page-section" aria-label="What makes Prime Tacos">
+        <section className="section-shell page-section" aria-label="What makes Prime Taco Shop">
           <div className="story-values">
             {highlights.map((item, index) => (
               <article key={item.title} className="story-value">
@@ -89,7 +89,7 @@ export default function OurStoryPage() {
             </div>
             <div className="story-note-copy">
               <p>
-                Prime Tacos is proudly San Diego based, built around quality food, fast service, and a team that
+                Prime Taco Shop is proudly San Diego based, built around quality food, fast service, and a team that
                 treats guests like regulars from day one.
               </p>
               <p>

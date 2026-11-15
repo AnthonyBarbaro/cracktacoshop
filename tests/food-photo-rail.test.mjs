@@ -167,7 +167,7 @@ function makeRailHarness() {
 test("food rail renders every new photo with descriptive alternatives and no visible captions", () => {
   const Rail = createSourceLoader({ require: cssBoundary })("src/components/FoodPhotoRail.tsx").default;
   const html = renderToStaticMarkup(React.createElement(Rail));
-  assert.match(html, /aria-label="Prime Tacos food gallery"/);
+  assert.match(html, /aria-label="Prime Taco Shop food gallery"/);
   assert.equal([...html.matchAll(/<img\b/g)].length, 27);
   assert.equal([...html.matchAll(/alt=""/g)].length, 18);
   assert.equal([...html.matchAll(/aria-hidden="true" inert=""/g)].length, 2);

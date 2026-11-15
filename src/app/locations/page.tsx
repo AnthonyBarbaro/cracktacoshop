@@ -12,20 +12,20 @@ import styles from "./LocationsPage.module.css";
 
 export const metadata: Metadata = {
   title: "Locations",
-  description: "Find your nearest Prime Tacos location in San Diego County.",
+  description: "Find your nearest Prime Taco Shop location in San Diego County.",
   alternates: {
     canonical: `${site.url}/locations`,
   },
   openGraph: {
     title: "Locations",
-    description: "Find your nearest Prime Tacos location in San Diego County.",
+    description: "Find your nearest Prime Taco Shop location in San Diego County.",
     url: `${site.url}/locations`,
     images: [socialImage],
   },
   twitter: {
     card: "summary_large_image",
     title: "Locations",
-    description: "Find your nearest Prime Tacos location in San Diego County.",
+    description: "Find your nearest Prime Taco Shop location in San Diego County.",
     images: [socialImage],
   },
 };

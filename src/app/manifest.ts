@@ -2,9 +2,9 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Prime Tacos",
-    short_name: "Prime Tacos",
-    description: "Order tri-tip tacos and burritos from Prime Tacos locations.",
+    name: "Prime Taco Shop",
+    short_name: "Prime Taco Shop",
+    description: "Order tri-tip tacos and burritos from Prime Taco Shop locations.",
     start_url: "/",
     display: "standalone",
     background_color: "#f8f7f1",

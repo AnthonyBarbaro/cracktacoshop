@@ -1,4 +1,4 @@
-import { notFound, redirect } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 
 import { locations } from "@/data/locations";
 import { getMenuHref } from "@/lib/menu-link";
@@ -17,5 +17,5 @@ export default async function MenuEmbedPage({ params }: MenuEmbedPageProps): Pro
   const { slug } = await params;
   const location = locations.find((entry) => entry.slug === slug);
   if (!location) notFound();
-  redirect(getMenuHref(location));
+  permanentRedirect(getMenuHref(location));
 }

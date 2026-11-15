@@ -1,6 +1,6 @@
 export const site = {
-  name: "Prime Tacos",
-  shortName: "Prime Tacos",
+  name: "Prime Taco Shop",
+  shortName: "Prime Taco Shop",
   url: "https://primetacoshop.com",
   phone: "619-269-2828",
   instagram: "https://www.instagram.com/primetacoshop/",
@@ -8,7 +8,7 @@ export const site = {
   tagline: "Home of the tri-tip taco.",
   heroHeadline: "Big flavor. Prime tacos.",
   story:
-    "Burgundy pepper tri-tip, handmade corn tortillas, and fresh salsa. Find your favorite tacos and burritos at Prime Tacos in San Diego.",
+    "Burgundy pepper tri-tip, handmade corn tortillas, and fresh salsa. Find your favorite tacos and burritos at Prime Taco Shop in San Diego.",
 };
 
 export const highlights = [
@@ -215,13 +215,13 @@ export const reviews = [
 export const marketingHighlights = [
   {
     title: "New Location Spotlight",
-    message: "Visit our Encinitas location for all-day tri-tip tacos and burritos.",
+    message: "Visit our Encinitas location for tri-tip tacos and burritos.",
     ctaLabel: "Order Encinitas",
     href: "/locations/encinitas",
   },
   {
-    title: "Seaport Late-Night Eats",
-    message: "Open every day until 2AM. Perfect for post-game and late-night food runs.",
+    title: "Seaport Village Dining",
+    message: "Find tacos and burritos on the San Diego waterfront. Call the shop to confirm hours.",
     ctaLabel: "Order Seaport",
     href: "/locations/seaport-village",
   },
@@ -237,10 +237,10 @@ export const faqItems = [
   {
     question: "Are you a San Diego based taco shop?",
     answer:
-      "Yes. Prime Tacos is San Diego based and currently serves guests in Mission Valley, Seaport Village, Encinitas, and Coronado.",
+      "Yes. Prime Taco Shop is San Diego based and currently serves guests in Mission Valley, Seaport Village, Encinitas, and Coronado.",
   },
   {
-    question: "What makes Prime Tacos different?",
+    question: "What makes Prime Taco Shop different?",
     answer:
       "Our tacos and burritos feature burgundy pepper tri-tip, handmade tortillas, and fresh salsa.",
   },

@@ -125,7 +125,7 @@ export default function HomeHeroSlideshow({ orderHref }: Props): ReactElement {
       data-home-hero
       role="region"
       aria-roledescription="carousel"
-      aria-label="Prime Tacos food photos"
+      aria-label="Prime Taco Shop food photos"
       tabIndex={0}
       onKeyDown={handleKeyDown}
       onPointerEnter={(event) => { if (event.pointerType === "mouse") setIsHovered(true); }}

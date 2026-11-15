@@ -7,20 +7,20 @@ import { socialImage } from "@/data/social-image";
 
 export const metadata: Metadata = {
   title: "Careers",
-  description: "Apply for open positions at Prime Tacos locations.",
+  description: "Apply for open positions at Prime Taco Shop locations.",
   alternates: {
     canonical: "/careers",
   },
   openGraph: {
     title: "Careers",
-    description: "Apply for open positions at Prime Tacos locations.",
+    description: "Apply for open positions at Prime Taco Shop locations.",
     url: "/careers",
     images: [socialImage],
   },
   twitter: {
     card: "summary_large_image",
     title: "Careers",
-    description: "Apply for open positions at Prime Tacos locations.",
+    description: "Apply for open positions at Prime Taco Shop locations.",
     images: [socialImage],
   },
 };

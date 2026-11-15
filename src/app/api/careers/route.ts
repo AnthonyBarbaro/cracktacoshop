@@ -254,7 +254,7 @@ export async function POST(request: Request) {
           contentType: resumeMime,
         },
       ],
-      headers: { "X-Mailer": "Prime Tacos Careers Form" },
+      headers: { "X-Mailer": "Prime Taco Shop Careers Form" },
     });
 
     return NextResponse.json({ ok: true });

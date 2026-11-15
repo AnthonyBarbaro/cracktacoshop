@@ -58,16 +58,19 @@ export default function SiteHeader({
     getShoppingLocationSlugServerSnapshot,
   );
   const [nearestStoreSlug, setNearestStoreSlug] = useState<string | null>(null);
-  const [activeDrawer, setActiveDrawer] = useState<"menu" | "locations" | "welcome" | "delivery" | null>(null);
+  const [activeDrawer, setActiveDrawer] = useState<"menu" | "locations" | "welcome" | "delivery" | "order" | null>(null);
+  const [orderLocationSlug, setOrderLocationSlug] = useState<string>("");
   const [deliveryLocationSlug, setDeliveryLocationSlug] = useState<string>("");
   const isMenuOpen = activeDrawer !== null;
   const isWelcomeOpen = activeDrawer === "welcome";
   const isDeliveryOpen = activeDrawer === "delivery";
+  const isOrderOpen = activeDrawer === "order";
   const isLocationPickerOpen = activeDrawer === "locations" || isWelcomeOpen;
   const mobileMenuPanelRef = useRef<HTMLElement | null>(null);
   const mobileMenuCloseButtonRef = useRef<HTMLButtonElement | null>(null);
   const menuToggleButtonRef = useRef<HTMLButtonElement | null>(null);
   const locationButtonRef = useRef<HTMLButtonElement | null>(null);
+  const orderLocationSelectRef = useRef<HTMLSelectElement | null>(null);
 
   const shoppingSlug = routeLocationSlug ?? storedShoppingSlug;
   const shoppingLocation = useMemo(
@@ -80,8 +83,7 @@ export default function SiteHeader({
     { href: "/catering", label: "Catering" },
   ];
   const deliveryLocation = locations.find((location) => location.slug === (deliveryLocationSlug || shoppingSlug));
-  const primaryCtaHref = ctaHref;
-  const drawerCtaHref = ctaHref;
+  const orderLocation = locations.find((location) => location.slug === (orderLocationSlug || shoppingSlug));
 
   const shoppingLabel = shoppingLocation?.name ?? "Select a location";
   const pickerLocations = nearestStoreSlug
@@ -104,6 +106,11 @@ export default function SiteHeader({
 
   const openMenu = () => {
     setActiveDrawer("menu");
+  };
+
+  const openOrder = (): void => {
+    setOrderLocationSlug("");
+    setActiveDrawer("order");
   };
 
   const openLocationPicker = (): void => {
@@ -236,7 +243,7 @@ export default function SiteHeader({
       <a href="#main-content" className="skip-link">Skip to main content</a>
       <header className={`site-header is-editorial${isEditorial ? " is-home" : ""}`}>
         <div className={`section-shell header-inner ${styles.inner}`}>
-          <Link href="/" prefetch={false} className={styles.brand} aria-label="Prime Tacos home">
+          <Link href="/" prefetch={false} className={styles.brand} aria-label="Prime Taco Shop home">
             <Image src="/newlogo.png" alt="Prime Taco Shop — Home of Tri-Tip Taco" width={3822} height={2378} sizes="(max-width: 639px) 106px, 152px" priority className="site-logo" data-home-logo-target />
           </Link>
 
@@ -254,9 +261,13 @@ export default function SiteHeader({
               <span className={styles.locationLabel}>{shoppingLabel}</span>
               <span className={styles.locationChevron} aria-hidden="true" />
             </button>
-            <Link href={primaryCtaHref} prefetch={false} className={styles.orderButton}>
-              {ctaLabel}
-            </Link>
+            {ctaHref === "/order-online" ? (
+              <button type="button" onClick={openOrder} className={styles.orderButton} aria-haspopup="dialog" aria-controls="mobile-site-menu" aria-expanded={isOrderOpen}>
+                {ctaLabel}
+              </button>
+            ) : (
+              <Link href={ctaHref} prefetch={false} className={styles.orderButton}>{ctaLabel}</Link>
+            )}
             <button ref={menuToggleButtonRef} type="button" onClick={openMenu} className={styles.menuButton} aria-label="Open menu" aria-expanded={activeDrawer === "menu"} aria-controls="mobile-site-menu">
               <SiteIcon name="menu" className="h-6 w-6" />
             </button>
@@ -265,9 +276,9 @@ export default function SiteHeader({
         </div>
       </header>
 
-      <div className={`site-drawer-layer is-editorial ${isMenuOpen ? "is-open" : ""} ${isWelcomeOpen ? "is-welcome" : ""} ${isDeliveryOpen ? "is-delivery" : ""}`} inert={!isMenuOpen} aria-hidden={!isMenuOpen}>
-        <button type="button" onClick={closeMenu} className="site-drawer-backdrop" aria-label={isDeliveryOpen ? "Close delivery options overlay" : isLocationPickerOpen ? "Close store selector overlay" : "Close menu overlay"} tabIndex={-1} />
-        <aside ref={mobileMenuPanelRef} id="mobile-site-menu" className={`site-drawer ${isWelcomeOpen ? "store-welcome-dialog" : ""}${isDeliveryOpen ? " delivery-drawer" : ""}`} role="dialog" aria-modal="true" aria-labelledby="mobile-menu-title" aria-describedby={isDeliveryOpen ? "delivery-description" : isLocationPickerOpen ? "store-picker-description" : undefined}>
+      <div className={`site-drawer-layer is-editorial ${isMenuOpen ? "is-open" : ""} ${isWelcomeOpen ? "is-welcome" : ""} ${isDeliveryOpen ? "is-delivery" : ""} ${isOrderOpen ? "is-order" : ""}`} inert={!isMenuOpen} aria-hidden={!isMenuOpen}>
+        <button type="button" onClick={closeMenu} className="site-drawer-backdrop" aria-label={isOrderOpen ? "Close ordering options overlay" : isDeliveryOpen ? "Close delivery options overlay" : isLocationPickerOpen ? "Close store selector overlay" : "Close menu overlay"} tabIndex={-1} />
+        <aside ref={mobileMenuPanelRef} id="mobile-site-menu" className={`site-drawer ${isWelcomeOpen ? "store-welcome-dialog" : ""}${isDeliveryOpen ? " delivery-drawer" : ""}${isOrderOpen ? " order-drawer" : ""}`} role="dialog" aria-modal="true" aria-labelledby="mobile-menu-title" aria-describedby={isOrderOpen ? "order-description" : isDeliveryOpen ? "delivery-description" : isLocationPickerOpen ? "store-picker-description" : undefined}>
           {isWelcomeOpen ? (
             <>
               <button ref={mobileMenuCloseButtonRef} type="button" onClick={closeMenu} className="menu-toggle store-welcome-close" aria-label="Close store selector">
@@ -288,14 +299,38 @@ export default function SiteHeader({
             </div>
           ) : (
             <div className="drawer-heading">
-              <h2 id="mobile-menu-title" className="drawer-title">{isLocationPickerOpen ? "Change store" : "Prime Tacos"}</h2>
-              <button ref={mobileMenuCloseButtonRef} type="button" onClick={closeMenu} className="menu-toggle shrink-0" aria-label={isLocationPickerOpen ? "Close store selector" : "Close menu"}>
+              <h2 id="mobile-menu-title" className="drawer-title">{isOrderOpen ? "Pickup or delivery?" : isLocationPickerOpen ? "Change store" : "Prime Taco Shop"}</h2>
+              <button ref={mobileMenuCloseButtonRef} type="button" onClick={closeMenu} className="menu-toggle shrink-0" aria-label={isOrderOpen ? "Close ordering options" : isLocationPickerOpen ? "Close store selector" : "Close menu"}>
                 <SiteIcon name="close" />
               </button>
             </div>
           )}
 
-          {isWelcomeOpen ? null : isDeliveryOpen ? (
+          {isWelcomeOpen ? null : isOrderOpen ? (
+            <div className="order-dialog-content">
+              <p id="order-description">Choose how you’d like to order from your shop.</p>
+              <label htmlFor="order-location">Your location</label>
+              <select ref={orderLocationSelectRef} id="order-location" className="brand-input" value={orderLocation?.slug ?? ""} onChange={(event) => {
+                const slug = event.target.value;
+                setOrderLocationSlug(slug);
+                applyShoppingLocation(slug);
+              }}>
+                <option value="" disabled>Choose a location</option>
+                {locations.map((location) => <option key={location.slug} value={location.slug}>{location.name}</option>)}
+              </select>
+              <div className="order-dialog-choices">
+                {orderLocation?.toastUrl ? (
+                  <a href={orderLocation.toastUrl} className="brand-btn" aria-label={`Order pickup from ${orderLocation.name}`}>Pickup<SiteIcon name="bag" /></a>
+                ) : (
+                  <button type="button" className="brand-btn" onClick={() => orderLocationSelectRef.current?.focus()}>Pickup<SiteIcon name="bag" /></button>
+                )}
+                <button type="button" className="brand-btn-muted" onClick={() => {
+                  setDeliveryLocationSlug(orderLocation?.slug ?? "");
+                  setActiveDrawer("delivery");
+                }} aria-haspopup="dialog" aria-controls="mobile-site-menu">Delivery<SiteIcon name="delivery" /></button>
+              </div>
+            </div>
+          ) : isDeliveryOpen ? (
             <div className="delivery-drawer-content">
               <div className="delivery-store-select">
                 <span className="delivery-store-pin"><SiteIcon name="pin" /></span>
@@ -377,7 +412,11 @@ export default function SiteHeader({
                   <SiteIcon name="arrow" />
                 </button>
                 {shoppingLocation && <p className="drawer-store-address">{shoppingLocation.address}</p>}
-                <Link href={drawerCtaHref} prefetch={false} onClick={closeMenu} className="brand-btn drawer-order">{ctaLabel}<SiteIcon name="arrow" /></Link>
+                {ctaHref === "/order-online" ? (
+                  <button type="button" onClick={openOrder} className="brand-btn drawer-order" aria-haspopup="dialog" aria-controls="mobile-site-menu">{ctaLabel}<SiteIcon name="arrow" /></button>
+                ) : (
+                  <Link href={ctaHref} prefetch={false} onClick={closeMenu} className="brand-btn drawer-order">{ctaLabel}<SiteIcon name="arrow" /></Link>
+                )}
               </section>
             </>
           )}

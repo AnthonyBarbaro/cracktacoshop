@@ -15,7 +15,7 @@ function createPageLoader(pathname, browser = {}, reactHooks) {
       if (specifier === "next/navigation") return {
         usePathname: () => pathname,
         useRouter: () => ({ push() {} }),
-        redirect: (destination) => { throw Object.assign(new Error("Redirect"), { destination }); },
+        permanentRedirect: (destination) => { throw Object.assign(new Error("Redirect"), { destination, status: 308 }); },
         notFound: () => { throw Object.assign(new Error("Not found"), { notFound: true }); },
       };
       if (specifier.endsWith(".module.css")) {
@@ -90,7 +90,7 @@ test("legacy menu entry redirects directly to the default Toast menu", () => {
   const load = createPageLoader("/menu");
   const MenuPage = load("src/app/menu/page.tsx").default;
   const { locations } = load("src/data/locations.ts");
-  assert.throws(() => MenuPage(), (error) => error.destination === locations[0].toastUrl);
+  assert.throws(() => MenuPage(), (error) => error.destination === locations[0].toastUrl && error.status === 308);
 });
 
 test("legacy location menus redirect to the matching Toast menu and reject unknown shops", async () => {
@@ -98,7 +98,7 @@ test("legacy location menus redirect to the matching Toast menu and reject unkno
   const MenuPage = load("src/app/menu/[slug]/embed/page.tsx").default;
   const { locations } = load("src/data/locations.ts");
   for (const location of locations) {
-    await assert.rejects(MenuPage({ params: Promise.resolve({ slug: location.slug }) }), (error) => error.destination === location.toastUrl);
+    await assert.rejects(MenuPage({ params: Promise.resolve({ slug: location.slug }) }), (error) => error.destination === location.toastUrl && error.status === 308);
   }
   await assert.rejects(MenuPage({ params: Promise.resolve({ slug: "unknown" }) }), (error) => error.notFound === true);
 });
@@ -120,6 +120,7 @@ test("locations keeps a compact visit heading and includes every configured shop
     assert.match(main, new RegExp(`href="tel:${location.phone}"`));
     assert.ok(main.includes(location.hours));
     assert.ok(main.includes(`href="${location.toastUrl}"`));
+    assert.ok(main.includes(`href="/locations/${location.slug}"`));
   }
 });
 

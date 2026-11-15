@@ -64,8 +64,8 @@ test("header and footer links keep their destinations without automatically pref
 
   renderToStaticMarkup(createElement(Header));
   assert.deepEqual(captured.map(({ href }) => href), [
-    "/", selectedLocation.toastUrl, "/locations", "/catering", "/order-online",
-    selectedLocation.toastUrl, "/locations", "/catering", "/order-online",
+    "/", selectedLocation.toastUrl, "/locations", "/catering",
+    selectedLocation.toastUrl, "/locations", "/catering",
   ]);
   for (const { prefetch } of captured) assert.equal(prefetch, false);
 
@@ -73,7 +73,11 @@ test("header and footer links keep their destinations without automatically pref
   for (const variant of ["minimal", "default"]) {
     captured.length = 0;
     renderToStaticMarkup(createElement(Footer, { variant }));
-    const expected = variant === "minimal" ? commonFooterHrefs : [
+    const expected = variant === "minimal" ? [
+      ...commonFooterHrefs.slice(0, -1),
+      ...locations.map((location) => `/locations/${location.slug}`),
+      commonFooterHrefs.at(-1),
+    ] : [
       ...commonFooterHrefs,
       ...locations.flatMap((location) => [`/locations/${location.slug}`, location.toastUrl]),
     ];
@@ -90,13 +94,13 @@ test("header and menu drawer each offer one ordering action beside three navigat
   assert.ok(header);
   assert.ok(drawer);
   assert.equal(getPrimaryLinks(header).length, 3);
-  assert.equal([...header.matchAll(/<a\b[^>]*href="\/order-online"/g)].length, 1);
-  assert.match(header, /<a\b[^>]*href="\/order-online"[^>]*>Order Online<\/a>/);
+  assert.equal([...header.matchAll(/<button\b[^>]*aria-haspopup="dialog"[^>]*>Order Online<\/button>/g)].length, 1);
+  assert.doesNotMatch(header, /href="\/order-online"/);
   assert.match(header, /<button\b[^>]*aria-label="Open menu"[^>]*aria-controls="mobile-site-menu"/);
   assert.match(header, /<button\b[^>]*aria-label="Accessibility options"/);
   assert.match(header, /<button\b[^>]*aria-label="Choose a store"[^>]*aria-haspopup="dialog"/);
   assert.doesNotMatch(header, /Find your Prime|header-location-pin/);
-  assert.equal([...drawer.matchAll(/<a\b[^>]*href="\/order-online"/g)].length, 1);
+  assert.equal([...drawer.matchAll(/<button\b[^>]*aria-haspopup="dialog"[^>]*>Order Online<svg/g)].length, 1);
   const drawerNavigation = drawer.match(/<nav[^>]*aria-label="Site sections"[^>]*>([\s\S]*?)<\/nav>/)?.[1];
   assert.ok(drawerNavigation);
   assert.equal([...drawerNavigation.matchAll(/<a\b/g)].length, 3);
@@ -123,7 +127,7 @@ test("homepage opens with food, the logo intro, and one ordering action while ke
   const heroImageUrls = [...hero.matchAll(/<img\b[^>]*src="([^"]+)"/g)]
     .map(([, src]) => new URL(src.replaceAll("&amp;", "&"), "https://example.test"));
   assert.ok(heroImageUrls.some((url) => url.pathname === heroFoodPhotos[0].src || url.searchParams.get("url") === heroFoodPhotos[0].src));
-  const gallery = html.match(/<section[^>]*aria-label="Prime Tacos food gallery"[^>]*>([\s\S]*?)<\/section>/)?.[1];
+  const gallery = html.match(/<section[^>]*aria-label="Prime Taco Shop food gallery"[^>]*>([\s\S]*?)<\/section>/)?.[1];
   assert.ok(gallery);
   assert.equal([...gallery.matchAll(/<img\b/g)].length, 27);
   assert.deepEqual([...gallery.matchAll(/data-photo-group="([^"]+)"/g)].map(([, group]) => group), ["before", "original", "after"]);
@@ -198,6 +202,7 @@ test("homepage shop cards identify only the current store and invite selecting t
       assert.ok(card.includes(isSelected ? 'class="home-selected-store">Your store</span>' : 'class="home-select-store">Select store</span>'));
       assert.doesNotMatch(card, /<h3><a\b/);
       assert.ok(card.includes(`href="${location.toastUrl}"`));
+      assert.ok(card.includes(`href="/locations/${location.slug}"`));
       assert.ok(card.includes(`aria-label="Directions to ${location.name}"`));
     });
     assert.equal([...html.matchAll(/class="home-selected-store"/g)].length, selectedLocation ? 1 : 0);
@@ -297,7 +302,7 @@ test("order page keeps three navigation links and a separate ordering action whi
   assert.deepEqual(getPrimaryLinks(orderHtml).map(([href]) => href), [locations[0].toastUrl, "/locations", "/catering"]);
   const header = orderHtml.match(/<header\b[^>]*>([\s\S]*?)<\/header>/)?.[1];
   assert.ok(header);
-  assert.equal([...header.matchAll(/<a\b[^>]*href="\/order-online"/g)].length, 1);
+  assert.match(header, /<button\b[^>]*aria-haspopup="dialog"[^>]*>Order Online<\/button>/);
 
   const CateringPage = load("src/app/catering/page.tsx").default;
   const cateringHtml = renderToStaticMarkup(createElement(CateringPage));

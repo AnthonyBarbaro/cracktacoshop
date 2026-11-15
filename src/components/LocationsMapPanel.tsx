@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRef, useState, useSyncExternalStore, type ReactElement } from "react";
 
 import GoogleMapEmbed from "@/components/GoogleMapEmbed";
@@ -93,7 +94,7 @@ export default function LocationsMapPanel({ locations }: Props): ReactElement | 
           <h2 id="locations-list-title" className={styles.title}>Our locations</h2>
           <span className={styles.shopCount}>{locations.length} shops</span>
         </div>
-        <div className={styles.list} role="region" aria-label="Choose a Prime Tacos shop" tabIndex={0}>
+        <div className={styles.list} role="region" aria-label="Choose a Prime Taco Shop location" tabIndex={0}>
           {locations.map((location, index) => {
             const isSelected = location.slug === activeLocation.slug;
 
@@ -118,6 +119,7 @@ export default function LocationsMapPanel({ locations }: Props): ReactElement | 
                   {location.phone && <a href={`tel:${location.phone}`}>{location.phone}</a>}
                 </div>
                 <div className={styles.actions}>
+                  <Link href={`/locations/${location.slug}`} className={styles.directions} aria-label={`${location.name} menu and location details`}>Menu &amp; details</Link>
                   {location.toastUrl && (
                     <a
                       href={location.toastUrl}
@@ -173,6 +175,9 @@ export default function LocationsMapPanel({ locations }: Props): ReactElement | 
                 <SiteIcon name="phone" />Call
               </a>
             )}
+            <Link href={`/locations/${activeLocation.slug}`} className={styles.directions} aria-label={`${activeLocation.name} menu and location details`}>
+              Menu &amp; details
+            </Link>
           </div>
         </section>
         <p className="sr-only" aria-live="polite">Showing {activeLocation.name} on the map.</p>
