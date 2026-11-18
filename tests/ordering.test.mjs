@@ -88,10 +88,11 @@ test("open badges respect opening and closing times, midnight, and Pacific dayli
     ["mission-valley", "2026-10-12T07:30:00Z", false],
     ["mission-valley", "2026-10-12T13:59:00Z", false],
     ["mission-valley", "2026-10-12T14:00:00Z", true],
-    ["seaport-village", "2026-10-12T07:30:00Z", null],
+    ["seaport-village", "2026-10-12T07:30:00Z", false],
     ["coronado", "2026-10-12T08:59:00Z", true],
-    ["seaport-village", "2026-10-12T09:00:00Z", null],
-    ["seaport-village", "2026-10-12T14:00:00Z", null],
+    ["seaport-village", "2026-10-12T09:00:00Z", false],
+    ["seaport-village", "2026-10-12T14:00:00Z", false],
+    ["seaport-village", "2026-10-12T14:30:00Z", true],
     ["encinitas", "2026-10-12T14:59:00Z", false],
     ["encinitas", "2026-10-12T15:00:00Z", true],
     ["encinitas", "2026-10-13T05:59:00Z", true],
@@ -114,6 +115,27 @@ test("open badges respect opening and closing times, midnight, and Pacific dayli
   assert.equal(getIsLocationOpenNow("unknown"), null);
 });
 
+test("Seaport opens at 7:30AM daily and closes later Friday through Sunday", async (t) => {
+  const { getIsLocationOpenNow } = loadSourceModule("src/lib/location-hours.ts");
+  const days = [
+    ["Monday", "2026-11-16", false],
+    ["Tuesday", "2026-11-17", false],
+    ["Wednesday", "2026-11-18", false],
+    ["Thursday", "2026-11-19", false],
+    ["Friday", "2026-11-20", true],
+    ["Saturday", "2026-11-21", true],
+    ["Sunday", "2026-11-22", true],
+  ];
+  for (const [day, date, lateClosing] of days) {
+    const times = [["07:29", false], ["07:30", true], ["19:59", true], ["20:00", lateClosing], ["20:29", lateClosing], ["20:30", false]];
+    for (const [time, expected] of times) {
+      await t.test(`${day} at ${time} Pacific`, () => {
+        assert.equal(getIsLocationOpenNow("seaport-village", new Date(`${date}T${time}:00-08:00`)), expected);
+      });
+    }
+  }
+});
+
 test("restaurant hours schema has all days and usable time values", () => {
   const { getLocationOpeningHoursSpecification } = loadSourceModule("src/lib/location-hours.ts");
   const expectedHours = {
@@ -125,7 +147,12 @@ test("restaurant hours schema has all days and usable time values", () => {
   for (const location of locations) {
     const schema = getLocationOpeningHoursSpecification(location.slug);
     if (location.slug === "seaport-village") {
-      assert.equal(schema, undefined);
+      assert.equal(schema.length, 2);
+      assert.deepEqual([...schema].map((period) => [period["@type"], [...period.dayOfWeek], period.opens, period.closes]), [
+        ["OpeningHoursSpecification", ["Monday", "Tuesday", "Wednesday", "Thursday"], "07:30", "20:00"],
+        ["OpeningHoursSpecification", ["Friday", "Saturday", "Sunday"], "07:30", "20:30"],
+      ]);
+      assert.equal(location.hours, "Mon–Thu: 7:30AM - 8PM; Fri–Sun: 7:30AM - 8:30PM");
       continue;
     }
     assert.equal(schema["@type"], "OpeningHoursSpecification");

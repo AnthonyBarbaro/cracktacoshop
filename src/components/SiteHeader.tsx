@@ -12,6 +12,7 @@ import SiteIcon from "@/components/SiteIcon";
 import StoreLocationSearch from "@/components/StoreLocationSearch";
 import StoreWelcome from "@/components/StoreWelcome";
 import { locations } from "@/data/locations";
+import { site } from "@/data/site-content";
 import { openAccessibilitySettings } from "@/lib/accessibility-preferences";
 import { OPEN_DELIVERY_OPTIONS_EVENT } from "@/lib/delivery-options";
 import { getGoogleMapsDirectionsUrl } from "@/lib/google-maps";
@@ -427,7 +428,7 @@ export default function SiteHeader({
         <button type="button" onClick={openAccessibilitySettings} aria-label="Accessibility options" aria-haspopup="dialog" aria-controls="accessibility-widget-panel"><AccessibilityIcon /><span>Access</span></button>
         <a href={shoppingLocation?.toastUrl ?? "/order-online"} aria-label={shoppingLocation ? `Order pickup from ${shoppingLocation.name}` : "Choose a location for pickup"}><SiteIcon name="bag" /><span>Pickup</span></a>
         <a href={selectedDirectionsUrl ?? (isEditorial ? "/#locations" : "/locations")} aria-label={shoppingLocation ? `Map and directions to ${shoppingLocation.name}` : "Map and directions to our locations"} target={selectedDirectionsUrl ? "_blank" : undefined} rel={selectedDirectionsUrl ? "noopener noreferrer" : undefined}><SiteIcon name="pin" /><span>Map</span></a>
-        <a href={getMenuHref(shoppingLocation)}><SiteIcon name="menu" /><span>Menu</span></a>
+        <a href={`tel:${shoppingLocation?.phone ?? site.phone}`} aria-label={shoppingLocation?.phone ? `Call ${shoppingLocation.name}` : "Call Prime Taco Shop"}><SiteIcon name="phone" /><span>Call</span></a>
         <button type="button" onClick={() => {
           setDeliveryLocationSlug("");
           setActiveDrawer("delivery");

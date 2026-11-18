@@ -17,14 +17,6 @@ export const instagramReels: InstagramReel[] = [
     videoSrc: "/videos/reels/prime-coronado.mp4",
   },
   {
-    id: "DZqQq_dye05",
-    title: "Dinner at Prime",
-    href: "https://www.instagram.com/reel/DZqQq_dye05/",
-    poster: "/images/reels/prime-dinner.webp",
-    posterAlt: "A diner holding a taco over a plate of tacos on an outdoor patio",
-    videoSrc: "/videos/reels/prime-dinner.mp4",
-  },
-  {
     id: "CU504L2Drsn",
     title: "Taco Tuesday",
     href: "https://www.instagram.com/reel/CU504L2Drsn/",

@@ -64,8 +64,10 @@ export default function HomeContent(): ReactElement {
                   {isSelected ? <span className="home-selected-store">Your store</span> : <span className="home-select-store">Select store</span>}
                 </div>
                 <h3><button type="button" className="home-shop-select" aria-pressed={isSelected} aria-label={isSelected ? `Selected store: ${location.name}` : `Select ${location.name} as your store`} onClick={() => setStoredShoppingLocationSlug(location.slug)}>{location.name}</button></h3>
-                <p className="home-shop-address">{location.address}</p>
-                <p className="home-shop-hours">{location.hours}</p>
+                <p className="home-shop-address">
+                  {location.streetAddress ? <>{location.streetAddress}<br />{location.city}, {location.state} {location.postalCode}</> : location.address}
+                </p>
+                <p className="home-shop-hours">{location.hours.split("; ").map((period) => <span key={period}>{period}</span>)}</p>
                 <div className="home-shop-links">
                   <Link href={`/locations/${location.slug}`} aria-label={`${location.name} menu and location details`}>Menu &amp; shop details<SiteIcon name="arrow" /></Link>
                   {location.phone && <a href={`tel:${location.phone}`} aria-label={`Call ${location.name}`}><SiteIcon name="phone" />Call</a>}

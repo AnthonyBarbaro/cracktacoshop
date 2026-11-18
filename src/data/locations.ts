@@ -1,3 +1,9 @@
+export const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] as const;
+
+type DayOfWeek = (typeof daysOfWeek)[number];
+type DailyOpeningHours = { opens: string; closes: string };
+type WeeklyOpeningHours = DailyOpeningHours & { dayOfWeek: DayOfWeek[] };
+
 export type Location = {
   slug: string;
   name: string;
@@ -11,7 +17,7 @@ export type Location = {
   postalCode: string;
   address: string;
   hours: string;
-  openingHours?: { opens: string; closes: string };
+  openingHours?: DailyOpeningHours | WeeklyOpeningHours[];
   streetAddress?: string;
   phoneNeedsConfirmation?: boolean;
   seoTitle: string;
@@ -73,6 +79,10 @@ const locationDetails: Omit<Location, "hours" | "address">[] = [
     state: "CA",
     postalCode: "92101",
     streetAddress: "817 W. Harbor Dr., Suite D",
+    openingHours: [
+      { dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday"], opens: "07:30", closes: "20:00" },
+      { dayOfWeek: ["Friday", "Saturday", "Sunday"], opens: "07:30", closes: "20:30" },
+    ],
     seoTitle: "Tacos in Seaport Village, San Diego | Prime Taco Shop",
     description: "Visit Prime Taco Shop in Seaport Village on San Diego's waterfront. Explore tacos and burritos, order pickup, get directions or call to confirm hours.",
     introduction: "Find Prime Taco Shop at Seaport Village on the San Diego waterfront. Planning a visit to the San Diego Convention Center? Browse this shop's menu and directions, and call to confirm hours before making your dining plans.",
@@ -155,12 +165,20 @@ function formatHour(time: string): string {
   return `${hour % 12 || 12}${minutes}${hour < 12 ? "AM" : "PM"}`;
 }
 
+function formatDays(days: DayOfWeek[]): string {
+  const labels = days.map((day) => day.slice(0, 3));
+  const consecutive = days.every((day, index) => daysOfWeek.indexOf(day) === daysOfWeek.indexOf(days[0]) + index);
+  return consecutive && days.length > 1 ? `${labels[0]}–${labels.at(-1)}` : labels.join(", ");
+}
+
 export const locations: Location[] = locationDetails.map((location) => ({
   ...location,
   address: location.streetAddress
     ? `${location.streetAddress}, ${location.city}, ${location.state} ${location.postalCode}`
     : `${location.city}, ${location.state} ${location.postalCode} — call to confirm street address`,
-  hours: location.openingHours
-    ? `Daily: ${formatHour(location.openingHours.opens)} - ${formatHour(location.openingHours.closes)}`
-    : "Hours: call to confirm",
+  hours: Array.isArray(location.openingHours)
+    ? location.openingHours.map(({ dayOfWeek, opens, closes }) => `${formatDays(dayOfWeek)}: ${formatHour(opens)} - ${formatHour(closes)}`).join("; ")
+    : location.openingHours
+      ? `Daily: ${formatHour(location.openingHours.opens)} - ${formatHour(location.openingHours.closes)}`
+      : "Hours: call to confirm",
 }));

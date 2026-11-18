@@ -1,7 +1,8 @@
-import { locations } from "@/data/locations";
+import { daysOfWeek, locations } from "@/data/locations";
 
 const locationTimeFormatter = new Intl.DateTimeFormat("en-US", {
   timeZone: "America/Los_Angeles",
+  weekday: "long",
   hour: "2-digit",
   minute: "2-digit",
   hourCycle: "h23",
@@ -14,13 +15,17 @@ type OpeningHoursSpecification = {
   closes: string;
 };
 
-export function getLocationOpeningHoursSpecification(slug: string): OpeningHoursSpecification | undefined {
+export function getLocationOpeningHoursSpecification(slug: string): OpeningHoursSpecification | OpeningHoursSpecification[] | undefined {
   const hours = locations.find((location) => location.slug === slug)?.openingHours;
   if (!hours) return undefined;
 
+  if (Array.isArray(hours)) {
+    return hours.map((period) => ({ "@type": "OpeningHoursSpecification", ...period }));
+  }
+
   return {
     "@type": "OpeningHoursSpecification",
-    dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+    dayOfWeek: [...daysOfWeek],
     ...hours,
   };
 }
@@ -37,13 +42,22 @@ export function getIsLocationOpenNow(slug: string, date: Date = new Date()): boo
   const parts = locationTimeFormatter.formatToParts(date);
   const hour = Number(parts.find((part) => part.type === "hour")?.value ?? "0");
   const minute = Number(parts.find((part) => part.type === "minute")?.value ?? "0");
+  const weekday = parts.find((part) => part.type === "weekday")?.value;
+  const dayIndex = daysOfWeek.findIndex((day) => day === weekday);
+  const previousDay = daysOfWeek[(dayIndex + daysOfWeek.length - 1) % daysOfWeek.length];
   const nowMinutes = hour * 60 + minute;
-  const openMinutes = toMinutes(hours.opens);
-  const closeMinutes = toMinutes(hours.closes);
+  const periods = Array.isArray(hours) ? hours : [{ ...hours, dayOfWeek: [...daysOfWeek] }];
 
-  if (closeMinutes <= openMinutes) {
-    return nowMinutes >= openMinutes || nowMinutes < closeMinutes;
-  }
+  return periods.some((period) => {
+    const today = period.dayOfWeek.some((day) => day === weekday);
+    const yesterday = period.dayOfWeek.includes(previousDay);
+    const openMinutes = toMinutes(period.opens);
+    const closeMinutes = toMinutes(period.closes);
 
-  return nowMinutes >= openMinutes && nowMinutes < closeMinutes;
+    if (closeMinutes <= openMinutes) {
+      return (today && nowMinutes >= openMinutes) || (yesterday && nowMinutes < closeMinutes);
+    }
+
+    return today && nowMinutes >= openMinutes && nowMinutes < closeMinutes;
+  });
 }

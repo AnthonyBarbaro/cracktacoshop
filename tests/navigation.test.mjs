@@ -234,20 +234,21 @@ function getQuickActions(html) {
 test("mobile bar starts with accessibility and keeps pickup and delivery within reach", () => {
   const load = createPageLoader("/");
   const Header = load("src/components/SiteHeader.tsx").default;
-  const { locations } = load("src/data/locations.ts");
+  const { site } = load("src/data/site-content.ts");
   const html = renderToStaticMarkup(createElement(Header));
   const actions = getQuickActions(html);
   assert.deepEqual(actions.map(({ type, label, href }) => [type, label, href]), [
     ["button", "Access", undefined],
     ["a", "Pickup", "/order-online"],
     ["a", "Map", "/#locations"],
-    ["a", "Menu", locations[0].toastUrl],
+    ["a", "Call", `tel:${site.phone}`],
     ["button", "Delivery", undefined],
   ]);
   assert.match(actions[0].attributes, /aria-label="Accessibility options"/);
   assert.match(actions[0].attributes, /aria-haspopup="dialog"/);
   assert.match(actions[0].attributes, /aria-controls="accessibility-widget-panel"/);
   assert.match(actions[2].attributes, /aria-label="Map and directions to our locations"/);
+  assert.match(actions[3].attributes, /aria-label="Call Prime Taco Shop"/);
   assert.match(actions[4].attributes, /aria-haspopup="dialog"/);
   assert.match(actions[4].attributes, /aria-controls="mobile-site-menu"/);
   assert.match(actions[4].attributes, /aria-expanded="false"/);
@@ -278,7 +279,7 @@ test("the mobile accessibility action opens the existing settings dialog", () =>
   assert.equal(opens, 1);
 });
 
-test("mobile pickup, directions, and Toast menu follow the selected shop", () => {
+test("mobile pickup, directions, and calls follow the selected shop", () => {
   const data = createPageLoader("/menu")("src/data/locations.ts");
   for (const location of data.locations) {
     const load = createPageLoader("/menu", location);
@@ -290,8 +291,20 @@ test("mobile pickup, directions, and Toast menu follow the selected shop", () =>
     assert.ok(actions[2].attributes.includes(`aria-label="Map and directions to ${location.name}"`));
     assert.equal(directions.searchParams.get("destination"), location.address);
     assert.equal(directions.searchParams.get("destination_place_id"), location.placeId);
-    assert.equal(actions[3].href, location.toastUrl);
+    assert.equal(actions[3].href, `tel:${location.phone}`);
+    assert.equal(actions[3].label, "Call");
+    assert.ok(actions[3].attributes.includes(`aria-label="Call ${location.name}"`));
   }
+});
+
+test("mobile calls use the location page's shop ahead of a saved selection", () => {
+  const { locations } = createPageLoader("/")("src/data/locations.ts");
+  const savedLocation = locations[0];
+  const routeLocation = locations[1];
+  const Header = createPageLoader(`/locations/${routeLocation.slug}`, savedLocation)("src/components/SiteHeader.tsx").default;
+  const actions = getQuickActions(renderToStaticMarkup(createElement(Header)));
+  assert.equal(actions[3].href, `tel:${routeLocation.phone}`);
+  assert.ok(actions[3].attributes.includes(`aria-label="Call ${routeLocation.name}"`));
 });
 
 test("order page keeps three navigation links and a separate ordering action while catering offers configured phones", () => {

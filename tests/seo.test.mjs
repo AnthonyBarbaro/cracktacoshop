@@ -30,11 +30,14 @@ test("sitemap contains only canonical public pages without invented modification
   }
 });
 
-test("schema withholds unresolved addresses, hours and phone numbers", () => {
+test("schema withholds unresolved addresses and phone numbers and includes confirmed hours", () => {
   assert.equal(getLocationRestaurantSchema(locations.find((location) => location.slug === "encinitas")), undefined);
   const seaport = getLocationRestaurantSchema(locations.find((location) => location.slug === "seaport-village"));
   assert.equal(seaport.address.streetAddress, "817 W. Harbor Dr., Suite D");
-  assert.equal(seaport.openingHoursSpecification, undefined);
+  assert.deepEqual([...seaport.openingHoursSpecification].map((period) => [[...period.dayOfWeek], period.opens, period.closes]), [
+    [["Monday", "Tuesday", "Wednesday", "Thursday"], "07:30", "20:00"],
+    [["Friday", "Saturday", "Sunday"], "07:30", "20:30"],
+  ]);
   const mission = getLocationRestaurantSchema(locations.find((location) => location.slug === "mission-valley"));
   assert.equal(mission.telephone, undefined);
   const coronado = getLocationRestaurantSchema(locations.find((location) => location.slug === "coronado"));
